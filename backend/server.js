@@ -63,7 +63,7 @@ app.get('/flashcards', (req, res) => {
   res.send('Flashcard browsing not implemented yet.');
 });
 
-module.exports = { app, passport };
+module.exports = app;
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
