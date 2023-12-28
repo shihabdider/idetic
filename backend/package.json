@@ -4,13 +4,18 @@
   "description": "Backend for idetic app",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js"
+    "test": "mocha"
   },
   "author": "Shihab Dider",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
     "nodemon": "^3.0.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "supertest": "^6.2.2",
+    "chai": "^4.3.6"
   }
 }
