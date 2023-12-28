@@ -64,13 +64,6 @@ app.get('/flashcards', (req, res) => {
   res.send('Flashcard browsing not implemented yet.');
 });
 
-app.get('/logout', (req, res, next) => {
-  req.logout(function(err) {
-    if (err) { return next(err); }
-    res.redirect('/');
-  });
-});
-
 module.exports = app;
 
 app.listen(port, () => {
