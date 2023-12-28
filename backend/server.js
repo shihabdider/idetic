@@ -41,24 +41,22 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: "http://localhost:3001/auth/google/callback"
   },
-  function(accessToken, refreshToken, profile, cb) {
-    const User = require('./models/user');
-    User.findOne({ googleId: profile.id }, function (err, user) {
-      if (err) return cb(err);
+  async function(accessToken, refreshToken, profile, cb) {
+    try {
+      const User = require('./models/user');
+      let user = await User.findOne({ googleId: profile.id }).exec();
       if (!user) {
         user = new User({
           googleId: profile.id,
           displayName: profile.displayName,
           email: profile.emails[0].value
         });
-        user.save(function(err) {
-          if (err) console.log(err);
-          return cb(err, user);
-        });
-      } else {
-        return cb(err, user);
+        await user.save();
       }
-    });
+      cb(null, user);
+    } catch (err) {
+      cb(err);
+    }
   }
 ));
 
