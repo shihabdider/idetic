@@ -79,6 +79,32 @@
 
 ### Backend Development Steps:
 
+ ### Directory Structure:
+
+ ```
+ /backend
+ ├── controllers     # Business logic for handling API requests
+ ├── models          # Database models
+ ├── routes          # Express route definitions
+ │   └── auth.js     # Authentication routes
+ ├── tests           # Test files for the backend
+ │   └── test_endpoints.spec.js
+ ├── utils           # Utility functions and middleware
+ ├── server.js       # Entry point for the backend server
+ └── package.json    # NPM package file
+
+ /frontend
+ ├── public          # Static files
+ ├── src             # React source files
+ │   ├── components  # React components
+ │   ├── services    # Services for API communication
+ │   ├── App.js      # Main React application file
+ │   └── index.js    # Entry point for the React app
+ ├── package.json    # NPM package file for the frontend
+ └── README.md       # README for the frontend
+ ```
+
+
 1. [x] **Set up the development environment:**
    - Install Node.js and npm.
    - Initialize a new Node.js project with `npm init`.
