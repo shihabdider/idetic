@@ -4,7 +4,7 @@
   "description": "Backend for idetic app",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
     "test": "mocha"
   },
   "author": "Shihab Dider",
