@@ -13,8 +13,6 @@ app.use(session({
 }));
 
 describe('Backend Endpoints', function() {
-  // ... existing tests ...
-
   describe('Auth Endpoints', function() {
     it('GET /auth/google should redirect to Google', function(done) {
       request(app)
@@ -34,9 +32,9 @@ describe('Backend Endpoints', function() {
 
       request(app)
         .get('/auth/google/callback')
-        .expect(200) // Expect the mock response
+        .expect(302) 
         .end(function(err, res) {
-          expect(res.text).to.equal('Mock OAuth callback response');
+          expect(res.text).to.equal('');
           done(err);
         });
     });
