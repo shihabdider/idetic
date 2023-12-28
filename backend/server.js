@@ -103,6 +103,19 @@ app.get('/', (req, res) => {
   res.send('Welcome to iDetic!');
 });
 
+// Route for testing: Print all sessions in the database to the console
+app.get('/test/session-contents', async (req, res) => {
+  try {
+    const sessionCollection = mongoose.connection.collection('sessions');
+    const sessions = await sessionCollection.find({}).toArray();
+    console.log('Session contents:', sessions);
+    res.send('Check server logs for session contents.');
+  } catch (err) {
+    console.error('Error fetching sessions:', err);
+    res.status(500).send('Error fetching session contents.');
+  }
+});
+
 // Placeholder routes for future implementation
 app.get('/books', (req, res) => {
   // TODO: Implement book browsing functionality
