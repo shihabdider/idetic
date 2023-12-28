@@ -41,10 +41,25 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// Set up auth routes
 app.use('/auth', authRoutes);
 
-// Route to display user profile or redirect to login
+app.get('/login', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.redirect('/profile');
+  } else {
+    // Render login page or redirect to Google OAuth
+    // res.render('login'); // Uncomment this if you have a login page to render
+    res.redirect('/auth/google'); // Redirect to Google OAuth if no login page
+  }
+});
+
+app.get('/logout', function(req, res) {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+});
+
 app.get('/profile', (req, res) => {
   if (req.isAuthenticated()) {
     res.send(`Logged in as: ${req.user.displayName}`);
