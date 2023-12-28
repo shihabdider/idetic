@@ -4,17 +4,24 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const app = express();
 const port = process.env.PORT || 3001;
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Configure session management
 app.use(session({
   secret: 'secret', // Replace with a real secret key
   resave: false,
   saveUninitialized: true,
+  store: new MongoStore({ mongooseConnection: mongoose.connection }) // Store session in MongoDB
 }));
 
+// ... rest of the server.js code ...
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -35,9 +42,23 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://localhost:3001/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, cb) {
-    // In a production app, you would want to associate the Google account with a user record in your database.
-    // For now, we'll just pass the profile along.
-    return cb(null, profile);
+    const User = require('./models/user');
+    User.findOne({ googleId: profile.id }, function (err, user) {
+      if (err) return cb(err);
+      if (!user) {
+        user = new User({
+          googleId: profile.id,
+          displayName: profile.displayName,
+          email: profile.emails[0].value
+        });
+        user.save(function(err) {
+          if (err) console.log(err);
+          return cb(err, user);
+        });
+      } else {
+        return cb(err, user);
+      }
+    });
   }
 ));
 
