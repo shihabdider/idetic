@@ -7,6 +7,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const authRoutes = require('./auth');
 const app = express();
 const port = process.env.PORT || 3001;
+
 // Configure session management
 app.use(session({
   secret: 'secret', // Replace with a real secret key
