@@ -87,6 +87,18 @@ app.get('/profile', (req, res) => {
   }
 });
 
+// Route for testing: Print all users in the database to the console
+app.get('/test/db-contents', async (req, res) => {
+  try {
+    const users = await User.find({});
+    console.log('Database contents:', users);
+    res.send('Check server logs for database contents.');
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).send('Error fetching database contents.');
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('Welcome to iDetic!');
 });
