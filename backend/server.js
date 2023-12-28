@@ -8,6 +8,15 @@ const authRoutes = require('./routes/auth');
 const app = express();
 const port = process.env.PORT || 3001;
 
+// Route to display user profile or redirect to login
+app.get('/profile', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.send(`Logged in as: ${req.user.displayName}`);
+  } else {
+    res.redirect('/login');
+  }
+});
+
 // Configure session management
 app.use(session({
   secret: 'secret', // Replace with a real secret key
