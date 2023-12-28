@@ -4,7 +4,7 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const authRoutes = require('./auth');
+const authRoutes = require('./routes/auth');
 const app = express();
 const port = process.env.PORT || 3001;
 
