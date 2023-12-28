@@ -74,6 +74,7 @@ describe('Backend Endpoints', function() {
         done(err);
       });
   });
+
   describe('Session Management', function() {
     it('should login and create a session', function(done) {
       // Mock the Google OAuth login response
