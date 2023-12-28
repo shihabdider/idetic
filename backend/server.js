@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const app = express();
 const port = process.env.PORT || 3001;
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -18,7 +20,7 @@ app.use(session({
   secret: 'secret', // Replace with a real secret key
   resave: false,
   saveUninitialized: true,
-  store: new MongoStore({ mongooseConnection: mongoose.connection }) // Store session in MongoDB
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }) // Store session in MongoDB
 }));
 
 // ... rest of the server.js code ...
