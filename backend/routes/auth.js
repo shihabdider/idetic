@@ -2,6 +2,18 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
+// Route to render login page or initiate login process
+router.get('/login', (req, res) => {
+  // If user is already logged in, redirect to profile
+  if (req.isAuthenticated()) {
+    res.redirect('/profile');
+  } else {
+    // Render login page or redirect to Google OAuth
+    // res.render('login'); // Uncomment this if you have a login page to render
+    res.redirect('/auth/google'); // Redirect to Google OAuth if no login page
+  }
+});
+
 // Redirect to Google for authentication
 router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })

@@ -49,7 +49,7 @@ app.get('/profile', (req, res) => {
   if (req.isAuthenticated()) {
     res.send(`Logged in as: ${req.user.displayName}`);
   } else {
-    res.redirect('/auth/google');
+    res.redirect('/login');
   }
 });
 
