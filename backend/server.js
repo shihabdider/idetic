@@ -8,7 +8,6 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const app = express();
 const port = process.env.PORT || 3001;
-const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
 // Connect to MongoDB
@@ -23,7 +22,6 @@ app.use(session({
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }) // Store session in MongoDB
 }));
 
-// ... rest of the server.js code ...
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
