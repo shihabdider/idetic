@@ -79,15 +79,15 @@
 
 ### Backend Development Steps:
 
-1. **Set up the development environment:**
+1. [x] **Set up the development environment:**
    - Install Node.js and npm.
    - Initialize a new Node.js project with `npm init`.
    - Set up version control with Git.
 
-2. **Create the project structure:**
+2. [x] **Create the project structure:**
    - Organize the project into folders for routes, controllers, models, and utilities.
 
-3. **Set up Express.js:**
+3. [x] **Set up Express.js:**
    - Install Express.js with `npm install express`.
    - Create a basic server with route placeholders.
 
