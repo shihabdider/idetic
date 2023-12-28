@@ -1,6 +1,46 @@
 const express = require('express');
+const passport = require('passport');
+const session = require('express-session');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const authRoutes = require('./auth');
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Configure session management
+app.use(session({
+  secret: 'secret', // Replace with a real secret key
+  resave: false,
+  saveUninitialized: true,
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Set up Passport session handling
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
+// Configure Google OAuth 2.0 strategy for Passport
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    // In a production app, you would want to associate the Google account with a user record in your database.
+    // For now, we'll just pass the profile along.
+    return cb(null, profile);
+  }
+));
+
+// Set up auth routes
+app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
   res.send('Welcome to iDetic!');
@@ -22,7 +62,8 @@ app.get('/flashcards', (req, res) => {
   res.send('Flashcard browsing not implemented yet.');
 });
 
-module.exports = app;
+module.exports = { app, passport };
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
