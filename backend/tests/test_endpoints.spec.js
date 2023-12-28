@@ -1,7 +1,6 @@
 const request = require('supertest');
 const expect = require('chai').expect;
 const app = require('../server');
-const app = require('../server');
 
 describe('Backend Endpoints', function() {
   it('GET / should return welcome message', function(done) {
