@@ -8,23 +8,6 @@ const authRoutes = require('./routes/auth');
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Route to display user profile or redirect to login
-app.get('/profile', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.send(`Logged in as: ${req.user.displayName}`);
-  } else {
-    res.redirect('/login');
-  }
-});
-
-// Route to initiate the login process
-app.get('/login', (req, res) => {
-  res.redirect('/auth/google');
-});
-
-// ... existing code ...
-
-module.exports = app;
 // Configure session management
 app.use(session({
   secret: 'secret', // Replace with a real secret key
@@ -60,6 +43,15 @@ passport.use(new GoogleStrategy({
 
 // Set up auth routes
 app.use('/auth', authRoutes);
+
+// Route to display user profile or redirect to login
+app.get('/profile', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.send(`Logged in as: ${req.user.displayName}`);
+  } else {
+    res.redirect('/auth/google');
+  }
+});
 
 app.get('/', (req, res) => {
   res.send('Welcome to iDetic!');

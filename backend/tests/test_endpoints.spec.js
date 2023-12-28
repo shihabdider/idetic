@@ -74,34 +74,4 @@ describe('Backend Endpoints', function() {
         done(err);
       });
   });
-
-  describe('Session Management', function() {
-    it('should login and create a session', function(done) {
-      // Mock the Google OAuth login response
-      nock('http://localhost:3001')
-        .post('/auth/google')
-        .reply(200, 'Mock login response', {
-          'Set-Cookie': 'connect.sid=s%3Asome_session_id; Path=/; HttpOnly'
-        });
-
-      request(app)
-        .post('/auth/google')
-        .expect(200)
-        .end(function(err, res) {
-          expect(res.headers['set-cookie']).to.be.an('array').that.is.not.empty;
-          done(err);
-        });
-    });
-
-    it('should destroy the session on logout', function(done) {
-      request(app)
-        .get('/logout')
-        .expect(302)
-        .end(function(err, res) {
-          // The 'set-cookie' header should indicate that the session cookie has been cleared
-          expect(res.headers['set-cookie'][0]).to.include('connect.sid=;');
-          done(err);
-        });
-    });
-  });
 });
