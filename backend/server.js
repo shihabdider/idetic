@@ -17,6 +17,14 @@ app.get('/profile', (req, res) => {
   }
 });
 
+// Route to initiate the login process
+app.get('/login', (req, res) => {
+  res.redirect('/auth/google');
+});
+
+// ... existing code ...
+
+module.exports = app;
 // Configure session management
 app.use(session({
   secret: 'secret', // Replace with a real secret key
