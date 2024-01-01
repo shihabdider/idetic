@@ -15,7 +15,8 @@ exports.createBook = async (req, res) => {
     const savedBook = await newBook.save();
     res.status(201).send(savedBook);
   } catch (error) {
-    res.status(500).send(error);
+    console.error('Error creating book:', error);
+    res.status(500).send({ message: 'Error creating book', error: error.message });
   }
 };
 
