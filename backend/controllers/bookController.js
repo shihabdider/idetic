@@ -13,7 +13,7 @@ exports.createBook = async (req, res) => {
   try {
     const newBook = new Book({ ...req.body, userId: req.user._id });
     const savedBook = await newBook.save();
-    res.status(201).json(savedBook);
+    res.status(201).send(savedBook);
   } catch (error) {
     res.status(500).send(error);
   }
