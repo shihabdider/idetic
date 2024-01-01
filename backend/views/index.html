@@ -20,7 +20,9 @@
             const bookData = new FormData();
             bookData.append('title', '100 Page Machine Learning Book');
             bookData.append('author', 'Test Author');
-            bookData.append('filePath', new File([''], 'tests/data/100pg_machine_learning_book.pdf'));
+            // Assuming the file input field in your actual HTML form is named 'book'
+            const bookInput = document.querySelector('input[type="file"][name="book"]');
+            bookData.append('book', bookInput.files[0]);
             fetch('/books', {
                 method: 'POST',
                 body: bookData
