@@ -2,6 +2,8 @@ const request = require('supertest');
 const expect = require('chai').expect;
 const fs = require('fs');
 const path = require('path');
+const Book = require('../models/book');
+const User = require('../models/user');
 const app = require('../server');
 
 const nock = require('nock');
@@ -41,33 +43,7 @@ describe('Backend Endpoints', function() {
         });
     });
   });
-  it('GET / should return welcome message', function(done) {
-    request(app)
-      .get('/')
-      .end(function(err, res) {
-        expect(res.text).to.equal('Welcome to iDetic!');
-        done(err);
-      });
-  });
-
-  it('GET /books should return not implemented message', function(done) {
-    request(app)
-      .get('/books')
-      .end(function(err, res) {
-        expect(res.text).to.equal('Book browsing not implemented yet.');
-        done(err);
-      });
-  });
-
-  it('POST /books should return not implemented message', function(done) {
-    request(app)
-      .post('/books')
-      .end(function(err, res) {
-        expect(res.text).to.equal('Book upload not implemented yet.');
-        done(err);
-      });
-  });
-
+  
   it('GET /flashcards should return not implemented message', function(done) {
     request(app)
       .get('/flashcards')
@@ -79,12 +55,12 @@ describe('Backend Endpoints', function() {
 
   describe('Book Management Endpoints', function() {
     it('POST /books should upload a book', function(done) {
-      const filePath = path.join(__dirname, 'data', 'testbook.pdf');
+      const filePath = path.join(__dirname, 'data', '100pg_machine_learning_book.pdf');
       fs.readFile(filePath, function(err, data) {
         if (err) throw err;
         request(app)
           .post('/books')
-          .attach('book', data, 'testbook.pdf')
+          .attach('book', data, '100pg_machine_learning_book.pdf')
           .expect(201)
           .end(function(err, res) {
             expect(res.body).to.have.property('_id');
@@ -105,18 +81,40 @@ describe('Backend Endpoints', function() {
     });
 
     it('GET /books/:id should retrieve a specific book', function(done) {
-      // This test will need a valid book ID to pass
-      done();
+      Book.findOne({ title: 'Test Book' }).then(book => {
+        request(app)
+          .get(`/books/${book._id}`)
+          .expect(200)
+          .end(function(err, res) {
+            expect(res.body).to.have.property('title', 'Test Book');
+            done(err);
+          });
+      });
     });
 
     it('PUT /books/:id should update a book\'s details', function(done) {
-      // This test will need a valid book ID to pass
-      done();
+      Book.findOne({ title: 'Test Book' }).then(book => {
+        request(app)
+          .put(`/books/${book._id}`)
+          .send({ title: 'Updated Test Book' })
+          .expect(200)
+          .end(function(err, res) {
+            expect(res.body).to.have.property('title', 'Updated Test Book');
+            done(err);
+          });
+      });
     });
 
     it('DELETE /books/:id should delete a book', function(done) {
-      // This test will need a valid book ID to pass
-      done();
+      Book.findOne({ title: 'Updated Test Book' }).then(book => {
+        request(app)
+          .delete(`/books/${book._id}`)
+          .expect(204)
+          .end(function(err, res) {
+            expect(res.body).to.be.empty;
+            done(err);
+          });
+      });
     });
   });
 });
