@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 const authRoutes = require('./routes/auth');
 const testRoutes = require('./routes/test');
+const bookRoutes = require('./routes/books');
 const app = express();
 const port = process.env.PORT || 3001;
 const MongoStore = require('connect-mongo');
@@ -67,6 +68,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/test', testRoutes);
+app.use('/books', bookRoutes);
 
 app.get('/login', (req, res) => {
   if (req.isAuthenticated()) {
