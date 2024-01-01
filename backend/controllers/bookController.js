@@ -13,11 +13,7 @@ exports.createBook = async (req, res) => {
   try {
     const newBook = new Book({ ...req.body, userId: req.user._id });
     const savedBook = await newBook.save();
-    if (savedBook) {
-      res.status(201).json(savedBook);
-    } else {
-      res.status(400).send('Book could not be saved');
-    }
+    res.status(201).json(savedBook);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -38,10 +34,7 @@ exports.getBook = async (req, res) => {
 exports.updateBook = async (req, res) => {
   try {
     const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!updatedBook) {
-      return res.status(404).send('Book not found');
-    }
-    res.json(updatedBook);
+    res.status(200).json(updatedBook);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -50,10 +43,7 @@ exports.updateBook = async (req, res) => {
 exports.deleteBook = async (req, res) => {
   try {
     const deletedBook = await Book.findByIdAndDelete(req.params.id);
-    if (!deletedBook) {
-      return res.status(404).send('Book not found');
-    }
-    res.status(204).json(deletedBook);
+    res.status(204).send();
   } catch (error) {
     res.status(500).send(error);
   }
