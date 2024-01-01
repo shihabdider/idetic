@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iDetic Test Page</title>
+</head>
+<body>
+    <h1>iDetic Test Page</h1>
+    <button id="list-books">List Books</button>
+    <button id="create-book">Create Book</button>
+    <button id="update-book">Update Book</button>
+    <button id="delete-book">Delete Book</button>
+    <script>
+        document.getElementById('list-books').addEventListener('click', function() {
+            fetch('/books').then(response => response.json()).then(data => console.log(data));
+        });
+        document.getElementById('create-book').addEventListener('click', function() {
+            fetch('/books', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title: 'Test Book', author: 'Test Author' })
+            }).then(response => response.json()).then(data => console.log(data));
+        });
+        // Add event listeners for 'update-book' and 'delete-book' with appropriate fetch calls
+    </script>
+</body>
+</html>

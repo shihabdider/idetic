@@ -13,6 +13,7 @@ const bookRoutes = require('./routes/books');
 const app = express();
 const port = process.env.PORT || 3001;
 const MongoStore = require('connect-mongo');
+const path = require('path');
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -67,7 +68,7 @@ passport.use(new GoogleStrategy({
 ));
 
 app.get('/', (req, res) => {
-  res.send('Welcome to iDetic!');
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
 app.use('/auth', authRoutes);
@@ -98,6 +99,9 @@ app.get('/profile', (req, res) => {
     res.redirect('/login');
   }
 });
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/flashcards', (req, res) => {
   // TODO: Implement flashcard browsing functionality
