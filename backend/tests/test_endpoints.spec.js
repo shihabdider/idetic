@@ -65,7 +65,7 @@ describe('Backend Endpoints', function() {
           .attach('file', data, '100pg_machine_learning_book.pdf')
           .expect(201)
           .end(function(err, res) {
-            console.log(res.body); // Log the response for debugging
+            console.log(res.body, res.error); // Log the response for debugging
             expect(res.body).to.have.property('_id');
             expect(res.body.title).to.equal('Test Book');
             done(err);
