@@ -8,10 +8,27 @@ exports.listBooks = async (req, res) => {
     res.status(500).send(error);
   }
 };
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/') // You need to create this directory or configure as needed
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+  }
+});
+const upload = multer({ storage: storage });
 
-exports.createBook = async (req, res) => {
+exports.createBook = upload.single('book'), async (req, res) => {
   try {
-    const newBook = new Book({ ...req.body, userId: req.user._id });
+    const { title, author } = req.body;
+    const bookFile = req.file;
+    const newBook = new Book({
+      title,
+      author,
+      filePath: bookFile.path, // Assuming 'book' is the field name for the uploaded file
+      userId: req.user._id
+    });
     const savedBook = await newBook.save();
     res.status(201).send(savedBook);
   } catch (error) {
