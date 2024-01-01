@@ -5,7 +5,9 @@ const passport = require('passport');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const mongoose = require('mongoose');
+const User = require('./models/user');
 const authRoutes = require('./routes/auth');
+const testRoutes = require('./routes/test');
 const app = express();
 const port = process.env.PORT || 3001;
 const MongoStore = require('connect-mongo');
@@ -43,7 +45,6 @@ passport.use(new GoogleStrategy({
   },
   async function(accessToken, refreshToken, profile, cb) {
     try {
-      const User = require('./models/user');
       let user = await User.findOne({ googleId: profile.id }).exec();
       if (!user) {
         user = new User({
@@ -60,7 +61,12 @@ passport.use(new GoogleStrategy({
   }
 ));
 
+app.get('/', (req, res) => {
+  res.send('Welcome to iDetic!');
+});
+
 app.use('/auth', authRoutes);
+app.use('/test', testRoutes);
 
 app.get('/login', (req, res) => {
   if (req.isAuthenticated()) {
@@ -84,35 +90,6 @@ app.get('/profile', (req, res) => {
     res.send(`Logged in as: ${req.user.displayName}`);
   } else {
     res.redirect('/login');
-  }
-});
-
-// Route for testing: Print all users in the database to the console
-app.get('/test/db-contents', async (req, res) => {
-  try {
-    const users = await User.find({});
-    console.log('Database contents:', users);
-    res.send('Check server logs for database contents.');
-  } catch (err) {
-    console.error('Error fetching users:', err);
-    res.status(500).send('Error fetching database contents.');
-  }
-});
-
-app.get('/', (req, res) => {
-  res.send('Welcome to iDetic!');
-});
-
-// Route for testing: Print all sessions in the database to the console
-app.get('/test/session-contents', async (req, res) => {
-  try {
-    const sessionCollection = mongoose.connection.collection('sessions');
-    const sessions = await sessionCollection.find({}).toArray();
-    console.log('Session contents:', sessions);
-    res.send('Check server logs for session contents.');
-  } catch (err) {
-    console.error('Error fetching sessions:', err);
-    res.status(500).send('Error fetching session contents.');
   }
 });
 
