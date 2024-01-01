@@ -15,12 +15,12 @@
         document.getElementById('list-books').addEventListener('click', function() {
             fetch('/books').then(response => response.json()).then(data => console.log(data));
         });
-        const bookData = new FormData();
-        bookData.append('title', '100 Page Machine Learning Book');
-        bookData.append('author', 'Test Author');
-        bookData.append('book', new File([''], 'tests/data/100pg_machine_learning_book.pdf'));
 
         document.getElementById('create-book').addEventListener('click', () => {
+            const bookData = new FormData();
+            bookData.append('title', '100 Page Machine Learning Book');
+            bookData.append('author', 'Test Author');
+            bookData.append('filePath', new File([''], 'tests/data/100pg_machine_learning_book.pdf'));
             fetch('/books', {
                 method: 'POST',
                 body: bookData
