@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
+const bodyParser = require('body-parser');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const mongoose = require('mongoose');
 const User = require('./models/user');
@@ -24,6 +25,9 @@ app.use(session({
   saveUninitialized: true,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }) // Store session in MongoDB
 }));
+
+// Parse JSON bodies (as sent by API clients)
+app.use(bodyParser.json());
 
 // Initialize Passport
 app.use(passport.initialize());
