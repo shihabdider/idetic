@@ -15,14 +15,44 @@
         document.getElementById('list-books').addEventListener('click', function() {
             fetch('/books').then(response => response.json()).then(data => console.log(data));
         });
-        document.getElementById('create-book').addEventListener('click', function() {
+        const bookData = new FormData();
+        bookData.append('title', '100 Page Machine Learning Book');
+        bookData.append('author', 'Test Author');
+        bookData.append('book', new File([''], 'tests/data/100pg_machine_learning_book.pdf'));
+
+        document.getElementById('create-book').addEventListener('click', () => {
             fetch('/books', {
                 method: 'POST',
+                body: bookData
+            }).then(response => response.json())
+              .then(data => console.log(data))
+              .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('update-book').addEventListener('click', () => {
+            const bookId = 'BOOK_ID_HERE'; // Replace with the actual book ID
+            fetch(`/books/${bookId}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ title: 'Test Book', author: 'Test Author' })
-            }).then(response => response.json()).then(data => console.log(data));
+                body: JSON.stringify({ title: 'Updated Book Title', author: 'Updated Author' })
+            }).then(response => response.json())
+              .then(data => console.log(data))
+              .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('delete-book').addEventListener('click', () => {
+            const bookId = 'BOOK_ID_HERE'; // Replace with the actual book ID
+            fetch(`/books/${bookId}`, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Book deleted successfully');
+                } else {
+                    console.error('Error deleting book');
+                }
+            }).catch(error => console.error('Error:', error));
         });
     </script>
 </body>
