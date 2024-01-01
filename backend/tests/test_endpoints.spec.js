@@ -43,7 +43,7 @@ describe('Backend Endpoints', function() {
         });
     });
   });
-  
+
   it('GET /flashcards should return not implemented message', function(done) {
     request(app)
       .get('/flashcards')
@@ -62,6 +62,7 @@ describe('Backend Endpoints', function() {
           .post('/books')
           .field('title', 'Test Book')
           .field('author', 'Test Author')
+          .field('userId', '658cc6b77c3ec2106ab21a5f')
           .attach('file', data, '100pg_machine_learning_book.pdf')
           .expect(201)
           .end(function(err, res) {
