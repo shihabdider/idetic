@@ -10,6 +10,8 @@ const User = require('./models/user');
 const authRoutes = require('./routes/auth');
 const testRoutes = require('./routes/test');
 const bookRoutes = require('./routes/books');
+const flashcardRoutes = require('./routes/flashcards');
+const highlightRoutes = require('./routes/highlights');
 const app = express();
 const port = process.env.PORT || 3001;
 const MongoStore = require('connect-mongo');
@@ -74,6 +76,8 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/test', testRoutes);
 app.use('/books', bookRoutes);
+app.use('/flashcards', flashcardRoutes);
+app.use('/highlights', highlightRoutes);
 
 app.get('/login', (req, res) => {
   if (req.isAuthenticated()) {
