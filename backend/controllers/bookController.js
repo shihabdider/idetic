@@ -10,6 +10,7 @@ exports.listBooks = async (req, res) => {
   }
 };
 const multer = require('multer');
+const pdfParse = require('pdf-parse');
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/') // You need to create this directory or configure as needed
@@ -26,9 +27,11 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     if (!bookFile) {
       return res.status(400).send({ message: 'No book file uploaded.' });
     }
-    // Extract metadata from the file if available or set default values
-    const title = bookFile.originalname || 'Untitled';
-    const author = 'Unknown'; // Update this line to extract author if possible
+    // Read the PDF file and extract metadata
+    const pdfData = await pdfParse(bookFile.buffer);
+    const title = pdfData.info.Title || bookFile.originalname || 'Untitled';
+    const author = pdfData.info.Author || 'Unknown';
+
     const newBook = new Book({
       title,
       author,
