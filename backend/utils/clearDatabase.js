@@ -6,11 +6,11 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 mongoose.connection.once('open', async () => {
   console.log('Connected to MongoDB');
   try {
-    const collections = Object.keys(mongoose.connection.collections);
-    console.log(collections)
-    for (const collectionName of collections) {
-      await mongoose.connection.collections[collectionName].drop();
-      console.log(`Dropped collection: ${collectionName}`);
+    const db = mongoose.connection.db;
+    const collections = await db.listCollections().toArray();
+    for (const collection of collections) {
+      await db.dropCollection(collection.name);
+      console.log(`Dropped collection: ${collection.name}`);
     }
     console.log('All collections dropped');
   } catch (error) {
