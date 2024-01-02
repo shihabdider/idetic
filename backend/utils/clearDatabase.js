@@ -3,7 +3,7 @@ require('dotenv').config({ path: '../.env' });
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-mongoose.connection.on('connected', async () => {
+mongoose.connection.once('open', async () => {
   console.log('Connected to MongoDB');
   try {
     const collections = Object.keys(mongoose.connection.collections);
