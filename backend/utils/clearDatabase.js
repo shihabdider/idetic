@@ -7,6 +7,7 @@ mongoose.connection.once('open', async () => {
   console.log('Connected to MongoDB');
   try {
     const collections = Object.keys(mongoose.connection.collections);
+    console.log(collections)
     for (const collectionName of collections) {
       await mongoose.connection.collections[collectionName].drop();
       console.log(`Dropped collection: ${collectionName}`);
