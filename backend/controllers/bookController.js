@@ -20,14 +20,21 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-exports.createBook = upload.single('book'), async (req, res) => {
+exports.createBook = [upload.single('book'), async (req, res) => {
   try {
-    const { title, author } = req.body;
+    const bookFile = req.file;
+    if (!bookFile) {
+      return res.status(400).send({ message: 'No book file uploaded.' });
+    }
+    // Extract metadata from the file if available or set default values
+    const title = bookFile.originalname || 'Untitled';
+    const author = 'Unknown'; // Update this line to extract author if possible
     const bookFile = req.file;
     const newBook = new Book({
       title,
       author,
       filePath: bookFile.path, // Assuming 'book' is the field name for the uploaded file
+      filePath: bookFile.path,
       userId: req.user._id
     });
     const savedBook = await newBook.save();
@@ -36,7 +43,7 @@ exports.createBook = upload.single('book'), async (req, res) => {
     console.error('Error creating book:', error);
     res.status(500).send({ message: 'Error creating book', error: error.message });
   }
-};
+}];
 
 exports.getBook = async (req, res) => {
   try {

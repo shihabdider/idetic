@@ -11,15 +11,20 @@
     <button id="create-book">Create Book</button>
     <button id="update-book">Update Book</button>
     <button id="delete-book">Delete Book</button>
+    <input type="file" id="book-file" name="book" accept=".pdf" />
     <script>
         document.getElementById('list-books').addEventListener('click', function() {
             fetch('/books').then(response => response.json()).then(data => console.log(data));
         });
 
         document.getElementById('create-book').addEventListener('click', () => {
+            const bookInput = document.getElementById('book-file');
+            if (bookInput.files.length === 0) {
+                return alert('Please select a book file to upload.');
+            }
+            const bookFile = bookInput.files[0];
             const bookData = new FormData();
-            bookData.append('title', '100 Page Machine Learning Book');
-            bookData.append('author', 'Test Author');
+            bookData.append('book', bookFile);
             // Assuming the file input field in your actual HTML form is named 'book'
             const bookInput = document.querySelector('input[type="file"][name="book"]');
             bookData.append('book', bookInput.files[0]);
