@@ -12,9 +12,11 @@ function BookLibrary() {
     const formData = new FormData();
     formData.append('book', data.book[0]);
 
-    axios.post('http://localhost:3001/books', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+   axios.post('http://localhost:3001/books', formData, {
+     withCredentials: true,
+     headers: {
+       'Content-Type': 'multipart/form-data',
+       'Authorization': 'Bearer ' + localStorage.getItem('authToken')
       }
     })
     .then(response => {
