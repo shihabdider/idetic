@@ -38,13 +38,14 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     const newBook = new Book({
       title,
       author,
+      filePath: bookFile.path,
       filePath: bookFile.path, // Assuming 'book' is the field name for the uploaded file
       userId: req.user._id
     });
     const savedBook = await newBook.save();
 
     // Generate thumbnail
-    const pdfImage = new PDFImage(path.join('uploads/books/', savedBook.filePath));
+    const pdfImage = new PDFImage(savedBook.filePath);
     pdfImage.convertPage(0).then(async (imagePath) => {
       savedBook.coverImagePath = path.join('uploads/thumbnails/', imagePath);
       await savedBook.save();
