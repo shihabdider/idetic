@@ -11,8 +11,8 @@ router.get('/google',
 router.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
-    // Successful authentication, redirect to profile.
-    res.redirect('/profile');
+    // Successful authentication, redirect to the frontend profile page.
+    res.redirect('http://localhost:3000/profile');
   }
 );
 
