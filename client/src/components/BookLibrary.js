@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Grid, Paper, TextField, Button, Box } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
+import { Container, Grid, Paper, TextField, Button, Box, IconButton } from '@mui/material';
+import { useForm } from 'react-hook-form';
 
 function BookLibrary() {
   const [books, setBooks] = useState([]);
+  const { register, handleSubmit } = useForm();
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -29,7 +32,25 @@ function BookLibrary() {
             endAdornment: <SearchIcon />,
           }}
         />
-        <Button variant="contained" sx={{ ml: 2 }}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input
+            {...register('book')}
+            type="file"
+            accept=".pdf"
+            style={{ display: 'none' }}
+            id="upload-book"
+          />
+          <label htmlFor="upload-book">
+            <IconButton component="span">
+              <Button variant="contained" component="span" sx={{ ml: 2 }}>
+                Upload Book
+              </Button>
+            </IconButton>
+          </label>
+          <Button type="submit" variant="contained" sx={{ ml: 2 }}>
+            Submit
+          </Button>
+        </form>
           Upload Book
         </Button>
       </Box>
@@ -52,6 +73,25 @@ function BookLibrary() {
       </Grid>
     </Container>
   );
+  const onSubmit = (data) => {
+    const formData = new FormData();
+    formData.append('book', data.book[0]);
+
+    axios.post('http://localhost:3001/books', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then(response => {
+      // Handle success
+      console.log('Book uploaded successfully', response);
+      setBooks([...books, response.data]);
+    })
+    .catch(error => {
+      // Handle error
+      console.error('Error uploading book:', error);
+    });
+  };
 }
 
 export default BookLibrary;
