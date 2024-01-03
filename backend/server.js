@@ -114,6 +114,9 @@ app.get('/profile', (req, res) => {
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve static files from the 'uploads/books' directory
+app.use('/uploads/books', express.static(path.join(__dirname, 'uploads', 'books')));
+
 app.get('/flashcards', (req, res) => {
   // TODO: Implement flashcard browsing functionality
   res.send('Flashcard browsing not implemented yet.');
