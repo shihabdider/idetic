@@ -25,9 +25,6 @@
             const bookFile = bookInput.files[0];
             const bookData = new FormData();
             bookData.append('book', bookFile);
-            // Assuming the file input field in your actual HTML form is named 'book'
-            const bookInput = document.querySelector('input[type="file"][name="book"]');
-            bookData.append('book', bookInput.files[0]);
             fetch('/books', {
                 method: 'POST',
                 body: bookData

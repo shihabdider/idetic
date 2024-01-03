@@ -53,3 +53,19 @@ exports.deleteHighlight = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+exports.exportHighlights = async (req, res) => {
+  try {
+    const highlights = await Highlight.find({ userId: req.user._id });
+    let markdown = '';
+    highlights.forEach(highlight => {
+      markdown += `## Highlight Location: ${highlight.location}\n`;
+      markdown += `${highlight.text}\n\n`;
+    });
+    res.header('Content-Type', 'text/markdown');
+    res.attachment('highlights.md');
+    res.send(markdown);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

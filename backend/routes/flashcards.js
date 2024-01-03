@@ -10,6 +10,7 @@ function isAuthenticated(req, res, next) {
 }
 
 router.get('/', isAuthenticated, flashcardController.listFlashcards);
+router.get('/export', isAuthenticated, flashcardController.exportFlashcards);
 router.post('/', isAuthenticated, flashcardController.createFlashcard);
 router.get('/:id', isAuthenticated, flashcardController.getFlashcard);
 router.put('/:id', isAuthenticated, flashcardController.updateFlashcard);

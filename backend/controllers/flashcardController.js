@@ -53,3 +53,18 @@ exports.deleteFlashcard = async (req, res) => {
     res.status(500).send(error);
   }
 };
+const { Parser } = require('json2csv');
+
+exports.exportFlashcards = async (req, res) => {
+  try {
+    const flashcards = await Flashcard.find({ userId: req.user._id });
+    const fields = ['frontText', 'backText'];
+    const json2csvParser = new Parser({ fields, delimiter: '|' });
+    const csv = json2csvParser.parse(flashcards);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('flashcards.csv');
+    res.send(csv);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

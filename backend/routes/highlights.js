@@ -10,6 +10,7 @@ function isAuthenticated(req, res, next) {
 }
 
 router.get('/', isAuthenticated, highlightController.listHighlights);
+router.get('/export', isAuthenticated, highlightController.exportHighlights);
 router.post('/', isAuthenticated, highlightController.createHighlight);
 router.get('/:id', isAuthenticated, highlightController.getHighlight);
 router.put('/:id', isAuthenticated, highlightController.updateHighlight);

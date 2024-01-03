@@ -21,23 +21,17 @@
    - Book library browser with search functionality.
    - Options to upload and delete books.
    - Reading interface with highlight and note-taking capabilities.
-   - Flashcard creation from highlighted text.
+   - Flashcard creation from highlighted text using GPT-4 API
 
-3. **Flashcard Manager:**
-   - Browse, search, add, edit and delete flashcards.
-   - Organize flashcards by book source and other categories.
-   - Card reviewing system with daily scheduled reviews using the SM2 algorithm.
-   - Linkage to the originating book and highlight.
-   - Integration with OpenAI's GPT for auto-generating card content from highlight text.
-
-4. **Highlights Browser:**
+3. **Highlights Browser:**
    - Searchable and navigable list of all highlights within a book.
    - Option to generate flashcards directly from highlights.
    - Should be accessible from within the book reader
 
-5. **Cloud-based Data Storage:**
+4. **Cloud-based Data Storage:**
    - Synchronization of books, highlights, and flashcards across devices.
    - Support for offline use with resynchronization upon reconnecting to the internet.
+   - Can export highlights and flashcards to a text/csv file
 
 ## User Experience Requirements
 
@@ -50,11 +44,6 @@
 - Minimalist reading interface with easy highlight and flashcard creation options.
 - Options for users to adjust text size, font, and background for comfortable reading.
 - Tooltips or instructional overlays for first-time users when they use the highlight or flashcard function.
-
-**Flashcard Browser & Review System:**
-- Simplified interface allowing users to review their scheduled flashcards.
-- Flashcard browsing with filtering and sorting options.
-- Easy navigation back to the origin of the flashcard content (specific book and highlight).
 
 **Technical Specifications**
 
@@ -117,25 +106,22 @@
    - Install Express.js with `npm install express`.
    - Create a basic server with route placeholders.
 
-4. **Implement User Authentication:**
+4. [x] **Implement User Authentication:**
    - Integrate Google OAuth 2.0 using Passport.js.
    - Set up user sessions and authentication middleware.
+   - Set up a MongoDB database for storing user and session data.
 
-5. **Design the Database Schema:**
+5. [x] **Design the Database Schema:**
    - Install MongoDB and a driver like Mongoose.
    - Define schemas for books, highlights, and flashcards.
 
 6. **Develop RESTful APIs:**
    - Create routes and controllers for book management (upload, delete, browse).
-   - Implement flashcard management APIs (add, edit, delete, review).
    - Add endpoints for highlights browsing and flashcard creation.
+   - Add endpoints for flashcard and highlight export.
 
 7. **Integrate OpenAI's GPT API:**
-   - Set up the OpenAI SDK.
-   - Create utility functions to enhance flashcard content.
-
-8. **Implement the SM2 Algorithm:**
-   - Code the spaced repetition algorithm for flashcard review scheduling.
+   - Set up the OpenAI API call for generating flashcard content.
 
 9. **Set up Cloud-based Data Storage:**
    - Configure MongoDB for cloud storage.
@@ -169,7 +155,6 @@
    - Implement user authentication flow with Google OAuth.
    - Create the book library browser interface.
    - Build the book reader interface with highlight and note-taking capabilities.
-   - Develop the flashcard manager interface.
    - Design the highlights browser.
 
 4. **UI/UX Design:**
@@ -179,6 +164,7 @@
 5. **Local Storage and Offline Capabilities:**
    - Implement local storage for offline access.
    - Handle data resynchronization when reconnecting to the internet.
+   - Handle export of highlights and flashcards to a text/csv file.
 
 6. **Testing:**
    - Write unit tests for components.
