@@ -3,6 +3,7 @@ const Book = require('../models/book');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
 const PDFImage = require('pdf-image').PDFImage;
+const fs = require('fs');
 
 exports.listBooks = async (req, res) => {
   try {
@@ -43,9 +44,6 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     const savedBook = await newBook.save();
 
     // Generate thumbnail
-    const pdfImage = new PDFImage(savedBook.filePath);
-    pdfImage.convertPage(0).then(async (imagePath) => {
-      savedBook.coverImagePath = imagePath;
     const pdfImage = new PDFImage(path.join('uploads/books/', savedBook.filePath));
     pdfImage.convertPage(0).then(async (imagePath) => {
       savedBook.coverImagePath = path.join('uploads/thumbnails/', imagePath);
