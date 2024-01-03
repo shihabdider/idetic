@@ -12,7 +12,14 @@ const testRoutes = require('./routes/test');
 const bookRoutes = require('./routes/books');
 const flashcardRoutes = require('./routes/flashcards');
 const highlightRoutes = require('./routes/highlights');
+const cors = require('cors');
 const app = express();
+
+// Enable CORS for the frontend on a different port
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow the frontend to access the backend
+  credentials: true, // Allow cookies to be sent with requests
+}));
 const port = process.env.PORT || 3001;
 const MongoStore = require('connect-mongo');
 const path = require('path');
