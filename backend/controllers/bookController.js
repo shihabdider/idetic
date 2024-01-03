@@ -29,8 +29,8 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     if (!bookFile) {
       return res.status(400).send({ message: 'No book file uploaded.' });
     }
-    // Read the PDF file and extract metadata
-    const pdfData = await pdfParse(bookFile.buffer);
+    // Read the PDF file from disk and extract metadata
+    const pdfData = await pdfParse(fs.readFileSync(bookFile.path));
     const title = pdfData.info.Title || bookFile.originalname || 'Untitled';
     const author = pdfData.info.Author || 'Unknown';
 
@@ -43,6 +43,9 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     const savedBook = await newBook.save();
 
     // Generate thumbnail
+    const pdfImage = new PDFImage(savedBook.filePath);
+    pdfImage.convertPage(0).then(async (imagePath) => {
+      savedBook.coverImagePath = imagePath;
     const pdfImage = new PDFImage(path.join('uploads/books/', savedBook.filePath));
     pdfImage.convertPage(0).then(async (imagePath) => {
       savedBook.coverImagePath = path.join('uploads/thumbnails/', imagePath);
