@@ -8,6 +8,26 @@ function BookLibrary() {
   const [books, setBooks] = useState([]);
   const { register, handleSubmit } = useForm();
 
+  const onSubmit = (data) => {
+    const formData = new FormData();
+    formData.append('book', data.book[0]);
+
+    axios.post('http://localhost:3001/books', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then(response => {
+      // Handle success
+      console.log('Book uploaded successfully', response);
+      setBooks([...books, response.data]);
+    })
+    .catch(error => {
+      // Handle error
+      console.error('Error uploading book:', error);
+    });
+  };
+
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -71,25 +91,6 @@ function BookLibrary() {
     </Container>
   );
 
-  const onSubmit = (data) => {
-    const formData = new FormData();
-    formData.append('book', data.book[0]);
-
-    axios.post('http://localhost:3001/books', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    .then(response => {
-      // Handle success
-      console.log('Book uploaded successfully', response);
-      setBooks([...books, response.data]);
-    })
-    .catch(error => {
-      // Handle error
-      console.error('Error uploading book:', error);
-    });
-  };
 }
 
 export default BookLibrary;
