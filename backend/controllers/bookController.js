@@ -11,6 +11,7 @@ exports.listBooks = async (req, res) => {
 };
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
+const PDFImage = require('pdf-image').PDFImage;
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/') // You need to create this directory or configure as needed
@@ -39,7 +40,17 @@ exports.createBook = [upload.single('book'), async (req, res) => {
       userId: req.user._id
     });
     const savedBook = await newBook.save();
-    res.status(201).send(savedBook);
+
+    // Generate thumbnail
+    const pdfImage = new PDFImage(savedBook.filePath);
+    pdfImage.convertPage(0).then(async (imagePath) => {
+      savedBook.coverImagePath = imagePath;
+      await savedBook.save();
+      res.status(201).send(savedBook);
+    }, (err) => {
+      console.error('Error generating thumbnail:', err);
+      res.status(500).send({ message: 'Error generating thumbnail', error: err.message });
+    });
   } catch (error) {
     console.error('Error creating book:', error);
     res.status(500).send({ message: 'Error creating book', error: error.message });
