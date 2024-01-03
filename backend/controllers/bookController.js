@@ -43,21 +43,8 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     });
     const savedBook = await newBook.save();
 
-    // Generate thumbnail using pdf-lib
-    const pdfBytes = fs.readFileSync(savedBook.filePath);
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-    const page = pdfDoc.getPage(0);
-    const jpgImage = await page.getImage(0);
-    if (jpgImage) {
-      const jpgDataUri = jpgImage.toDataURL();
-      // Save the image data URI as the thumbnail
-      savedBook.coverImagePath = jpgDataUri;
-      await savedBook.save();
-      res.status(201).send(savedBook);
-    } else {
-      console.error('No image found on the first page of the PDF');
-      res.status(500).send({ message: 'No image found on the first page of the PDF' });
-    }
+    // No thumbnail generation code here, as we need a different approach
+    res.status(201).send(savedBook);
   } catch (error) {
     console.error('Error creating book:', error);
     res.status(500).send({ message: 'Error creating book', error: error.message });
