@@ -2,8 +2,8 @@ const path = require('path');
 const Book = require('../models/book');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
+const PDFImage = require('pdf-image').PDFImage;
 const fs = require('fs');
- const { PDFDocument } = require('pdf-lib');
 
 exports.listBooks = async (req, res) => {
   try {
@@ -43,8 +43,16 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     });
     const savedBook = await newBook.save();
 
-    // No thumbnail generation code here, as we need a different approach
-    res.status(201).send(savedBook);
+    // Generate thumbnail
+    const pdfImage = new PDFImage(path.join('uploads/books/', savedBook.filePath));
+    pdfImage.convertPage(0).then(async (imagePath) => {
+      savedBook.coverImagePath = path.join('uploads/thumbnails/', imagePath);
+      await savedBook.save();
+      res.status(201).send(savedBook);
+    }, (err) => {
+      console.error('Error generating thumbnail:', err);
+      res.status(500).send({ message: 'Error generating thumbnail', error: err.message });
+    });
   } catch (error) {
     console.error('Error creating book:', error);
     res.status(500).send({ message: 'Error creating book', error: error.message });
