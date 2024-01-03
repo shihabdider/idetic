@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Grid, Paper, TextField, Button, Box } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { Container, Grid, Paper, TextField, Button, Box, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
@@ -51,8 +50,6 @@ function BookLibrary() {
             Submit
           </Button>
         </form>
-          Upload Book
-        </Button>
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {books.length > 0 ? books.map((book) => (
@@ -73,6 +70,7 @@ function BookLibrary() {
       </Grid>
     </Container>
   );
+
   const onSubmit = (data) => {
     const formData = new FormData();
     formData.append('book', data.book[0]);
