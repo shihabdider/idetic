@@ -1,0 +1,20 @@
+{
+  "name": "idetic-client",
+  "version": "1.0.0",
+  "description": "Front-end for iDetic",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shihab Dider",
+  "license": "ISC",
+  "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.2",
+    "axios": "^1.6.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.1"
+  }
+}
