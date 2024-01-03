@@ -1,5 +1,8 @@
 const path = require('path');
 const Book = require('../models/book');
+const multer = require('multer');
+const pdfParse = require('pdf-parse');
+const PDFImage = require('pdf-image').PDFImage;
 
 exports.listBooks = async (req, res) => {
   try {
@@ -9,12 +12,10 @@ exports.listBooks = async (req, res) => {
     res.status(500).send(error);
   }
 };
-const multer = require('multer');
-const pdfParse = require('pdf-parse');
-const PDFImage = require('pdf-image').PDFImage;
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/') // You need to create this directory or configure as needed
+    cb(null, 'uploads/books/') // You need to create this directory or configure as needed
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
@@ -42,9 +43,9 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     const savedBook = await newBook.save();
 
     // Generate thumbnail
-    const pdfImage = new PDFImage(savedBook.filePath);
+    const pdfImage = new PDFImage(path.join('uploads/books/', savedBook.filePath));
     pdfImage.convertPage(0).then(async (imagePath) => {
-      savedBook.coverImagePath = imagePath;
+      savedBook.coverImagePath = path.join('uploads/thumbnails/', imagePath);
       await savedBook.save();
       res.status(201).send(savedBook);
     }, (err) => {
