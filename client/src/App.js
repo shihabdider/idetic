@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import LoginPage from './components/LoginPage';
 import ProfilePage from './components/ProfilePage';
+import BookLibrary from './components/BookLibrary';
 import theme from './theme';
 
 function App() {
@@ -14,8 +15,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          {/* Define your other routes here */}
-          {/* Define your routes here */}
+          <Route path="/" element={<BookLibrary />} />
         </Routes>
       </Router>
     </ThemeProvider>
