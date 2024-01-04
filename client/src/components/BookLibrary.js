@@ -91,10 +91,7 @@ function BookLibrary() {
                 <Button variant="outlined" color="primary">
                   View
                 </Button>
-                <Button variant="outlined" color="secondary">
-                Delete
-              </Button>
-              <Button variant="outlined" color="secondary" onClick={() => deleteBook(book._id)}>
+                <Button variant="outlined" color="secondary" onClick={() => deleteBook(book._id)}>
                   Delete
                 </Button>
               </Box>
