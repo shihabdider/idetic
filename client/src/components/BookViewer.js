@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -7,7 +7,7 @@ import { Paper, CircularProgress } from '@mui/material';
 // pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-function BookViewer() {
+const BookViewer = memo(function BookViewer() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [numPages, setNumPages] = useState(null);
@@ -46,6 +46,6 @@ function BookViewer() {
       </Document>
     </Paper>
   );
-}
+});
 
-export default BookViewer;
+export default React.memo(BookViewer);
