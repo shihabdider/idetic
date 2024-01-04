@@ -8,6 +8,15 @@ function BookLibrary() {
   const [books, setBooks] = useState([]);
   const { register, handleSubmit } = useForm();
 
+  const deleteBook = async (bookId) => {
+    try {
+      await axios.delete(`http://localhost:3001/books/${bookId}`, { withCredentials: true });
+      setBooks(books.filter(book => book._id !== bookId));
+    } catch (error) {
+      console.error('Error deleting book:', error);
+    }
+  };
+
   const onSubmit = (data) => {
     const formData = new FormData();
     formData.append('book', data.book[0]);
@@ -83,6 +92,9 @@ function BookLibrary() {
                   View
                 </Button>
                 <Button variant="outlined" color="secondary">
+                Delete
+              </Button>
+              <Button variant="outlined" color="secondary" onClick={() => deleteBook(book._id)}>
                   Delete
                 </Button>
               </Box>
