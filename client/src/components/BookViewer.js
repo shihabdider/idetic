@@ -11,7 +11,7 @@ function BookViewer() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1); // We will not use this state if we implement infinite scrolling
+  // Removed pageNumber state as it is not used for infinite scrolling
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -36,13 +36,13 @@ function BookViewer() {
         file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<CircularProgress />}
+        options={{ renderMode: 'canvas' }}
       >
-        {Array.from(
-          new Array(numPages),
-          (el, index) => (
-            <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-          ),
-        )}
+        {Array.from(new Array(numPages), (el, index) => (
+          <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
+            <Page pageNumber={index + 1} />
+          </div>
+        ))}
       </Document>
     </Paper>
   );
