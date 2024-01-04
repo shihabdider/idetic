@@ -33,7 +33,7 @@ const BookViewer = memo(function BookViewer() {
   return (
     <Paper elevation={3} style={{ overflow: 'auto', position: 'relative' }}>
       <Document
-        file={book ? `http://localhost:3001/${book.filePath}` : null}
+        file={book ? `http://localhost:3001/${book.filePath}` : undefined}
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<CircularProgress />}
         options={{ renderMode: 'canvas' }}
