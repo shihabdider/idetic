@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 
 function BookLibrary() {
   const [books, setBooks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const { register, handleSubmit } = useForm();
 
   const deleteBook = async (bookId) => {
@@ -52,12 +53,21 @@ function BookLibrary() {
     fetchBooks();
   }, []);
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value.toLowerCase());
+  };
+
+  const filteredBooks = books.filter(book =>
+    book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm)
+  );
+
   return (
     <Container component="main">
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <TextField
           variant="outlined"
           placeholder="Search for books..."
+          onChange={handleSearchChange}
           InputProps={{
             endAdornment: <SearchIcon />,
           }}
@@ -83,7 +93,7 @@ function BookLibrary() {
         </form>
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
-        {books.length > 0 ? books.map((book) => (
+        {filteredBooks.length > 0 ? filteredBooks.map((book) => (
           <Grid item key={book.id} xs={12} sm={6} md={4} lg={3}>
             <Paper elevation={3} sx={{ p: 2 }}>
               <img src={`http://localhost:3001/${book.coverImagePath}`} alt={book.title} style={{ width: '100%', height: 'auto' }} />
