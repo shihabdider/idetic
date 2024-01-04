@@ -1,13 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Paper, CircularProgress } from '@mui/material';
-
-// pdfjs worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-
-function BookViewer({ file }) {
 
 // pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -38,7 +33,7 @@ function BookViewer() {
   return (
     <Paper elevation={3} style={{ overflow: 'auto', position: 'relative' }}>
       <Document
-        file={book ? `http://localhost:3001/uploads/books/${book.filePath}` : null}
+        file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<CircularProgress />}
       >
