@@ -79,7 +79,7 @@ function BookLibrary() {
           }}
         />
         {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
-        <Dropzone onDrop={acceptedFiles => {
+        <Dropzone accept="application/pdf" onDrop={acceptedFiles => {
           const file = acceptedFiles[0];
           const formData = new FormData();
           formData.append('book', file);
@@ -109,7 +109,7 @@ function BookLibrary() {
             <section>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <Button variant="contained">Upload</Button>
+                <Button variant="contained" style={{ marginTop: '10px', color: '#fff', backgroundColor: '#3f51b5' }}>Upload</Button>
               </div>
             </section>
           )}
