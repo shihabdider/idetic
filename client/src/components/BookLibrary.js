@@ -77,6 +77,7 @@ function BookLibrary() {
           InputProps={{
             endAdornment: <SearchIcon />,
           }}
+          style={{ height: '40px' }}
         />
         {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
         <Dropzone accept="application/pdf" onDrop={acceptedFiles => {
@@ -109,7 +110,7 @@ function BookLibrary() {
             <section>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <Button variant="contained" style={{ marginTop: '10px', color: '#fff', backgroundColor: '#3f51b5' }}>Upload</Button>
+                <Button variant="contained" style={{ marginTop: '20px', color: '#fff', backgroundColor: '#3f51b5' }}>Upload</Button>
               </div>
             </section>
           )}
