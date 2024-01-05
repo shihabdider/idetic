@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { useNavigate } from 'react-router-dom';
 import { useLayoutEffect } from 'react';
-import { Paper, CircularProgress } from '@mui/material';
+import { Paper, CircularProgress, Button } from '@mui/material';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
@@ -12,6 +13,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 function BookViewer() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [scale, setScale] = useState(1);
   const [numPages, setNumPages] = useState(null);
@@ -46,6 +48,7 @@ function BookViewer() {
 
   return (
     <Paper elevation={3} style={{ overflow: 'auto', position: 'relative' }}>
+      <Button onClick={() => navigate('/')} style={{ margin: '10px' }}>Back to Library</Button>
       <Document
         file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
