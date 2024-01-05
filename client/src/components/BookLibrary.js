@@ -98,11 +98,14 @@ function BookLibrary() {
           {...register('book')}
         />
         <label htmlFor="contained-button-file">
-          <Button variant="contained" component="span" sx={{ ml: 2 }} type="submit">
+          <Button variant="contained" component="span" sx={{ ml: 2 }}>
             Upload
           </Button>
         </label>
-        </form>
+        <Button variant="contained" component="span" sx={{ ml: 2 }} type="submit">
+          Submit
+        </Button>
+      </form>
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
