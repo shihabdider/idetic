@@ -9,7 +9,6 @@ function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
-  const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
 
   const deleteBook = async (bookId) => {
@@ -110,7 +109,7 @@ function BookLibrary() {
             <section>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <p>Drag 'n' drop some files here, or click to select files</p>
+                <Button variant="contained">Upload</Button>
               </div>
             </section>
           )}
