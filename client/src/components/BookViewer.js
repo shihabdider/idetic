@@ -20,11 +20,11 @@ function BookViewer() {
     setNumPages(numPages);
   }
 
-  useEffect(() => {
-    const calculateScale = () => {
-      const scale = window.innerWidth / 900; // Assuming 900 is the average width of a PDF page
-      setScale(scale);
-    };
+  useLayoutEffect(() => {
+    function calculateScale() {
+      const scale = Math.min(1, window.innerWidth / 900); // Adjust scale based on screen width
+      setScale(scale > 0.5 ? scale : 0.5); // Ensure a minimum scale of 0.5
+    }
 
     window.addEventListener('resize', calculateScale);
     calculateScale();
