@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [uploadProgress, setUploadProgress] = useState({});
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
 
@@ -81,6 +82,7 @@ function BookLibrary() {
             accept=".pdf"
             style={{ display: 'none' }}
             id="upload-book"
+            multiple
           />
           <label htmlFor="upload-book">
             <IconButton component="span">
