@@ -22,7 +22,7 @@ function BookViewer() {
 
   useLayoutEffect(() => {
     function calculateScale() {
-      const scale = Math.min(1, window.innerWidth / 900); // Adjust scale based on screen width
+      const scale = Math.min(10, window.innerWidth / 900); // Adjust scale based on screen width
       setScale(scale > 0.5 ? scale : 0.5); // Ensure a minimum scale of 0.5
     }
 
@@ -31,6 +31,7 @@ function BookViewer() {
     return () => window.removeEventListener('resize', calculateScale);
   }, []);
 
+  useEffect(() => {
     const fetchBook = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
@@ -53,7 +54,7 @@ function BookViewer() {
 
         {Array.from( new Array(numPages), (el, index) => (
             <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} />
             </div>
           ),
         )}
