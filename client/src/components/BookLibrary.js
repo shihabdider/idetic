@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { Container, Grid, Paper, TextField, Button, Box, IconButton, LinearProgress } from '@mui/material';
-import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import Dropzone from 'react-dropzone';
 
 function BookLibrary() {
   const [books, setBooks] = useState([]);
@@ -80,25 +80,41 @@ function BookLibrary() {
           }}
         />
         {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <input
-            {...register('book')}
-            type="file"
-            accept=".pdf"
-            style={{ display: 'none' }}
-            id="upload-book"
-          />
-          <label htmlFor="upload-book">
-            <IconButton component="span">
-              <Button variant="contained" component="span" sx={{ ml: 2 }}>
-                Upload Book
-              </Button>
-            </IconButton>
-          </label>
-          <Button type="submit" variant="contained" sx={{ ml: 2 }}>
-            Submit
-          </Button>
-        </form>
+        <Dropzone onDrop={acceptedFiles => {
+          const file = acceptedFiles[0];
+          const formData = new FormData();
+          formData.append('book', file);
+
+          axios.post('http://localhost:3001/books', formData, {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+            },
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              setUploadProgress(percentCompleted);
+            }
+          })
+          .then(response => {
+            // Handle success
+            console.log('Book uploaded successfully', response);
+            setBooks([...books, response.data]);
+          })
+          .catch(error => {
+            // Handle error
+            console.error('Error uploading book:', error);
+          });
+        }}>
+          {({getRootProps, getInputProps}) => (
+            <section>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <p>Drag 'n' drop some files here, or click to select files</p>
+              </div>
+            </section>
+          )}
+        </Dropzone>
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
