@@ -22,24 +22,38 @@ function BookLibrary() {
   };
 
   const onSubmit = (data) => {
-    const formData = new FormData();
-    formData.append('book', data.book[0]);
+    const files = data.book;
+    const totalFiles = files.length;
+    let uploadedFiles = 0;
 
-   axios.post('http://localhost:3001/books', formData, {
-     withCredentials: true,
-     headers: {
-       'Content-Type': 'multipart/form-data',
-       'Authorization': 'Bearer ' + localStorage.getItem('authToken')
-      }
-    })
-    .then(response => {
-      // Handle success
-      console.log('Book uploaded successfully', response);
-      setBooks([...books, response.data]);
-    })
-    .catch(error => {
-      // Handle error
-      console.error('Error uploading book:', error);
+    files.forEach((file) => {
+      const formData = new FormData();
+      formData.append('book', file);
+
+      axios.post('http://localhost:3001/books', formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+        },
+        onUploadProgress: (progressEvent) => {
+          let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(prevState => ({ ...prevState, [file.name]: percentCompleted }));
+        }
+      })
+      .then(response => {
+        // Handle success
+        console.log('Book uploaded successfully', response);
+        uploadedFiles++;
+        if (uploadedFiles === totalFiles) {
+          setUploadProgress({});
+        }
+        setBooks(prevBooks => [...prevBooks, response.data]);
+      })
+      .catch(error => {
+        // Handle error
+        console.error('Error uploading book:', error);
+      });
     });
   };
 
@@ -91,9 +105,15 @@ function BookLibrary() {
               </Button>
             </IconButton>
           </label>
-          <Button type="submit" variant="contained" sx={{ ml: 2 }}>
+          <Button type="submit" variant="contained" sx={{ ml: 2 }} disabled={Object.keys(uploadProgress).length > 0}>
             Submit
           </Button>
+          {Object.keys(uploadProgress).map((fileName) => (
+            <Box key={fileName} sx={{ mt: 2 }}>
+              <Typography variant="body2">{fileName}</Typography>
+              <LinearProgress variant="determinate" value={uploadProgress[fileName]} />
+            </Box>
+          ))}
         </form>
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
