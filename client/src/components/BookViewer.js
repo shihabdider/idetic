@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { useLayoutEffect } from 'react';
 import { Paper, CircularProgress } from '@mui/material';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
@@ -12,6 +13,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 function BookViewer() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
+  const [scale, setScale] = useState(1);
   const [numPages, setNumPages] = useState(null);
 
   function onDocumentLoadSuccess({ numPages }) {
@@ -19,6 +21,16 @@ function BookViewer() {
   }
 
   useEffect(() => {
+    const calculateScale = () => {
+      const scale = window.innerWidth / 900; // Assuming 900 is the average width of a PDF page
+      setScale(scale);
+    };
+
+    window.addEventListener('resize', calculateScale);
+    calculateScale();
+    return () => window.removeEventListener('resize', calculateScale);
+  }, []);
+
     const fetchBook = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
