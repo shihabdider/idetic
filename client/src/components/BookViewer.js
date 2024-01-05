@@ -39,7 +39,14 @@ function BookViewer() {
 
         {Array.from( new Array(numPages), (el, index) => (
             <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} renderMode="svg" />
+            <Page
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+              customTextRenderer={false}
+              key={`page_${index + 1}`}
+              className="pdf-page"
+              pageNumber={index + 1}
+            />
             </div>
           ),
         )}
