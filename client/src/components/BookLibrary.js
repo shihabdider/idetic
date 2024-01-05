@@ -37,7 +37,6 @@ function BookLibrary() {
        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
        setUploadProgress(percentCompleted);
      }
-      }
     })
     .then(response => {
       // Handle success
@@ -99,6 +98,7 @@ function BookLibrary() {
             Upload
           </Button>
         </label>
+        </form>
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
