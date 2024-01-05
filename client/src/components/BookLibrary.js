@@ -119,7 +119,7 @@ function BookLibrary() {
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
           <Grid item key={book.id} xs={12} sm={6} md={4} lg={3}>
-            <Paper sx={{ p: 2, height: '400px', backgroundColor: 'transparent', elevation: 0 }}>
+            <Paper sx={{ p: 2, height: '400px', backgroundColor: 'transparent', boxShadow: 'none' }}>
               <img src={`http://localhost:3001/${book.coverImagePath}`} alt={book.title} style={{ width: '100%', height: '80%', objectFit: 'cover', cursor: 'pointer' }} onClick={() => navigate(`/books/view/${book._id}`)} />
               <Box sx={{ mt: 1 }}>
                 <IconButton color="error" onClick={() => deleteBook(book._id)} style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
