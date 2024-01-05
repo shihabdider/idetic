@@ -10,8 +10,7 @@ import { useState } from 'react';
 function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
 
@@ -45,13 +44,11 @@ function BookLibrary() {
       // Handle success
       console.log('Book uploaded successfully', response);
       setBooks([...books, response.data]);
-      setIsUploading(false);
       setUploadProgress(0);
     })
     .catch(error => {
       // Handle error
       console.error('Error uploading book:', error);
-      setIsUploading(false);
       setUploadProgress(0);
     });
   };
@@ -73,13 +70,14 @@ function BookLibrary() {
     setSearchTerm(event.target.value.toLowerCase());
   };
 
-  const filteredBooks = books.filter(book =>
+  const filteredBooks = books?.filter(book =>
     book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm)
   );
 
   return (
     <Container component="main">
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        {uploadProgress !== null && <LinearProgress variant="determinate" value={uploadProgress} />}
         <TextField
           variant="outlined"
           placeholder="Search for books..."
@@ -90,24 +88,19 @@ function BookLibrary() {
         />
         {isUploading && <LinearProgress variant="determinate" value={uploadProgress} />}
       <form onSubmit={handleSubmit(onSubmit)}>
-          <input
-            {...register('book')}
-            type="file"
-            accept=".pdf"
-            style={{ display: 'none' }}
-            id="upload-book"
-          />
-          <label htmlFor="upload-book">
-            <IconButton component="span">
-              <Button variant="contained" component="span" sx={{ ml: 2 }}>
-                Upload Book
-              </Button>
-            </IconButton>
-          </label>
-          <Button type="submit" variant="contained" sx={{ ml: 2 }}>
-            Submit
+        <input
+          accept=".pdf"
+          style={{ display: 'none' }}
+          id="contained-button-file"
+          multiple
+          type="file"
+          onChange={handleUpload}
+        />
+        <label htmlFor="contained-button-file">
+          <Button variant="contained" component="span" sx={{ ml: 2 }}>
+            Upload
           </Button>
-        </form>
+        </label>
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
