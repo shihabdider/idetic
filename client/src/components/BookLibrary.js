@@ -122,7 +122,7 @@ function BookLibrary() {
             <Paper elevation={3} sx={{ p: 2 }}>
               <img src={`http://localhost:3001/${book.coverImagePath}`} alt={book.title} style={{ width: '100%', height: 'auto', cursor: 'pointer' }} onClick={() => navigate(`/books/view/${book._id}`)} />
               <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
-                <IconButton color="secondary" onClick={() => deleteBook(book._id)}>
+                <IconButton color="error" onClick={() => deleteBook(book._id)}>
                   <DeleteIcon />
                 </IconButton>
               </Box>
