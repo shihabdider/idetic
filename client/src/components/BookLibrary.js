@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { Container, Grid, Paper, TextField, Button, Box, IconButton, LinearProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Dropzone from 'react-dropzone';
 
 function BookLibrary() {
