@@ -1,17 +1,16 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Paper, CircularProgress } from '@mui/material';
 
 // pdfjs worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const BookViewer = memo(function BookViewer() {
+function BookViewer() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [numPages, setNumPages] = useState(null);
-  // Removed pageNumber state as it is not used for infinite scrolling
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -33,19 +32,20 @@ const BookViewer = memo(function BookViewer() {
   return (
     <Paper elevation={3} style={{ overflow: 'auto', position: 'relative' }}>
       <Document
-        file={book ? `http://localhost:3001/${book.filePath}` : undefined}
+        file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<CircularProgress />}
-        options={{ renderMode: 'canvas' }}
       >
-        {Array.from(new Array(numPages), (el, index) => (
-          <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
-            <Page pageNumber={index + 1} />
-          </div>
-        ))}
+
+        {Array.from( new Array(numPages), (el, index) => (
+            <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+            </div>
+          ),
+        )}
       </Document>
     </Paper>
   );
-});
+}
 
-export default React.memo(BookViewer);
+export default BookViewer;
