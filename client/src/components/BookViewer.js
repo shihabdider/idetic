@@ -48,7 +48,7 @@ function BookViewer() {
 
   return (
     <Paper elevation={3} style={{ position: 'relative' }}>
-      <Button onClick={() => navigate('/')} style={{ margin: '10px', position: 'sticky', top: '0' }}>Back to Library</Button>
+      <Button onClick={() => navigate('/')} style={{ margin: '10px', position: 'sticky', top: '20px' }}>Back to Library</Button>
       <Document
         file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
