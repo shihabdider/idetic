@@ -47,7 +47,7 @@ function BookViewer() {
   }, [id]);
 
   return (
-    <Paper elevation={3} style={{ overflow: 'auto', position: 'relative' }}>
+    <Paper elevation={3} style={{ position: 'relative' }}>
       <Button onClick={() => navigate('/')} style={{ margin: '10px', position: 'sticky', top: '0' }}>Back to Library</Button>
       <Document
         file={book ? `http://localhost:3001/${book.filePath}` : null}
