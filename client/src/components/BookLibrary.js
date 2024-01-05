@@ -9,6 +9,7 @@ function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [uploadProgress, setUploadProgress] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,6 +27,7 @@ function BookLibrary() {
     const formData = new FormData();
     formData.append('book', data.book[0]);
     setIsUploading(true);
+    setUploadProgress(0);
 
    axios.post('http://localhost:3001/books', formData, {
      withCredentials: true,
@@ -43,6 +45,8 @@ function BookLibrary() {
       console.log('Book uploaded successfully', response);
       setBooks([...books, response.data]);
       setUploadProgress(0);
+      setIsUploading(false);
+      setIsUploading(false);
     })
     .catch(error => {
       // Handle error
@@ -75,7 +79,7 @@ function BookLibrary() {
   return (
     <Container component="main">
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        {uploadProgress !== null && <LinearProgress variant="determinate" value={uploadProgress} />}
+        {isUploading && <LinearProgress variant="determinate" value={uploadProgress} />}
         <TextField
           variant="outlined"
           placeholder="Search for books..."
