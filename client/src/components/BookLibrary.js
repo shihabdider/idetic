@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { Container, Grid, Paper, TextField, Button, Box, IconButton } from '@mui/material';
+import { Container, Grid, Paper, TextField, Button, Box, IconButton, LinearProgress } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
 
@@ -23,22 +27,32 @@ function BookLibrary() {
   const onSubmit = (data) => {
     const formData = new FormData();
     formData.append('book', data.book[0]);
+    setIsUploading(true);
 
    axios.post('http://localhost:3001/books', formData, {
      withCredentials: true,
      headers: {
        'Content-Type': 'multipart/form-data',
        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+     },
+     onUploadProgress: (progressEvent) => {
+       const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+       setUploadProgress(percentCompleted);
+     }
       }
     })
     .then(response => {
       // Handle success
       console.log('Book uploaded successfully', response);
       setBooks([...books, response.data]);
+      setIsUploading(false);
+      setUploadProgress(0);
     })
     .catch(error => {
       // Handle error
       console.error('Error uploading book:', error);
+      setIsUploading(false);
+      setUploadProgress(0);
     });
   };
 
@@ -74,7 +88,8 @@ function BookLibrary() {
             endAdornment: <SearchIcon />,
           }}
         />
-        <form onSubmit={handleSubmit(onSubmit)}>
+        {isUploading && <LinearProgress variant="determinate" value={uploadProgress} />}
+      <form onSubmit={handleSubmit(onSubmit)}>
           <input
             {...register('book')}
             type="file"
