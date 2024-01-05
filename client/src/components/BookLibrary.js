@@ -69,21 +69,17 @@ function BookLibrary() {
 
   return (
     <Container component="main">
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2 }}>
-        <Box>
-          <TextField
-            variant="outlined"
-            placeholder="Search for books..."
-            onChange={handleSearchChange}
-            InputProps={{
-              endAdornment: <SearchIcon />,
-            }}
-            style={{ height: '40px' }}
-          />
-          {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
-        </Box>
-        <Box>
-          <Dropzone accept="application/pdf" onDrop={acceptedFiles => {
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2}}>
+        <TextField
+          variant="outlined"
+          placeholder="Search for books..."
+          onChange={handleSearchChange}
+          InputProps={{
+            endAdornment: <SearchIcon />,
+          }}
+        />
+        {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
+        <Dropzone accept={{"application/pdf": [".pdf"]}} onDrop={acceptedFiles => {
           const file = acceptedFiles[0];
           const formData = new FormData();
           formData.append('book', file);
@@ -113,7 +109,7 @@ function BookLibrary() {
             <section>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <Button variant="contained" style={{ marginTop: '20px', color: '#fff', backgroundColor: '#3f51b5' }}>Upload</Button>
+                <Button variant="contained">Upload</Button>
               </div>
             </section>
           )}
