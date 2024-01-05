@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search as SearchIcon } from '@mui/icons-material';
-import { Container, Grid, Paper, TextField, Button, Box, IconButton } from '@mui/material';
+import { Container, Grid, Paper, TextField, Button, Box, IconButton, LinearProgress } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
 
@@ -29,6 +30,10 @@ function BookLibrary() {
      headers: {
        'Content-Type': 'multipart/form-data',
        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+      },
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(percentCompleted);
       }
     })
     .then(response => {
@@ -74,6 +79,7 @@ function BookLibrary() {
             endAdornment: <SearchIcon />,
           }}
         />
+        {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
         <form onSubmit={handleSubmit(onSubmit)}>
           <input
             {...register('book')}
