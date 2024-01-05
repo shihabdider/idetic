@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Paper, CircularProgress } from '@mui/material';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 // pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -39,14 +41,7 @@ function BookViewer() {
 
         {Array.from( new Array(numPages), (el, index) => (
             <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
-            <Page
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-              customTextRenderer={false}
-              key={`page_${index + 1}`}
-              className="pdf-page"
-              pageNumber={index + 1}
-            />
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
             </div>
           ),
         )}

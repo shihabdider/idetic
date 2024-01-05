@@ -39,7 +39,6 @@ exports.createBook = [upload.single('book'), async (req, res) => {
       title,
       author,
       filePath: bookFile.path,
-      filePath: bookFile.path, // Assuming 'book' is the field name for the uploaded file
       userId: req.user._id
     });
     const savedBook = await newBook.save();
@@ -47,7 +46,7 @@ exports.createBook = [upload.single('book'), async (req, res) => {
     // Generate thumbnail
     const pdfImage = new PDFImage(savedBook.filePath);
     pdfImage.convertPage(0).then(async (imagePath) => {
-      savedBook.coverImagePath = path.join('uploads/thumbnails/', imagePath);
+      savedBook.coverImagePath = imagePath;
       await savedBook.save();
       res.status(201).send(savedBook);
     }, (err) => {

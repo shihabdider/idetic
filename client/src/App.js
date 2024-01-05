@@ -17,7 +17,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/" element={<BookLibrary />} />
-          <Route path="/books/:id" element={<BookViewer />} />
+          <Route path="/books/view/:id" element={<BookViewer />} />
         </Routes>
       </Router>
     </ThemeProvider>
