@@ -119,7 +119,7 @@ function BookLibrary() {
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
           <Grid item key={book.id} xs={12} sm={6} md={4} lg={3}>
             <Paper elevation={3} sx={{ p: 2 }}>
-              <img src={`http://localhost:3001/${book.coverImagePath}`} alt={book.title} style={{ width: '100%', height: 'auto' }} onClick={() => navigate(`/books/view/${book._id}`)} />
+              <img src={`http://localhost:3001/${book.coverImagePath}`} alt={book.title} style={{ width: '100%', height: 'auto', cursor: 'pointer' }} onClick={() => navigate(`/books/view/${book._id}`)} />
               <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
                 <Button variant="outlined" color="secondary" onClick={() => deleteBook(book._id)}>
                   Delete
