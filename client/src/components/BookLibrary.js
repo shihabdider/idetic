@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search as SearchIcon } from '@mui/icons-material';
-import { Container, Grid, Paper, TextField, Button, Box, IconButton, LinearProgress } from '@mui/material';
+import { Container, Grid, Paper, TextField, Button, Box, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [uploadProgress, setUploadProgress] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const deleteBook = async (bookId) => {
     try {
@@ -26,32 +23,22 @@ function BookLibrary() {
   const onSubmit = (data) => {
     const formData = new FormData();
     formData.append('book', data.book[0]);
-    setIsUploading(true);
-    setUploadProgress(0);
 
    axios.post('http://localhost:3001/books', formData, {
      withCredentials: true,
      headers: {
        'Content-Type': 'multipart/form-data',
        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
-     },
-     onUploadProgress: (progressEvent) => {
-       const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-       setUploadProgress(percentCompleted);
-     }
+      }
     })
     .then(response => {
       // Handle success
       console.log('Book uploaded successfully', response);
       setBooks([...books, response.data]);
-      setUploadProgress(0);
-      setIsUploading(false);
-      setIsUploading(false);
     })
     .catch(error => {
       // Handle error
       console.error('Error uploading book:', error);
-      setUploadProgress(0);
     });
   };
 
@@ -72,14 +59,13 @@ function BookLibrary() {
     setSearchTerm(event.target.value.toLowerCase());
   };
 
-  const filteredBooks = books?.filter(book =>
+  const filteredBooks = books.filter(book =>
     book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm)
   );
 
   return (
     <Container component="main">
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        {isUploading && <LinearProgress variant="determinate" value={uploadProgress} />}
         <TextField
           variant="outlined"
           placeholder="Search for books..."
@@ -88,24 +74,25 @@ function BookLibrary() {
             endAdornment: <SearchIcon />,
           }}
         />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input
-          accept=".pdf"
-          style={{ display: 'none' }}
-          id="contained-button-file"
-          multiple
-          type="file"
-          {...register('book')}
-        />
-        <label htmlFor="contained-button-file">
-          <Button variant="contained" component="span" sx={{ ml: 2 }}>
-            Upload
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input
+            {...register('book')}
+            type="file"
+            accept=".pdf"
+            style={{ display: 'none' }}
+            id="upload-book"
+          />
+          <label htmlFor="upload-book">
+            <IconButton component="span">
+              <Button variant="contained" component="span" sx={{ ml: 2 }}>
+                Upload Book
+              </Button>
+            </IconButton>
+          </label>
+          <Button type="submit" variant="contained" sx={{ ml: 2 }}>
+            Submit
           </Button>
-        </label>
-        <Button variant="contained" component="span" sx={{ ml: 2 }} type="submit">
-          Submit
-        </Button>
-      </form>
+        </form>
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
