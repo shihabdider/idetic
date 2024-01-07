@@ -21,8 +21,8 @@ function BookViewer() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [highlightText, setHighlightText] = useState('');
   const [selectedPage, setSelectedPage] = useState(null);
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const popoverOpen = Boolean(anchorEl);
+  const popoverId = popoverOpen ? 'highlight-popover' : undefined;
 
   const handleTextSelection = (event) => {
     const selection = window.getSelection();
@@ -96,8 +96,8 @@ function BookViewer() {
     <Paper elevation={3} style={{ position: 'relative' }}>
       <Button onClick={() => navigate('/')} style={{ margin: '16px', position: 'sticky', top: '8px' }}>Back to Library</Button>
       <Popover
-        id={id}
-        open={open}
+        id={popoverId}
+        open={popoverOpen}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
         anchorOrigin={{
