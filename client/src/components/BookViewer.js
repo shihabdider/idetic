@@ -112,13 +112,12 @@ function BookViewer() {
           position: 'absolute',
           top: `${popoverPosition.top}px`,
           left: `${popoverPosition.left}px`,
-          height: '100px' // Assuming this is the line you added for height
           height: '100px'
         }}
         onClose={() => setAnchorEl(null)}
       >
         <IconButton onClick={handleCreateHighlight}>
-          <HighlightIcon style={{ color: 'lightyellow' }} />
+          <HighlightIcon style={{ color: 'orange' }} />
         </IconButton>
       </Popover>
       <Document
