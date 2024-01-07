@@ -17,6 +17,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 function BookViewer() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [highlights, setHighlights] = useState([]);
   const [book, setBook] = useState(null);
   const [scale, setScale] = useState(1);
   const [numPages, setNumPages] = useState(null);
@@ -93,6 +94,9 @@ function BookViewer() {
       try {
         const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
         setBook(response.data);
+        const highlightsResponse = await axios.get(`http://localhost:3001/highlights?bookId=${id}`, { withCredentials: true });
+        setHighlights(highlightsResponse.data);
+        console.log('Fetched highlights:', highlightsResponse.data);
       } catch (error) {
         console.error('Error fetching book:', error);
       }
