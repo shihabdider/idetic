@@ -33,6 +33,21 @@ exports.createHighlight = async (req, res) => {
   }
 };
 
+exports.createHighlightForBook = async (req, res) => {
+  try {
+    const newHighlight = new Highlight({
+      text: req.body.text,
+      location: req.body.location,
+      bookId: req.params.bookId,
+      userId: req.user._id
+    });
+    const savedHighlight = await newHighlight.save();
+    res.status(201).send(savedHighlight);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 exports.getHighlight = async (req, res) => {
   try {
     const highlight = await Highlight.findById(req.params.id);

@@ -52,14 +52,28 @@ function BookViewer() {
     fetchBookAndHighlights();
   }, [id]);
 
+  const addHighlight = async () => {
+    // Implement logic to add highlight
+    // This will depend on the PDF viewer library you are using
+  };
+
   return (
     <Paper elevation={3} style={{ position: 'relative' }}>
       <Button onClick={() => navigate('/')} style={{ margin: '16px', position: 'sticky', top: '8px' }}>Back to Library</Button>
+      <Button onClick={addHighlight} style={{ margin: '16px', position: 'sticky', top: '8px' }}>Add Highlight</Button>
       <Document
         file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<CircularProgress />}
       >
+        {Array.from( new Array(numPages), (el, index) => (
+            <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} />
+              {/* Implement logic to display highlights here */}
+              {/* This will depend on the PDF viewer library you are using */}
+            </div>
+          ),
+        )}
 
         {Array.from( new Array(numPages), (el, index) => (
             <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
