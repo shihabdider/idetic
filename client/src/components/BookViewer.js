@@ -112,17 +112,14 @@ function BookViewer() {
           position: 'absolute',
           top: `${popoverPosition.top}px`,
           left: `${popoverPosition.left}px`,
-          transform: 'translate(-50%, -100%)', // Center above the text
-          padding: '8px', // Add some padding to prevent cutting off the icon
-          left: `${popoverPosition.left}px`
+          height: '100px'
         }}
         onClose={() => setAnchorEl(null)}
       >
-        <IconButton onClick={handleCreateHighlight} size="large">
+        <IconButton onClick={handleCreateHighlight}>
           <HighlightIcon />
         </IconButton>
       </Popover>
-      // ... existing code ...
       <Document
         file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
