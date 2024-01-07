@@ -29,7 +29,7 @@ function BookViewer() {
     if (selection.toString().length > 0) {
       setHighlightText(selection.toString());
       setAnchorEl(event.currentTarget);
-      const parentNode = selection.anchorNode.parentNode;
+      let parentNode = selection.anchorNode.parentNode;
       while (parentNode && !parentNode.dataset.pageNumber) {
         parentNode = parentNode.parentNode;
       }
