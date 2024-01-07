@@ -23,6 +23,7 @@ function BookViewer() {
   const [numPages, setNumPages] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [highlightText, setHighlightText] = useState('');
+  const [selectedPage, setSelectedPage] = useState(null);
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
@@ -31,6 +32,12 @@ function BookViewer() {
     if (selection.toString().length > 0) {
       setHighlightText(selection.toString());
       setAnchorEl(event.currentTarget);
+      const parentNode = selection.anchorNode.parentNode;
+      while (parentNode && !parentNode.dataset.pageNumber) {
+        parentNode = parentNode.parentNode;
+      }
+      const pageNumber = parentNode ? parentNode.dataset.pageNumber : null;
+      setSelectedPage(pageNumber);
     } else {
       setAnchorEl(null);
     }
@@ -38,11 +45,14 @@ function BookViewer() {
 
   const handleCreateHighlight = async () => {
     try {
+      if (!selectedPage) {
+        throw new Error('Page number is not available for the highlight.');
+      }
       const response = await axios.post(
         `http://localhost:3001/highlights`,
         {
           text: highlightText,
-          location: 'page number or location identifier',
+          location: `Page ${selectedPage}`, // Use the page number as the location
           bookId: id,
         },
         { withCredentials: true }
@@ -54,6 +64,7 @@ function BookViewer() {
     setAnchorEl(null);
   };
 
+  // ... rest of the component
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
   }
