@@ -5,15 +5,12 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { useNavigate } from 'react-router-dom';
 import { useLayoutEffect } from 'react';
 import { Paper, CircularProgress, Button } from '@mui/material';
+import Popover from '@mui/material/Popover';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 // pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-import { Paper, CircularProgress, Button } from '@mui/material';
-import Popover from '@mui/material/Popover';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 function BookViewer() {
   const { id } = useParams();
