@@ -5,6 +5,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { useNavigate } from 'react-router-dom';
 import { useLayoutEffect } from 'react';
 import { Paper, CircularProgress, Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
@@ -48,7 +49,7 @@ function BookViewer() {
 
   return (
     <Paper elevation={3} style={{ position: 'relative' }}>
-      <Button onClick={() => navigate('/')} style={{ margin: '10px', position: 'sticky', top: '20px' }}>Back to Library</Button>
+      <Button onClick={() => navigate('/')} style={{ margin: '16px', position: 'sticky', top: '8px' }}>Back to Library</Button>
       <Document
         file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
