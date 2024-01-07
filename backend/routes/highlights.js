@@ -9,7 +9,6 @@ function isAuthenticated(req, res, next) {
   res.status(401).send({ message: 'User is not authenticated' });
 }
 
-router.get('/book/:bookId', isAuthenticated, highlightController.listHighlightsForBook);
 router.get('/', isAuthenticated, highlightController.listHighlights);
 router.get('/export', isAuthenticated, highlightController.exportHighlights);
 router.post('/', isAuthenticated, highlightController.createHighlight);

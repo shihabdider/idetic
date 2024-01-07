@@ -1,14 +1,5 @@
 const Highlight = require('../models/highlight');
 
-exports.listHighlightsForBook = async (req, res) => {
-  try {
-    const highlights = await Highlight.find({ userId: req.user._id, bookId: req.params.bookId });
-    res.json(highlights);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
-
 exports.listHighlights = async (req, res) => {
   try {
     const highlights = await Highlight.find({ userId: req.user._id });
@@ -24,21 +15,6 @@ exports.createHighlight = async (req, res) => {
       text: req.body.text,
       location: req.body.location,
       bookId: req.body.bookId,
-      userId: req.user._id
-    });
-    const savedHighlight = await newHighlight.save();
-    res.status(201).send(savedHighlight);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
-
-exports.createHighlightForBook = async (req, res) => {
-  try {
-    const newHighlight = new Highlight({
-      text: req.body.text,
-      location: req.body.location,
-      bookId: req.params.bookId,
       userId: req.user._id
     });
     const savedHighlight = await newHighlight.save();
