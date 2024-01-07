@@ -17,7 +17,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 function BookViewer() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [highlights, setHighlights] = useState([]);
   const [book, setBook] = useState(null);
   const [scale, setScale] = useState(1);
   const [numPages, setNumPages] = useState(null);
@@ -94,8 +93,6 @@ function BookViewer() {
       try {
         const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
         setBook(response.data);
-        const highlightsResponse = await axios.get(`http://localhost:3001/highlights`, { withCredentials: true });
-        setHighlights(highlightsResponse.data.filter(h => h.bookId === id));
       } catch (error) {
         console.error('Error fetching book:', error);
       }
@@ -103,33 +100,6 @@ function BookViewer() {
 
     fetchBook();
   }, [id]);
-
-  const renderTextLayer = textLayerProps => {
-    const { textItems } = textLayerProps;
-    if (!textItems) return null;
-
-    const highlightPositions = highlights.map(h => ({
-      ...h,
-      position: textItems.find(item => item.str.includes(h.text))?.transform,
-    }));
-
-    return (
-      <div className="react-pdf__Page__textContent">
-        {textItems.map(textItem => {
-          const isHighlighted = highlightPositions.some(h => h.text === textItem.str);
-          const highlightStyle = isHighlighted ? { backgroundColor: 'orange' } : {};
-          return (
-            <span
-              key={textItem.itemIndex}
-              style={{ transform: `matrix(${textItem.transform.join(',')})`, ...highlightStyle }}
-            >
-              {textItem.str}
-            </span>
-          );
-        })}
-      </div>
-    );
-  };
 
   return (
     <Paper elevation={3} style={{ position: 'relative' }}>
@@ -159,17 +129,11 @@ function BookViewer() {
 
         {Array.from( new Array(numPages), (el, index) => (
             <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
-              <Page
-                key={`page_${index + 1}`}
-                pageNumber={index + 1}
-                scale={scale}
-                customTextRenderer={renderTextLayer}
-              />
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} />
             </div>
           ),
         )}
       </Document>
-      // ... existing code ...
     </Paper>
   );
 }
