@@ -34,17 +34,22 @@ function BookViewer() {
     return () => window.removeEventListener('resize', calculateScale);
   }, []);
 
+  const [highlights, setHighlights] = useState([]);
+
   useEffect(() => {
-    const fetchBook = async () => {
+    const fetchBookAndHighlights = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
-        setBook(response.data);
+        const bookResponse = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
+        setBook(bookResponse.data);
+
+        const highlightsResponse = await axios.get(`http://localhost:3001/highlights/book/${id}`, { withCredentials: true });
+        setHighlights(highlightsResponse.data);
       } catch (error) {
-        console.error('Error fetching book:', error);
+        console.error('Error fetching book or highlights:', error);
       }
     };
 
-    fetchBook();
+    fetchBookAndHighlights();
   }, [id]);
 
   return (

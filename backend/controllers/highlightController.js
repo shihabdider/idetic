@@ -1,5 +1,14 @@
 const Highlight = require('../models/highlight');
 
+exports.listHighlightsForBook = async (req, res) => {
+  try {
+    const highlights = await Highlight.find({ userId: req.user._id, bookId: req.params.bookId });
+    res.json(highlights);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 exports.listHighlights = async (req, res) => {
   try {
     const highlights = await Highlight.find({ userId: req.user._id });
