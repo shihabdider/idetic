@@ -21,6 +21,7 @@ function BookViewer() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [highlightText, setHighlightText] = useState('');
   const [selectedPage, setSelectedPage] = useState(null);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const popoverOpen = Boolean(anchorEl);
   const popoverId = popoverOpen ? 'highlight-popover' : undefined;
 
@@ -28,7 +29,13 @@ function BookViewer() {
     const selection = window.getSelection();
     if (selection.toString().length > 0) {
       setHighlightText(selection.toString());
-      setAnchorEl(event.currentTarget);
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      setPopoverPosition({
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX
+      });
+      setAnchorEl(document.body); // Anchor to body and use calculated position
       let parentNode = selection.anchorNode.parentNode;
       while (parentNode && !parentNode.dataset.pageNumber) {
         parentNode = parentNode.parentNode;
@@ -99,11 +106,12 @@ function BookViewer() {
         id={popoverId}
         open={popoverOpen}
         anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
+        style={{
+          position: 'absolute',
+          top: `${popoverPosition.top}px`,
+          left: `${popoverPosition.left}px`
         }}
+        onClose={() => setAnchorEl(null)}
       >
         <Button onClick={handleCreateHighlight}>Highlight</Button>
       </Popover>
