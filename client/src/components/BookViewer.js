@@ -5,6 +5,8 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { useNavigate } from 'react-router-dom';
 import { useLayoutEffect } from 'react';
 import { Paper, CircularProgress, Button } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import HighlightIcon from '@mui/icons-material/Highlight';
 import Popover from '@mui/material/Popover';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
@@ -113,7 +115,9 @@ function BookViewer() {
         }}
         onClose={() => setAnchorEl(null)}
       >
-        <Button onClick={handleCreateHighlight}>Highlight</Button>
+        <IconButton onClick={handleCreateHighlight} size="large">
+          <HighlightIcon />
+        </IconButton>
       </Popover>
       <Document
         file={book ? `http://localhost:3001/${book.filePath}` : null}
