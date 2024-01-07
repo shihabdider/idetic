@@ -10,6 +10,10 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 // pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+import { Paper, CircularProgress, Button } from '@mui/material';
+import Popover from '@mui/material/Popover';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 function BookViewer() {
   const { id } = useParams();
@@ -17,10 +21,44 @@ function BookViewer() {
   const [book, setBook] = useState(null);
   const [scale, setScale] = useState(1);
   const [numPages, setNumPages] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [highlightText, setHighlightText] = useState('');
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+  const handleTextSelection = (event) => {
+    const selection = window.getSelection();
+    if (selection.toString().length > 0) {
+      setHighlightText(selection.toString());
+      setAnchorEl(event.currentTarget);
+    } else {
+      setAnchorEl(null);
+    }
+  };
+
+  const handleCreateHighlight = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3001/highlights`,
+        {
+          text: highlightText,
+          location: 'page number or location identifier',
+          bookId: id,
+        },
+        { withCredentials: true }
+      );
+      // Handle the response, e.g., by adding the new highlight to state
+    } catch (error) {
+      console.error('Error creating highlight:', error);
+    }
+    setAnchorEl(null);
+  };
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
   }
+
+  // Existing useLayoutEffect and useEffect hooks...
 
   useLayoutEffect(() => {
     function calculateScale() {
@@ -49,10 +87,23 @@ function BookViewer() {
   return (
     <Paper elevation={3} style={{ position: 'relative' }}>
       <Button onClick={() => navigate('/')} style={{ margin: '16px', position: 'sticky', top: '8px' }}>Back to Library</Button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <Button onClick={handleCreateHighlight}>Highlight</Button>
+      </Popover>
       <Document
         file={book ? `http://localhost:3001/${book.filePath}` : null}
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<CircularProgress />}
+        onMouseUp={handleTextSelection}
       >
 
         {Array.from( new Array(numPages), (el, index) => (
