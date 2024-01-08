@@ -10,9 +10,13 @@ function BookViewer() {
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
-      // Replace with the actual API call to fetch the PDF document
-      const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
-      setPdfDocument(response.data);
+      try {
+        // Fetch the book details to get the filePath
+        const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
+        setPdfDocument(response.data.filePath);
+      } catch (error) {
+        console.error('Error fetching PDF document:', error);
+      }
     };
 
     const fetchHighlights = async () => {
@@ -37,7 +41,7 @@ function BookViewer() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
-      {pdfDocument && (
+      {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
             <PdfHighlighter
