@@ -32,6 +32,9 @@ function BookViewer() {
   }, [id]);
 
   // ... rest of the component
+function BookViewer() {
+  // ... existing code ...
+
   const addHighlight = (highlight) => {
     // Implement the logic to save the highlight to the server
     console.log('Saving highlight', highlight);
@@ -40,6 +43,17 @@ function BookViewer() {
   const updateHighlight = (highlightId, position, content) => {
     // Implement the logic to update the highlight on the server
     console.log('Updating highlight', highlightId, position, content);
+  };
+
+  const onSelectionFinished = (
+    highlightedArea,
+    highlight,
+    submitHighlight
+  ) => {
+    // You can show a popup to add a note to the highlight or save it directly
+    console.log('Selection finished', highlightedArea, highlight);
+    // For example, to immediately save the highlight:
+    // submitHighlight(highlight);
   };
 
   return (
@@ -52,6 +66,7 @@ function BookViewer() {
               enableAreaSelection={(event) => event.altKey}
               onHighlight={addHighlight}
               onUpdateHighlight={updateHighlight}
+              onSelectionFinished={onSelectionFinished}
               highlights={highlights}
               Tip={Tip}
               Highlight={Highlight}
