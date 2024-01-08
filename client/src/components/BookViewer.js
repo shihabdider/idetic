@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Document, Page, pdfjs, TextLayerItem } from 'react-pdf';
+import { Document, Page, pdfjs } from 'react-pdf';
 import { useNavigate } from 'react-router-dom';
 import { useLayoutEffect } from 'react';
 import { Paper, CircularProgress, Button } from '@mui/material';
@@ -11,32 +11,6 @@ import Popover from '@mui/material/Popover';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
-const highlightStyle = {
-  backgroundColor: 'yellow',
-  color: 'black',
-};
-
-function highlightRender(textItem, itemIndex, highlights, pageNumber) {
-  const pageHighlights = highlights.filter(h => h.location === `Page ${pageNumber}`);
-  const isHighlighted = pageHighlights.some(h => textItem.str.includes(h.text));
-  const itemStyle = isHighlighted ? highlightStyle : {};
-  return (
-    <TextLayerItem
-      key={itemIndex}
-      itemIndex={itemIndex}
-      fontName={textItem.fontName}
-      itemStr={textItem.str}
-      transform={textItem.transform}
-      width={textItem.width}
-      height={textItem.height}
-      style={itemStyle}
-    />
-  );
-}
-
-function BookViewer() {
-  const { id } = useParams();
-  const navigate = useNavigate();
 // pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -158,13 +132,8 @@ function BookViewer() {
       >
 
         {Array.from( new Array(numPages), (el, index) => (
-            <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }} data-page-number={index + 1}>
-              <Page
-                key={`page_${index + 1}`}
-                pageNumber={index + 1}
-                scale={scale}
-                customTextRenderer={(textItem, itemIndex) => highlightRender(textItem, itemIndex, highlights, index + 1)}
-              />
+            <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} />
             </div>
           ),
         )}
