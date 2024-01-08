@@ -28,20 +28,22 @@ function BookViewer() {
   const popoverOpen = Boolean(anchorEl);
   const popoverId = popoverOpen ? 'highlight-popover' : undefined;
   const textRenderer = useCallback(
-    (textItem, pageNumber) => {
-      let highlightedText = textItem.str;
+    (pageTextItems, pageNumber) => {
+      const pageText = pageTextItems.map(item => item.str).join('');
+      let highlightedPageText = pageText;
       const pageHighlights = highlights.filter(h => h.location === `Page ${pageNumber}`);
       pageHighlights.forEach(highlight => {
-        if (highlight.text && textItem.str.includes(highlight.text)) {
-          console.log('Highlight:', highlight);
-          const startIndex = textItem.str.indexOf(highlight.text);
-          const endIndex = startIndex + highlight.text.length;
-          highlightedText = textItem.str.substring(0, startIndex) +
-                            `<mark>${highlight.text}</mark>` +
-                            textItem.str.substring(endIndex);
+        const highlightIndex = pageText.indexOf(highlight.text);
+        if (highlightIndex !== -1) {
+          highlightedPageText = highlightedPageText.substring(0, highlightIndex) +
+                                `<mark>${highlight.text}</mark>` +
+                                highlightedPageText.substring(highlightIndex + highlight.text.length);
         }
       });
-      return highlightedText;
+      return pageTextItems.map(item => {
+        const itemIndex = pageText.indexOf(item.str);
+        return highlightedPageText.substring(itemIndex, itemIndex + item.str.length);
+      });
     },
     [highlights]
   );
@@ -149,12 +151,19 @@ function BookViewer() {
         onMouseUp={handleTextSelection}
       >
 
-        {Array.from(new Array(numPages), (el, index) => (
-            <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }} data-page-number={index + 1}>
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} customTextRenderer={(textItem) => textRenderer(textItem, index + 1)} />
+        {Array.from(new Array(numPages), (el, index) => {
+          const pageNumber = index + 1;
+          return (
+            <div key={`page_${pageNumber}`} style={{ display: 'flex', justifyContent: 'center' }} data-page-number={pageNumber}>
+              <Page
+                key={`page_${pageNumber}`}
+                pageNumber={pageNumber}
+                scale={scale}
+                customTextRenderer={(textItems) => textRenderer(textItems, pageNumber).join('')}
+              />
             </div>
-          ),
-        )}
+          );
+        })}
       </Document>
     </Paper>
   );
