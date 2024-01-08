@@ -13,7 +13,9 @@ function BookViewer() {
       try {
         // Fetch the book details to get the filePath
         const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
-        setPdfDocument(response.data.filePath);
+        const pdfPath = response.data.filePath;
+        const fullPdfUrl = `http://localhost:3001/uploads/books/${pdfPath}`;
+        setPdfDocument(fullPdfUrl);
       } catch (error) {
         console.error('Error fetching PDF document:', error);
       }
@@ -29,6 +31,7 @@ function BookViewer() {
     fetchHighlights();
   }, [id]);
 
+  // ... rest of the component
   const addHighlight = (highlight) => {
     // Implement the logic to save the highlight to the server
     console.log('Saving highlight', highlight);
