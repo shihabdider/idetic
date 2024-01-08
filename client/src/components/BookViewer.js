@@ -14,11 +14,6 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 // pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-function highlightPattern(text, pattern) {
-  const escape = text => text.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
-  return text.replace(new RegExp(escape(pattern), 'gi'), (match) => `<mark>${match}</mark>`);
-}
-
 function BookViewer() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,10 +30,14 @@ function BookViewer() {
   const textRenderer = useCallback(
     (textItem) => {
       let highlightedText = textItem.str;
-      console.log(highlightedText);
-      highlights.forEach(highlight => {
-        if (highlight.text) {
-          highlightedText = highlightPattern(highlightedText, highlight.text);
+      const pageHighlights = highlights.filter(h => h.location === `Page ${pageIndex + 1}`);
+      pageHighlights.forEach(highlight => {
+        if (highlight.text && textItem.str.includes(highlight.text)) {
+          const startIndex = textItem.str.indexOf(highlight.text);
+          const endIndex = startIndex + highlight.text.length;
+          highlightedText = textItem.str.substring(0, startIndex) +
+                            `<mark>${highlight.text}</mark>` +
+                            textItem.str.substring(endIndex);
         }
       });
       return highlightedText;
@@ -149,9 +148,9 @@ function BookViewer() {
         onMouseUp={handleTextSelection}
       >
 
-        {Array.from( new Array(numPages), (el, index) => (
+        {Array.from(new Array(numPages), (el, index) => (
             <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} customTextRenderer={textRenderer} />
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} customTextRenderer={(textItem) => textRenderer(textItem, index)} />
             </div>
           ),
         )}
