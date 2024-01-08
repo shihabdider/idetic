@@ -11,13 +11,13 @@ function BookViewer() {
   useEffect(() => {
     const fetchPdfDocument = async () => {
       // Replace with the actual API call to fetch the PDF document
-      const response = await axios.get(`http://localhost:3001/books/pdf/${id}`, { responseType: 'blob' });
+      const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
       setPdfDocument(response.data);
     };
 
     const fetchHighlights = async () => {
       // Replace with the actual API call to fetch highlights for the document
-      const response = await axios.get(`http://localhost:3001/highlights?bookId=${id}`);
+      const response = await axios.get(`http://localhost:3001/highlights?bookId=${id}`, { withCredentials: true });
       setHighlights(response.data);
     };
 
