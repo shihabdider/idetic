@@ -14,6 +14,11 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 // pdfjs worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
+function highlightPattern(text, pattern) {
+  const escape = text => text.replace(/[-\\^$*+?.()|[\]{}]/g, '\\$&');
+  return text.replace(new RegExp(escape(pattern), 'gi'), (match) => `<mark>${match}</mark>`);
+}
+
 function BookViewer() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,6 +32,18 @@ function BookViewer() {
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const popoverOpen = Boolean(anchorEl);
   const popoverId = popoverOpen ? 'highlight-popover' : undefined;
+  const textRenderer = useCallback(
+    (textItem) => {
+      let highlightedText = textItem.str;
+      highlights.forEach(highlight => {
+        if (highlight.text) {
+          highlightedText = highlightPattern(highlightedText, highlight.text);
+        }
+      });
+      return highlightedText;
+    },
+    [highlights]
+  );
 
   const handleTextSelection = (event) => {
     const selection = window.getSelection();
@@ -133,7 +150,7 @@ function BookViewer() {
 
         {Array.from( new Array(numPages), (el, index) => (
             <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} />
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} customTextRenderer={textRenderer} />
             </div>
           ),
         )}
