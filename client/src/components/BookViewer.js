@@ -35,6 +35,7 @@ function BookViewer() {
   const textRenderer = useCallback(
     (textItem) => {
       let highlightedText = textItem.str;
+      console.log(highlightedText);
       highlights.forEach(highlight => {
         if (highlight.text) {
           highlightedText = highlightPattern(highlightedText, highlight.text);
