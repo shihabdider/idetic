@@ -29,23 +29,23 @@ function BookViewer() {
   const popoverId = popoverOpen ? 'highlight-popover' : undefined;
   const textRenderer = useCallback(
     (textItem, pageNumber) => {
-      let highlightedText = textItem.str;
       const pageHighlights = highlights.filter(h => h.location === `Page ${pageNumber}`);
-      if (pageHighlights.length != 0) {
-        console.log(textItem);
-        console.log('Page highlights:', pageHighlights);
-      }
-      pageHighlights.forEach(highlight => {
-        if (highlight.text && textItem.str.includes(highlight.text)) {
-          console.log('Highlight:', highlight);
-          const startIndex = textItem.str.indexOf(highlight.text);
-          const endIndex = startIndex + highlight.text.length;
-          highlightedText = textItem.str.substring(0, startIndex) +
-                            `<mark>${highlight.text}</mark>` +
-                            textItem.str.substring(endIndex);
+      return pageHighlights.reduce((acc, highlight) => {
+        const highlightIndex = acc.indexOf(highlight.text);
+        const textItemIndex = highlight.text.indexOf(acc);
+        if (highlightIndex !== -1) {
+          // The textItem is within the highlight
+          return (
+            acc.substring(0, highlightIndex) +
+            `<mark>${acc.substring(highlightIndex, highlightIndex + highlight.text.length)}</mark>` +
+            acc.substring(highlightIndex + highlight.text.length)
+          );
+        } else if (textItemIndex !== -1) {
+          // The highlight is within the textItem
+          return `<mark>${acc}</mark>`;
         }
-      });
-      return highlightedText;
+        return acc; // No match, return the accumulated string
+      }, textItem.str);
     },
     [highlights]
   );
