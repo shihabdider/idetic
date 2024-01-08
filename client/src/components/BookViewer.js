@@ -33,6 +33,7 @@ function BookViewer() {
       const pageHighlights = highlights.filter(h => h.location === `Page ${pageNumber}`);
       pageHighlights.forEach(highlight => {
         if (highlight.text && textItem.str.includes(highlight.text)) {
+          console.log('Highlight:', highlight);
           const startIndex = textItem.str.indexOf(highlight.text);
           const endIndex = startIndex + highlight.text.length;
           highlightedText = textItem.str.substring(0, startIndex) +
