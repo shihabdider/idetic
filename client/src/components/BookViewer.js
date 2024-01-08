@@ -28,9 +28,9 @@ function BookViewer() {
   const popoverOpen = Boolean(anchorEl);
   const popoverId = popoverOpen ? 'highlight-popover' : undefined;
   const textRenderer = useCallback(
-    (textItem) => {
+    (textItem, pageNumber) => {
       let highlightedText = textItem.str;
-      const pageHighlights = highlights.filter(h => h.location === `Page ${pageIndex + 1}`);
+      const pageHighlights = highlights.filter(h => h.location === `Page ${pageNumber}`);
       pageHighlights.forEach(highlight => {
         if (highlight.text && textItem.str.includes(highlight.text)) {
           const startIndex = textItem.str.indexOf(highlight.text);
@@ -149,8 +149,8 @@ function BookViewer() {
       >
 
         {Array.from(new Array(numPages), (el, index) => (
-            <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }}>
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} customTextRenderer={(textItem) => textRenderer(textItem, index)} />
+            <div key={`page_${index + 1}`} style={{ display: 'flex', justifyContent: 'center' }} data-page-number={index + 1}>
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={scale} customTextRenderer={(textItem) => textRenderer(textItem, index + 1)} />
             </div>
           ),
         )}
