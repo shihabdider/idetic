@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
+import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function BookViewer() {
   const { id } = useParams();
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
@@ -31,6 +34,10 @@ function BookViewer() {
     fetchHighlights();
   }, [id]);
 
+  const goBackToLibrary = () => {
+    navigate('/');
+  };
+
   const addHighlight = (highlight) => {
     // Implement the logic to save the highlight to the server
     console.log('Saving highlight', highlight);
@@ -54,6 +61,20 @@ function BookViewer() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
+    <>
+      <AppBar position="fixed">
+        <Toolbar>
+          <IconButton edge="start" color="inherit" aria-label="back" onClick={goBackToLibrary}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap>
+            Book Viewer
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Toolbar /> {/* This empty Toolbar is necessary to offset the content below the AppBar */}
+    </>
+    <div style={{ display: 'flex', height: '100vh', width: '100vw', marginTop: '64px' }}>
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
