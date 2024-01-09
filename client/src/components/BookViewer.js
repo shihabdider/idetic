@@ -61,18 +61,25 @@ function BookViewer() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
-    <>
-      <AppBar position="fixed">
-        <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="back" onClick={goBackToLibrary}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Book Viewer
-          </Typography>
-        </Toolbar>
-      </AppBar>
-    </>
+        <AppBar position="fixed" sx={{
+             marginRight: '16px', // Adjust the margin to ensure it doesn't cover the scrollbar
+             width: `calc(100% - 16px)`, // Adjust the width to account for the margin
+             transition: 'visibility 0s, opacity 0.1s linear',
+             '&:hover': {
+               visibility: 'visible',
+               opacity: 1
+             },
+             }}
+          >
+          <Toolbar>
+            <IconButton edge="start" color="inherit" aria-label="back" onClick={goBackToLibrary}>
+              <ArrowBackIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap>
+              Book Viewer
+            </Typography>
+          </Toolbar>
+        </AppBar>
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
