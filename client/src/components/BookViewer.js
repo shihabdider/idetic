@@ -31,10 +31,6 @@ function BookViewer() {
     fetchHighlights();
   }, [id]);
 
-  // ... rest of the component
-function BookViewer() {
-  // ... existing code ...
-
   const addHighlight = (highlight) => {
     // Implement the logic to save the highlight to the server
     console.log('Saving highlight', highlight);
