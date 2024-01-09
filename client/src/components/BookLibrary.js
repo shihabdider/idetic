@@ -9,7 +9,7 @@ import Dropzone from 'react-dropzone';
 function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState(10);
   const navigate = useNavigate();
 
   const deleteBook = async (bookId) => {
@@ -19,32 +19,6 @@ function BookLibrary() {
     } catch (error) {
       console.error('Error deleting book:', error);
     }
-  };
-
-  const onSubmit = (data) => {
-    const formData = new FormData();
-    formData.append('book', data.book[0]);
-
-   axios.post('http://localhost:3001/books', formData, {
-     withCredentials: true,
-     headers: {
-       'Content-Type': 'multipart/form-data',
-       'Authorization': 'Bearer ' + localStorage.getItem('authToken')
-      },
-      onUploadProgress: (progressEvent) => {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        setUploadProgress(percentCompleted);
-      }
-    })
-    .then(response => {
-      // Handle success
-      console.log('Book uploaded successfully', response);
-      setBooks([...books, response.data]);
-    })
-    .catch(error => {
-      // Handle error
-      console.error('Error uploading book:', error);
-    });
   };
 
   useEffect(() => {
@@ -118,7 +92,7 @@ function BookLibrary() {
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
-          <Grid item key={book.id} xs={12} sm={6} md={4} lg={3}>
+          <Grid item key={book._id} xs={12} sm={6} md={4} lg={3}>
             <Paper sx={{ p: 2, height: '400px', backgroundColor: 'transparent', boxShadow: 'none' }}>
               <Box sx={{ width: '100%', height: '80%', cursor: 'pointer', '&:hover': { opacity: 0.8 } }} onClick={() => navigate(`/books/view/${book._id}`)}>
                 <img src={`http://localhost:3001/${book.coverImagePath}`} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

@@ -7,6 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function BookViewer() {
   const { id } = useParams();
+  const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ function BookViewer() {
       try {
         // Fetch the book details to get the filePath
         const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
+        const pdfTitle = response.data.title;
+        setPdfTitle(pdfTitle);
         const pdfPath = response.data.filePath;
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
@@ -62,7 +65,7 @@ function BookViewer() {
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
         <AppBar position="fixed" sx={{
-             background: 'transparent',
+             background: 'white',
              color: 'black',
              boxShadow: 'none',
              marginRight: '16px',
@@ -73,8 +76,8 @@ function BookViewer() {
             <IconButton edge="start" color="default" aria-label="back" onClick={goBackToLibrary}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6" noWrap style={{ color: 'black' }}>
-              Book Viewer
+            <Typography variant="h7" noWrap style={{ color: 'black' }}>
+              { pdfTitle }
             </Typography>
           </Toolbar>
         </AppBar>
