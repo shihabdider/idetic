@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
 import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
@@ -72,9 +72,7 @@ function BookViewer() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Toolbar /> {/* This empty Toolbar is necessary to offset the content below the AppBar */}
     </>
-    <div style={{ display: 'flex', height: '100vh', width: '100vw', marginTop: '64px' }}>
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
