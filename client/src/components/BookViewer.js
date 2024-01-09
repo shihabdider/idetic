@@ -42,8 +42,17 @@ function BookViewer() {
   };
 
   const addHighlight = (highlight) => {
-    // Implement the logic to save the highlight to the server
-    console.log('Saving highlight', highlight);
+    axios.post(`http://localhost:3001/highlights`, {
+      text: highlight.content.text,
+      location: JSON.stringify(highlight.position),
+      bookId: id
+    }, { withCredentials: true })
+    .then(response => {
+      setHighlights([...highlights, response.data]);
+    })
+    .catch(error => {
+      console.error('Error saving highlight:', error);
+    });
   };
 
   const updateHighlight = (highlightId, position, content) => {
@@ -56,10 +65,7 @@ function BookViewer() {
     highlight,
     submitHighlight
   ) => {
-    // You can show a popup to add a note to the highlight or save it directly
-    console.log('Selection finished', highlightedArea, highlight);
-    // For example, to immediately save the highlight:
-    // submitHighlight(highlight);
+    submitHighlight(highlight);
   };
 
   return (
