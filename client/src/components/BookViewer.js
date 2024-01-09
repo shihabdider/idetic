@@ -62,20 +62,18 @@ function BookViewer() {
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
         <AppBar position="fixed" sx={{
-             marginRight: '16px', // Adjust the margin to ensure it doesn't cover the scrollbar
-             width: `calc(100% - 16px)`, // Adjust the width to account for the margin
-             transition: 'visibility 0s, opacity 0.1s linear',
-             '&:hover': {
-               visibility: 'visible',
-               opacity: 1
-             },
+             background: 'transparent',
+             color: 'black',
+             boxShadow: 'none',
+             marginRight: '16px',
+             width: `calc(100% - 16px)`,
              }}
           >
           <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="back" onClick={goBackToLibrary}>
+            <IconButton edge="start" color="default" aria-label="back" onClick={goBackToLibrary}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h6" noWrap style={{ color: 'black' }}>
               Book Viewer
             </Typography>
           </Toolbar>
