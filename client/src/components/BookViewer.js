@@ -102,6 +102,8 @@ function BookViewer() {
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
       onClose={handlePopoverClose}
+      anchorPosition={{ top: popoverPosition.top, left: popoverPosition.left }}
+      anchorReference="anchorPosition"
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'left',
@@ -121,8 +123,10 @@ function BookViewer() {
     </Popover>
   );
 
-  const handlePopoverOpen = (event, highlight) => {
-    setAnchorEl(event.currentTarget);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+
+const handlePopoverOpen = (event, highlight) => {
+    setAnchorEl(event.target);
     setHighlightToDelete(highlight);
   };
 
@@ -146,8 +150,7 @@ function BookViewer() {
         isScrolledTo={isScrolledTo}
         position={highlight.position}
         comment={highlight.comment}
-        onClick={() => setHighlightToDelete(highlight)}
-        onMouseEnter={(e) => handlePopoverOpen(e, highlight)}
+        onClick={(e) => handlePopoverOpen(e, highlight)}
         onMouseLeave={handlePopoverClose}
       />
     ) : (
@@ -160,8 +163,7 @@ function BookViewer() {
             pageNumber: highlight.position.pageNumber
           });
         }}
-        onClick={() => setHighlightToDelete(highlight)}
-        onMouseEnter={(e) => handlePopoverOpen(e, highlight)}
+        onClick={(e) => handlePopoverOpen(e, highlight)}
         onMouseLeave={handlePopoverClose}
       />
     );
