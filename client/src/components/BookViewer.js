@@ -119,7 +119,6 @@ function BookViewer() {
     const boundingRect = highlight.position.boundingRect;
     const popoverHeight = 40; // Assuming the popover has a fixed height of 40px
     const popoverX = boundingRect.left + window.pageXOffset + (boundingRect.width / 2);
-    // Position the popover just above the highlight, accounting for the popover's height
     const popoverY = boundingRect.top + window.pageYOffset - popoverHeight;
     setPopoverPosition({ top: popoverY, left: popoverX });
     setHighlightToDelete(highlight);
