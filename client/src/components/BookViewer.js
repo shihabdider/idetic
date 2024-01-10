@@ -14,6 +14,7 @@ function BookViewer() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [highlightToDelete, setHighlightToDelete] = useState(null);
   const navigate = useNavigate();
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
@@ -115,17 +116,14 @@ function BookViewer() {
     >
       <Button
         startIcon={<DeleteOutlineIcon />}
-        onClick={() => deleteHighlight(highlightToDelete._id)}
+        onClick={() => {deleteHighlight(highlightToDelete._id); handlePopoverClose()}}
         color="error"
       >
-        Delete
       </Button>
     </Popover>
   );
 
-  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
-
-const handlePopoverOpen = (event, highlight) => {
+  const handlePopoverOpen = (event, highlight) => {
     setAnchorEl(event.target);
     setHighlightToDelete(highlight);
   };
