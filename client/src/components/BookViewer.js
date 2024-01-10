@@ -116,10 +116,9 @@ function BookViewer() {
   );
 
   const handlePopoverOpen = (highlight) => {
-    const { boundingRect } = highlight.position;
-    console.log(highlight);
-    const popoverX = boundingRect.x1 + (boundingRect.x2 - boundingRect.x1) / 2;
-    const popoverY = boundingRect.y1 + window.scrollY;
+    const { left, top, width } = highlight.position.boundingRect;
+    const popoverX = left + width / 2;
+    const popoverY = top + window.scrollY;
     setPopoverPosition({ top: popoverY, left: popoverX });
     setHighlightToDelete(highlight);
     console.log(popoverPosition);
