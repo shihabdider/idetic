@@ -42,30 +42,76 @@ function BookViewer() {
   };
 
   const addHighlight = (highlight) => {
+    console.log('Saving highlight', highlight);
     axios.post(`http://localhost:3001/highlights`, {
-      text: highlight.content.text,
-      location: JSON.stringify(highlight.position),
-      bookId: id
+      content: {
+        text: highlight.content.text,
+        image: highlight.content.image // Include the image content if it exists
+      },
+      position: highlight.position,
+      comment: highlight.comment, // Don't forget to include the comment
+      bookId: id // Assuming 'id' is the ID of the book where the highlight is made
     }, { withCredentials: true })
     .then(response => {
       setHighlights([...highlights, response.data]);
+      console.log('Highlights:', highlights); 
     })
     .catch(error => {
       console.error('Error saving highlight:', error);
     });
   };
 
-  const updateHighlight = (highlightId, position, content) => {
-    // Implement the logic to update the highlight on the server
-    console.log('Updating highlight', highlightId, position, content);
+  const updateHighlight = (highlight) => {
+    console.log('Updating highlight', highlight)
+    axios.put(`http://localhost:3001/highlights/${highlight._id}`, {
+      content: {
+        text: content?.text,
+        image: content?.image
+      },
+      position: position,
+    }, { withCredentials: true })
+    .then(response => {
+      const index = highlights.findIndex(h => h.id === highlight._id);
+      if (index !== -1) {
+        let newHighlights = [...highlights];
+        newHighlights[index] = response.data;
+        setHighlights(newHighlights);
+      }
+    })
+    .catch(error => {
+      console.error('Error updating highlight:', error);
+    });
   };
 
   const onSelectionFinished = (
-    highlightedArea,
-    highlight,
-    submitHighlight
+    position,
+    content
   ) => {
-    submitHighlight(highlight);
+    const highlight = { content, position };
+    addHighlight(highlight);
+  };
+
+  const highlightTransform = (highlight, index, setTip, hideTip, viewportToScaled, screenshot, isScrolledTo) => {
+    const isTextHighlight = !Boolean(highlight.content.image);
+    const component = isTextHighlight ? (
+      <Highlight
+        isScrolledTo={isScrolledTo}
+        position={highlight.position}
+        comment={highlight.comment}
+      />
+    ) : (
+      <AreaHighlight
+        highlight={highlight}
+        onChange={(boundingRect) => {
+          updateHighlight(highlight.id, {
+            boundingRect: viewportToScaled(boundingRect),
+            rects: [],
+            pageNumber: highlight.position.pageNumber
+          });
+        }}
+      />
+    );
+    return component
   };
 
   return (
@@ -96,6 +142,7 @@ function BookViewer() {
               onHighlight={addHighlight}
               onUpdateHighlight={updateHighlight}
               onSelectionFinished={onSelectionFinished}
+              highlightTransform={highlightTransform}
               highlights={highlights}
               Tip={Tip}
               Highlight={Highlight}

@@ -2,7 +2,7 @@ const Highlight = require('../models/highlight');
 
 exports.listHighlights = async (req, res) => {
   try {
-    const highlights = await Highlight.find({ userId: req.user._id });
+    const highlights = await Highlight.find({ userId: req.user._id, bookId: req.query.bookId });
     res.json(highlights);
   } catch (error) {
     res.status(500).send(error);
@@ -12,8 +12,10 @@ exports.listHighlights = async (req, res) => {
 exports.createHighlight = async (req, res) => {
   try {
     const newHighlight = new Highlight({
-      text: req.body.text,
-      location: req.body.location,
+      content: req.body.content,
+      position: req.body.position,
+      comment: req.body.comment,
+      id: req.body.id,
       bookId: req.body.bookId,
       userId: req.user._id
     });
@@ -38,7 +40,16 @@ exports.getHighlight = async (req, res) => {
 
 exports.updateHighlight = async (req, res) => {
   try {
-    const updatedHighlight = await Highlight.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updateData = {
+      content: req.body.content,
+      position: req.body.position,
+      comment: req.body.comment,
+      id: req.body.id,
+      // Only update bookId and userId if they are provided
+      ...(req.body.bookId && { bookId: req.body.bookId }),
+      ...(req.body.userId && { userId: req.body.userId })
+    };
+    const updatedHighlight = await Highlight.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     res.status(200).json(updatedHighlight);
   } catch (error) {
     res.status(500).send(error);
@@ -47,7 +58,7 @@ exports.updateHighlight = async (req, res) => {
 
 exports.deleteHighlight = async (req, res) => {
   try {
-    const deletedHighlight = await Highlight.findByIdAndDelete(req.params.id);
+    await Highlight.findByIdAndDelete(req.params.id);
     res.status(204).send();
   } catch (error) {
     res.status(500).send(error);
@@ -56,11 +67,13 @@ exports.deleteHighlight = async (req, res) => {
 
 exports.exportHighlights = async (req, res) => {
   try {
-    const highlights = await Highlight.find({ userId: req.user._id });
+    const highlights = await Highlight.find({ userId: req.user._id, bookId: req.query.bookId });
     let markdown = '';
     highlights.forEach(highlight => {
-      markdown += `## Highlight Location: ${highlight.location}\n`;
-      markdown += `${highlight.text}\n\n`;
+      markdown += `## Highlight ID: ${highlight.id}\n`;
+      markdown += `- Content: ${highlight.content.text || 'Image content'}\n`;
+      markdown += `- Comment: ${highlight.comment.text}\n`;
+      markdown += `- Page Number: ${highlight.position.pageNumber}\n\n`;
     });
     res.header('Content-Type', 'text/markdown');
     res.attachment('highlights.md');
