@@ -103,8 +103,14 @@ function BookViewer() {
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
       onClose={handlePopoverClose}
-      anchorPosition={{ top: popoverPosition.top, left: popoverPosition.left }}
-      anchorReference="anchorPosition"
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
     >
       <Button
         startIcon={<DeleteOutlineIcon />}
@@ -115,14 +121,9 @@ function BookViewer() {
     </Popover>
   );
 
-  const handlePopoverOpen = (highlight) => {
-    const boundingRect = highlight.position.boundingRect;
-    const popoverHeight = 40; // Assuming the popover has a fixed height of 40px
-    const popoverX = boundingRect.left + window.pageXOffset + (boundingRect.width / 2);
-    const popoverY = boundingRect.top + window.pageYOffset - popoverHeight;
-    setPopoverPosition({ top: popoverY, left: popoverX });
+  const handlePopoverOpen = (event, highlight) => {
+    setAnchorEl(event.currentTarget);
     setHighlightToDelete(highlight);
-    console.log(popoverPosition);
   };
 
   const handlePopoverClose = () => {
@@ -145,7 +146,7 @@ function BookViewer() {
         isScrolledTo={isScrolledTo}
         position={highlight.position}
         comment={highlight.comment}
-        onClick={() => handlePopoverOpen(highlight)}
+        onClick={(e) => handlePopoverOpen(e, highlight)}
         onMouseLeave={handlePopoverClose}
       />
     ) : (
