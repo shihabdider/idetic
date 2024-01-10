@@ -105,14 +105,6 @@ function BookViewer() {
       onClose={handlePopoverClose}
       anchorPosition={{ top: popoverPosition.top, left: popoverPosition.left }}
       anchorReference="anchorPosition"
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'left',
-      }}
     >
       <Button
         startIcon={<DeleteOutlineIcon />}
@@ -125,10 +117,12 @@ function BookViewer() {
 
   const handlePopoverOpen = (highlight) => {
     const { boundingRect } = highlight.position;
+    console.log(highlight);
     const popoverX = boundingRect.x1 + (boundingRect.x2 - boundingRect.x1) / 2;
     const popoverY = boundingRect.y1 + window.scrollY;
     setPopoverPosition({ top: popoverY, left: popoverX });
     setHighlightToDelete(highlight);
+    console.log(popoverPosition);
   };
 
   const handlePopoverClose = () => {
