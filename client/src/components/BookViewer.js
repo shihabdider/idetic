@@ -121,6 +121,16 @@ function BookViewer() {
     </Popover>
   );
 
+  const handlePopoverOpen = (event, highlight) => {
+    setAnchorEl(event.currentTarget);
+    setHighlightToDelete(highlight);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setHighlightToDelete(null);
+  };
+
   const onSelectionFinished = (
     position,
     content
@@ -196,20 +206,8 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
-      {renderDeleteDialog()}
       {renderDeletePopover()}
     </div>
   );
 }
-
 export default BookViewer;
-  const handlePopoverOpen = (event, highlight) => {
-    setAnchorEl(event.currentTarget);
-    setHighlightToDelete(highlight);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-    setHighlightToDelete(null);
-  };
-
