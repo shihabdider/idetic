@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
 import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function BookViewer() {
@@ -113,7 +113,7 @@ function BookViewer() {
       }}
     >
       <Button
-        startIcon={<DeleteOutlineIcon />}
+        startIcon={<CancelIcon />}
         onClick={() => {deleteHighlight(highlightToDelete._id); handlePopoverClose()}}
         color="error"
       >
