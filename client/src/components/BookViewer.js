@@ -85,6 +85,35 @@ function BookViewer() {
     });
   };
 
+  const deleteHighlight = (highlightId) => {
+    axios.delete(`http://localhost:3001/highlights/${highlightId}`, { withCredentials: true })
+      .then(() => {
+        setHighlights(highlights.filter(h => h._id !== highlightId));
+        setHighlightToDelete(null);
+      })
+      .catch(error => {
+        console.error('Error deleting highlight:', error);
+      });
+  };
+
+  const renderDeleteDialog = () => (
+    <Dialog
+      open={Boolean(highlightToDelete)}
+      onClose={() => setHighlightToDelete(null)}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogActions>
+        <Button onClick={() => setHighlightToDelete(null)} color="primary">
+          Cancel
+        </Button>
+        <IconButton color="error" onClick={() => deleteHighlight(highlightToDelete._id)}>
+          <CloseIcon />
+        </IconButton>
+      </DialogActions>
+    </Dialog>
+  );
+
   const onSelectionFinished = (
     position,
     content
@@ -162,32 +191,3 @@ function BookViewer() {
 }
 
 export default BookViewer;
-  const deleteHighlight = (highlightId) => {
-    axios.delete(`http://localhost:3001/highlights/${highlightId}`, { withCredentials: true })
-      .then(() => {
-        setHighlights(highlights.filter(h => h._id !== highlightId));
-        setHighlightToDelete(null);
-      })
-      .catch(error => {
-        console.error('Error deleting highlight:', error);
-      });
-  };
-
-  const renderDeleteDialog = () => (
-    <Dialog
-      open={Boolean(highlightToDelete)}
-      onClose={() => setHighlightToDelete(null)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogActions>
-        <Button onClick={() => setHighlightToDelete(null)} color="primary">
-          Cancel
-        </Button>
-        <IconButton color="error" onClick={() => deleteHighlight(highlightToDelete._id)}>
-          <CloseIcon />
-        </IconButton>
-      </DialogActions>
-    </Dialog>
-  );
-
