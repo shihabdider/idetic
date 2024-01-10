@@ -116,11 +116,11 @@ function BookViewer() {
   );
 
   const handlePopoverOpen = (highlight) => {
-    const anchor = event.currentTarget;
-    setAnchorEl(anchor);
-    const anchorRect = anchor.getBoundingClientRect();
-    const popoverX = anchorRect.left + anchorRect.width / 2; // Center the popover on the X axis
-    const popoverY = anchorRect.top + (highlight.position.boundingRect.height / 2) + window.scrollY; // Position the popover above or below the highlight
+    const boundingRect = highlight.position.boundingRect;
+    const popoverHeight = 40; // Assuming the popover has a fixed height of 40px
+    const popoverX = boundingRect.left + window.pageXOffset + (boundingRect.width / 2);
+    // Position the popover just above the highlight, accounting for the popover's height
+    const popoverY = boundingRect.top + window.pageYOffset - popoverHeight;
     setPopoverPosition({ top: popoverY, left: popoverX });
     setHighlightToDelete(highlight);
     console.log(popoverPosition);
