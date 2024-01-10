@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
-import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Dialog, DialogActions, Button } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function BookViewer() {
@@ -10,6 +11,7 @@ function BookViewer() {
   const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
+  const [highlightToDelete, setHighlightToDelete] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,6 +100,7 @@ function BookViewer() {
         isScrolledTo={isScrolledTo}
         position={highlight.position}
         comment={highlight.comment}
+        onClick={() => setHighlightToDelete(highlight)}
       />
     ) : (
       <AreaHighlight
@@ -109,6 +112,7 @@ function BookViewer() {
             pageNumber: highlight.position.pageNumber
           });
         }}
+        onClick={() => setHighlightToDelete(highlight)}
       />
     );
     return component
@@ -152,8 +156,38 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
+      {renderDeleteDialog()}
     </div>
   );
 }
 
 export default BookViewer;
+  const deleteHighlight = (highlightId) => {
+    axios.delete(`http://localhost:3001/highlights/${highlightId}`, { withCredentials: true })
+      .then(() => {
+        setHighlights(highlights.filter(h => h._id !== highlightId));
+        setHighlightToDelete(null);
+      })
+      .catch(error => {
+        console.error('Error deleting highlight:', error);
+      });
+  };
+
+  const renderDeleteDialog = () => (
+    <Dialog
+      open={Boolean(highlightToDelete)}
+      onClose={() => setHighlightToDelete(null)}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogActions>
+        <Button onClick={() => setHighlightToDelete(null)} color="primary">
+          Cancel
+        </Button>
+        <IconButton color="error" onClick={() => deleteHighlight(highlightToDelete._id)}>
+          <CloseIcon />
+        </IconButton>
+      </DialogActions>
+    </Dialog>
+  );
+
