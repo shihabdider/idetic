@@ -116,14 +116,11 @@ function BookViewer() {
   );
 
   const handlePopoverOpen = (highlight) => {
-    const { boundingRect } = highlight.position;
-    const highlightElement = document.querySelector(`[data-highlight-id="${highlight._id}"]`);
-    if (highlightElement) {
-      const rect = highlightElement.getBoundingClientRect();
-      const popoverX = rect.left + rect.width / 2;
-      const popoverY = rect.top;
-      setPopoverPosition({ top: popoverY, left: popoverX });
-    }
+    setAnchorEl(event.target);
+    const { left, top, width } = highlight.position.boundingRect;
+    const popoverX = left + width / 2;
+    const popoverY = top + window.scrollY;
+    setPopoverPosition({ top: popoverY, left: popoverX });
     setHighlightToDelete(highlight);
     console.log(popoverPosition);
   };
@@ -149,7 +146,6 @@ function BookViewer() {
         position={highlight.position}
         comment={highlight.comment}
         onClick={() => handlePopoverOpen(highlight)}
-        data-highlight-id={highlight._id}
         onMouseLeave={handlePopoverClose}
       />
     ) : (
@@ -163,7 +159,6 @@ function BookViewer() {
           });
         }}
         onClick={() => handlePopoverOpen(highlight)}
-        data-highlight-id={highlight._id}
         onMouseLeave={handlePopoverClose}
       />
     );
