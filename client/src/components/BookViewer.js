@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
-import { AppBar, Toolbar, Typography, IconButton, Dialog, DialogActions, Button } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function BookViewer() {
@@ -11,6 +11,7 @@ function BookViewer() {
   const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [highlightToDelete, setHighlightToDelete] = useState(null);
   const navigate = useNavigate();
 
@@ -96,22 +97,28 @@ function BookViewer() {
       });
   };
 
-  const renderDeleteDialog = () => (
-    <Dialog
-      open={Boolean(highlightToDelete)}
-      onClose={() => setHighlightToDelete(null)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
+  const renderDeletePopover = () => (
+    <Popover
+      open={Boolean(anchorEl)}
+      anchorEl={anchorEl}
+      onClose={handlePopoverClose}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'left',
+      }}
     >
-      <DialogActions>
-        <Button onClick={() => setHighlightToDelete(null)} color="primary">
-          Cancel
-        </Button>
-        <IconButton color="error" onClick={() => deleteHighlight(highlightToDelete._id)}>
-          <CloseIcon />
-        </IconButton>
-      </DialogActions>
-    </Dialog>
+      <Button
+        startIcon={<DeleteOutlineIcon />}
+        onClick={() => deleteHighlight(highlightToDelete._id)}
+        color="error"
+      >
+        Delete
+      </Button>
+    </Popover>
   );
 
   const onSelectionFinished = (
@@ -130,6 +137,8 @@ function BookViewer() {
         position={highlight.position}
         comment={highlight.comment}
         onClick={() => setHighlightToDelete(highlight)}
+        onMouseEnter={(e) => handlePopoverOpen(e, highlight)}
+        onMouseLeave={handlePopoverClose}
       />
     ) : (
       <AreaHighlight
@@ -142,6 +151,8 @@ function BookViewer() {
           });
         }}
         onClick={() => setHighlightToDelete(highlight)}
+        onMouseEnter={(e) => handlePopoverOpen(e, highlight)}
+        onMouseLeave={handlePopoverClose}
       />
     );
     return component
@@ -186,8 +197,19 @@ function BookViewer() {
         </PdfLoader>
       )}
       {renderDeleteDialog()}
+      {renderDeletePopover()}
     </div>
   );
 }
 
 export default BookViewer;
+  const handlePopoverOpen = (event, highlight) => {
+    setAnchorEl(event.currentTarget);
+    setHighlightToDelete(highlight);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setHighlightToDelete(null);
+  };
+
