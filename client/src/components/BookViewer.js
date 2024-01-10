@@ -124,7 +124,8 @@ function BookViewer() {
   );
 
   const handlePopoverOpen = (event, highlight) => {
-    setAnchorEl(event.target);
+    const { top, left, width } = highlight.position.boundingRect;
+    setPopoverPosition({ top: top + window.scrollY, left: left + width / 2 + window.scrollX });
     setHighlightToDelete(highlight);
   };
 
