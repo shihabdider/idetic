@@ -179,12 +179,12 @@ function BookViewer() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
         <AppBar position="fixed" sx={{
              background: 'white',
              color: 'black',
              boxShadow: 'none',
-             marginRight: '16px',
+             marginLeft: '16px',
              width: sidebarVisible ? `calc(100% - 250px)` : '100%', // Adjust width based on Sidebar visibility
              }}
           >
@@ -219,8 +219,8 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
-      {sidebarVisible && <Sidebar bookId={id} />} 
       {renderDeletePopover()}
+      {sidebarVisible && <Sidebar bookId={id} style={{ order: 2 }} />} 
     </div>
   );
 }
