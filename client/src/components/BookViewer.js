@@ -219,8 +219,8 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
+      {sidebarVisible && <Sidebar highlights={highlights} />} 
       {renderDeletePopover()}
-      {sidebarVisible && <Sidebar bookId={id} />} 
     </div>
   );
 }
