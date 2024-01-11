@@ -182,14 +182,14 @@ function BookViewer() {
              background: 'white',
              color: 'black',
              boxShadow: sidebarVisible ? '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)' : 'none',
-             marginRight: '16px'
+             marginRight: '16px',
              }}
           >
           <Toolbar>
             <IconButton edge="start" color="default" aria-label="back" onClick={goBackToLibrary} style={{ marginLeft: '16px'}}>
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6" noWrap style={{ color: 'black' }}>
+            <Typography variant="h7" noWrap style={{ color: 'black' }}>
               { pdfTitle }
             </Typography>
             <IconButton edge="end" color="default" aria-label="menu" onClick={toggleSidebar} style={{ marginLeft: 'auto', marginRight: '8px' }}>
