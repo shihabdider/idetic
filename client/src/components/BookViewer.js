@@ -5,6 +5,8 @@ import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 
 import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import MenuIcon from '@mui/icons-material/Menu'; // Import Menu icon for the toggle button
+import Sidebar from './Sidebar';
 import Sidebar from './Sidebar'; // Import Sidebar only once
 
 function BookViewer() {
@@ -16,6 +18,7 @@ function BookViewer() {
   const [highlightToDelete, setHighlightToDelete] = useState(null);
   const navigate = useNavigate();
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  const [sidebarVisible, setSidebarVisible] = useState(true); // State to manage Sidebar visibility
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
@@ -137,6 +140,10 @@ function BookViewer() {
     setHighlightToDelete(null);
   };
 
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible); // Toggle the visibility state
+  };
+
   const onSelectionFinished = (
     position,
     content
@@ -173,16 +180,19 @@ function BookViewer() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'row-reverse', height: '100vh' }}> // Change layout to row-reverse
         <AppBar position="fixed" sx={{
              background: 'white',
              color: 'black',
              boxShadow: 'none',
              marginRight: '16px',
-             width: `calc(100% - 250px)`, // Adjust width to account for Sidebar
+             width: sidebarVisible ? `calc(100% - 250px)` : '100%', // Adjust width based on Sidebar visibility
              }}
           >
           <Toolbar>
+            <IconButton edge="start" color="default" aria-label="menu" onClick={toggleSidebar}>
+              <MenuIcon />
+            </IconButton>
             <IconButton edge="start" color="default" aria-label="back" onClick={goBackToLibrary}>
               <ArrowBackIcon />
             </IconButton>
@@ -206,11 +216,11 @@ function BookViewer() {
               Highlight={Highlight}
               Popup={Popup}
               AreaHighlight={AreaHighlight}
-            />
+            /> // Adjust PdfHighlighter width based on Sidebar visibility
           )}
         </PdfLoader>
       )}
-      <Sidebar bookId={id} /> // Add the Sidebar component
+      {sidebarVisible && <Sidebar bookId={id} />} // Conditionally render the Sidebar based on visibility state
       {renderDeletePopover()}
     </div>
   );
