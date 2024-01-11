@@ -5,7 +5,7 @@ import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 
 import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import MenuIcon from '@mui/icons-material/Menu'; // Import Menu icon for the toggle button
+import MenuIcon from '@mui/icons-material/Menu'; 
 import Sidebar from './Sidebar';
 
 function BookViewer() {
@@ -22,7 +22,6 @@ function BookViewer() {
   useEffect(() => {
     const fetchPdfDocument = async () => {
       try {
-        // Fetch the book details to get the filePath
         const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
         const pdfTitle = response.data.title;
         setPdfTitle(pdfTitle);
@@ -35,7 +34,6 @@ function BookViewer() {
     };
 
     const fetchHighlights = async () => {
-      // Replace with the actual API call to fetch highlights for the document
       const response = await axios.get(`http://localhost:3001/highlights?bookId=${id}`, { withCredentials: true });
       setHighlights(response.data);
     };
@@ -53,11 +51,11 @@ function BookViewer() {
     axios.post(`http://localhost:3001/highlights`, {
       content: {
         text: highlight.content.text,
-        image: highlight.content.image // Include the image content if it exists
+        image: highlight.content.image 
       },
       position: highlight.position,
-      comment: highlight.comment, // Don't forget to include the comment
-      bookId: id // Assuming 'id' is the ID of the book where the highlight is made
+      comment: highlight.comment, 
+      bookId: id 
     }, { withCredentials: true })
     .then(response => {
       setHighlights([...highlights, response.data]);
@@ -140,7 +138,7 @@ function BookViewer() {
   };
 
   const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible); // Toggle the visibility state
+    setSidebarVisible(!sidebarVisible);
   };
 
   const onSelectionFinished = (
@@ -179,13 +177,13 @@ function BookViewer() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
         <AppBar position="fixed" sx={{
              background: 'white',
              color: 'black',
              boxShadow: 'none',
              marginLeft: '16px',
-             width: sidebarVisible ? `calc(100% - 250px)` : '100%', // Adjust width based on Sidebar visibility
+             marginRight: '16px',
              }}
           >
           <Toolbar>
@@ -200,6 +198,7 @@ function BookViewer() {
             </IconButton>
           </Toolbar>
         </AppBar>
+      <div style={{ display: 'flex', flexGrow: 1}}>
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
@@ -219,7 +218,12 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
-      {sidebarVisible && <Sidebar highlights={highlights} />} 
+      </div>
+      {sidebarVisible && (
+        <div style={{ width: '250px', marginTop: '64px', marginRight: '48px' }}>
+          <Sidebar highlights={highlights} />
+        </div>
+      )}
       {renderDeletePopover()}
     </div>
   );
