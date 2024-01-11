@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
-import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
+import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MenuIcon from '@mui/icons-material/Menu'; 
@@ -219,7 +219,7 @@ function BookViewer() {
         </PdfLoader>
       )}
       </div>
-      {sidebarVisible && <Divider orientation="vertical" flexItem />}
+      {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
         <div style={{ width: '250px', marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column' }}>
           <Sidebar highlights={highlights} />
