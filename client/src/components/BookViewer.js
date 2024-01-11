@@ -6,6 +6,7 @@ import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/m
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Sidebar from './Sidebar';
+import Sidebar from './Sidebar';
 
 function BookViewer() {
   const { id } = useParams();
