@@ -2,21 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
 
-function Sidebar({ bookId }) {
-  const [highlights, setHighlights] = useState([]);
-
-  useEffect(() => {
-    const fetchHighlights = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3001/highlights?bookId=${bookId}`, { withCredentials: true });
-        setHighlights(response.data);
-      } catch (error) {
-        console.error('Error fetching highlights:', error);
-      }
-    };
-
-    fetchHighlights();
-  }, [bookId]);
+function Sidebar({ highlights }) {
 
   return (
     <div style={{ width: '250px', overflowY: 'auto' }}>
