@@ -179,8 +179,15 @@ function BookViewer() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row-reverse', height: '100vh' }}> // Change layout to row-reverse
-        <AppBar position="fixed" sx={{ background: 'white', color: 'black', boxShadow: 'none', width: '100%' }}>
+    <div style={{ display: 'flex', height: '100vh' }}>
+        <AppBar position="fixed" sx={{
+             background: 'white',
+             color: 'black',
+             boxShadow: 'none',
+             marginRight: '16px',
+             width: sidebarVisible ? `calc(100% - 250px)` : '100%', // Adjust width based on Sidebar visibility
+             }}
+          >
           <Toolbar>
             <IconButton edge="start" color="default" aria-label="back" onClick={goBackToLibrary}>
               <ArrowBackIcon />
@@ -212,7 +219,7 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
-      {sidebarVisible && <Sidebar bookId={id} />}
+      {sidebarVisible && <Sidebar bookId={id} />} 
       {renderDeletePopover()}
     </div>
   );
