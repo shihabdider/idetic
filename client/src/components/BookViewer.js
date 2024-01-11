@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
 import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function BookViewer() {
@@ -65,17 +65,21 @@ function BookViewer() {
     });
   };
 
-  const updateHighlight = (highlight) => {
+  const updateHighlight = (highlight, position, content) => {
     console.log('Updating highlight', highlight)
     axios.put(`http://localhost:3001/highlights/${highlight._id}`, {
       content: {
         text: content?.text,
         image: content?.image
       },
-      position: position,
+      position: {
+        boundingRect: position?.boundingRect,
+        rects: position?.rects,
+        pageNumber: position?.pageNumber
+      }
     }, { withCredentials: true })
     .then(response => {
-      const index = highlights.findIndex(h => h.id === highlight._id);
+      const index = highlights.findIndex(h => h._id === highlight._id);
       if (index !== -1) {
         let newHighlights = [...highlights];
         newHighlights[index] = response.data;
@@ -104,16 +108,16 @@ function BookViewer() {
       anchorEl={anchorEl}
       onClose={handlePopoverClose}
       anchorOrigin={{
-        vertical: 'bottom',
+        vertical: 'top',
         horizontal: 'center',
       }}
       transformOrigin={{
-        vertical: 'top',
+        vertical: 'bottom',
         horizontal: 'center',
       }}
     >
       <Button
-        startIcon={<CancelIcon />}
+        startIcon={<DeleteOutlineIcon />}
         onClick={() => {deleteHighlight(highlightToDelete._id); handlePopoverClose()}}
         color="error"
       >
@@ -122,6 +126,7 @@ function BookViewer() {
   );
 
   const handlePopoverOpen = (event, highlight) => {
+    console.log(event.currentTarget);
     setAnchorEl(event.currentTarget);
     setHighlightToDelete(highlight);
   };
@@ -143,6 +148,7 @@ function BookViewer() {
     const isTextHighlight = !Boolean(highlight.content.image);
     const component = isTextHighlight ? (
       <Highlight
+        key={highlight.id}
         isScrolledTo={isScrolledTo}
         position={highlight.position}
         comment={highlight.comment}
@@ -153,13 +159,12 @@ function BookViewer() {
       <AreaHighlight
         highlight={highlight}
         onChange={(boundingRect) => {
-          updateHighlight(highlight.id, {
+          updateHighlight(highlight, {
             boundingRect: viewportToScaled(boundingRect),
-            rects: [],
             pageNumber: highlight.position.pageNumber
-          });
+          }, { image: screenshot(boundingRect)});
         }}
-        onClick={() => handlePopoverOpen(highlight)}
+        onClick={(e) => handlePopoverOpen(e, highlight)}
         onMouseLeave={handlePopoverClose}
       />
     );
