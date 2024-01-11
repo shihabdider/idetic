@@ -3,6 +3,16 @@ import axios from 'axios';
 import { List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
 
 function Sidebar({ highlights }) {
+  const sortHighlights = (highlights) => {
+    return highlights.sort((a, b) => {
+      if (a.position.pageNumber === b.position.pageNumber) {
+        return a.position.boundingRect.y1 - b.position.boundingRect.y1;
+      }
+      return a.position.pageNumber - b.position.pageNumber;
+    });
+  };
+
+  const sortedHighlights = sortHighlights(highlights);
 
   return (
     <div style={{ width: '250px', overflowY: 'auto' }}>
@@ -11,7 +21,7 @@ function Sidebar({ highlights }) {
       </Typography>
       <Divider />
       <List>
-        {highlights.map((highlight, index) => (
+        {sortedHighlights.map((highlight, index) => (
           <React.Fragment key={highlight._id}>
             <ListItem alignItems="flex-start">
               <ListItemText
