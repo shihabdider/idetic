@@ -179,9 +179,9 @@ function BookViewer() {
   return (
     <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
         <AppBar position="fixed" sx={{
-             background: 'white',
+             background: sidebarVisible ? 'rgba(255, 255, 255, 0.7)' : 'white',
              color: 'black',
-             boxShadow: 'none',
+             boxShadow: sidebarVisible ? '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)' : 'none',
              marginLeft: '16px',
              marginRight: '16px',
              }}
