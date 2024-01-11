@@ -152,7 +152,11 @@ function BookViewer() {
         isScrolledTo={isScrolledTo}
         position={highlight.position}
         comment={highlight.comment}
-        onClick={(e) => handlePopoverOpen(e, highlight)}
+        onClick={(e) => {
+          if (e.target.className.includes('Highlight__part')) {
+            handlePopoverOpen(e, highlight);
+          }
+        }}
         onMouseLeave={handlePopoverClose}
       />
     ) : (
@@ -164,7 +168,11 @@ function BookViewer() {
             pageNumber: highlight.position.pageNumber
           }, { image: screenshot(boundingRect)});
         }}
-        onClick={(e) => handlePopoverOpen(e, highlight)}
+        onClick={(e) => {
+          if (e.target.className.includes('AreaHighlight__part')) {
+            handlePopoverOpen(e, highlight);
+          }
+        }}
         onMouseLeave={handlePopoverClose}
       />
     );
