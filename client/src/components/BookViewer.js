@@ -17,7 +17,7 @@ function BookViewer() {
   const [highlightToDelete, setHighlightToDelete] = useState(null);
   const navigate = useNavigate();
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
-  const [sidebarVisible, setSidebarVisible] = useState(true); // State to manage Sidebar visibility
+  const [sidebarVisible, setSidebarVisible] = useState(false); 
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
@@ -179,7 +179,7 @@ function BookViewer() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
+    <div style={{ display: 'flex', height: '100vh' }}>
         <AppBar position="fixed" sx={{
              background: 'white',
              color: 'black',
@@ -220,7 +220,7 @@ function BookViewer() {
         </PdfLoader>
       )}
       {renderDeletePopover()}
-      {sidebarVisible && <Sidebar bookId={id} style={{ order: 2 }} />} 
+      {sidebarVisible && <Sidebar bookId={id} />} 
     </div>
   );
 }
