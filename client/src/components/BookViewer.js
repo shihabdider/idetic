@@ -5,6 +5,7 @@ import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 
 import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Sidebar from './Sidebar';
 
 function BookViewer() {
   const { id } = useParams();
