@@ -5,8 +5,7 @@ import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 
 import { AppBar, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Sidebar from './Sidebar';
-import Sidebar from './Sidebar';
+import Sidebar from './Sidebar'; // Import Sidebar only once
 
 function BookViewer() {
   const { id } = useParams();
@@ -174,13 +173,13 @@ function BookViewer() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
+    <div style={{ display: 'flex', height: '100vh' }}>
         <AppBar position="fixed" sx={{
              background: 'white',
              color: 'black',
              boxShadow: 'none',
              marginRight: '16px',
-             width: `calc(100% - 16px)`,
+             width: `calc(100% - 250px)`, // Adjust width to account for Sidebar
              }}
           >
           <Toolbar>
@@ -211,6 +210,7 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
+      <Sidebar bookId={id} /> // Add the Sidebar component
       {renderDeletePopover()}
     </div>
   );
