@@ -7,7 +7,6 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MenuIcon from '@mui/icons-material/Menu'; // Import Menu icon for the toggle button
 import Sidebar from './Sidebar';
-import Sidebar from './Sidebar'; // Import Sidebar only once
 
 function BookViewer() {
   const { id } = useParams();
@@ -190,15 +189,15 @@ function BookViewer() {
              }}
           >
           <Toolbar>
-            <IconButton edge="start" color="default" aria-label="menu" onClick={toggleSidebar}>
-              <MenuIcon />
-            </IconButton>
             <IconButton edge="start" color="default" aria-label="back" onClick={goBackToLibrary}>
               <ArrowBackIcon />
             </IconButton>
             <Typography variant="h7" noWrap style={{ color: 'black' }}>
               { pdfTitle }
             </Typography>
+            <IconButton edge="end" color="default" aria-label="menu" onClick={toggleSidebar}>
+              <MenuIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
       {pdfDocument && highlights && (
@@ -216,11 +215,11 @@ function BookViewer() {
               Highlight={Highlight}
               Popup={Popup}
               AreaHighlight={AreaHighlight}
-            /> // Adjust PdfHighlighter width based on Sidebar visibility
+            />
           )}
         </PdfLoader>
       )}
-      {sidebarVisible && <Sidebar bookId={id} />} // Conditionally render the Sidebar based on visibility state
+      {sidebarVisible && <Sidebar bookId={id} />}
       {renderDeletePopover()}
     </div>
   );
