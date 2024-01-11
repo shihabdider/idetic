@@ -195,7 +195,7 @@ function BookViewer() {
             <Typography variant="h7" noWrap style={{ color: 'black' }}>
               { pdfTitle }
             </Typography>
-            <IconButton edge="end" color="default" aria-label="menu" onClick={toggleSidebar}>
+            <IconButton edge="end" color="default" aria-label="menu" onClick={toggleSidebar} style={{ marginLeft: 'auto', marginRight: '8px' }}>
               <MenuIcon />
             </IconButton>
           </Toolbar>
