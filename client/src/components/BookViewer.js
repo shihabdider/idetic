@@ -180,14 +180,7 @@ function BookViewer() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row-reverse', height: '100vh' }}> // Change layout to row-reverse
-        <AppBar position="fixed" sx={{
-             background: 'white',
-             color: 'black',
-             boxShadow: 'none',
-             marginRight: '16px',
-             width: sidebarVisible ? `calc(100% - 250px)` : '100%', // Adjust width based on Sidebar visibility
-             }}
-          >
+        <AppBar position="fixed" sx={{ background: 'white', color: 'black', boxShadow: 'none', width: '100%' }}>
           <Toolbar>
             <IconButton edge="start" color="default" aria-label="back" onClick={goBackToLibrary}>
               <ArrowBackIcon />
