@@ -219,8 +219,9 @@ function BookViewer() {
         </PdfLoader>
       )}
       </div>
+      {sidebarVisible && <Divider orientation="vertical" flexItem />}
       {sidebarVisible && (
-        <div style={{ width: '250px', marginTop: '64px', marginRight: '48px' }}>
+        <div style={{ width: '250px', marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column' }}>
           <Sidebar highlights={highlights} />
         </div>
       )}
