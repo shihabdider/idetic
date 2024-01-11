@@ -148,19 +148,16 @@ function BookViewer() {
     const isTextHighlight = !Boolean(highlight.content.image);
     const component = isTextHighlight ? (
       <Highlight
-        key={highlight.id}
+        key={highlight._id}
         isScrolledTo={isScrolledTo}
         position={highlight.position}
         comment={highlight.comment}
-        onClick={(e) => {
-          if (e.target.className.includes('Highlight__part')) {
-            handlePopoverOpen(e, highlight);
-          }
-        }}
+        onClick={(e) => handlePopoverOpen(e, highlight)}
         onMouseLeave={handlePopoverClose}
       />
     ) : (
       <AreaHighlight
+        key={highlight._id}
         highlight={highlight}
         onChange={(boundingRect) => {
           updateHighlight(highlight, {
@@ -168,12 +165,7 @@ function BookViewer() {
             pageNumber: highlight.position.pageNumber
           }, { image: screenshot(boundingRect)});
         }}
-        onClick={(e) => {
-          if (e.target.className.includes('AreaHighlight__part')) {
-            handlePopoverOpen(e, highlight);
-          }
-        }}
-        onMouseLeave={handlePopoverClose}
+        onClick={(e) => handlePopoverOpen(e, highlight)}
       />
     );
     return component
