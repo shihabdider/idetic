@@ -80,6 +80,20 @@ exports.updateBook = async (req, res) => {
   }
 };
 
+exports.updateScrollPosition = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const scrollPosition = req.body.scrollPosition;
+    if (typeof scrollPosition !== 'number') {
+      return res.status(400).send({ message: 'Invalid scroll position value' });
+    }
+    const updatedBook = await Book.findByIdAndUpdate(bookId, { scrollPosition: scrollPosition }, { new: true });
+    res.status(200).json(updatedBook);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 exports.deleteBook = async (req, res) => {
   try {
     const deletedBook = await Book.findByIdAndDelete(req.params.id);
