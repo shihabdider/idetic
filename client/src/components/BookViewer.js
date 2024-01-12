@@ -182,18 +182,22 @@ function BookViewer() {
   };
 
   useEffect(() => {
-    if (scrollTo) {
-      const highlight = highlights.find(h => h._id === scrollTo);
-      if (highlight) {
-        const pageNumber = highlight.position.pageNumber;
-        const pageElement = document.querySelector(`div[data-page-number="${pageNumber}"]`);
-        if (pageElement) {
-          pageElement.scrollIntoView();
-        }
+  if (scrollTo) {
+    const highlight = highlights.find(h => h._id === scrollTo);
+    if (highlight) {
+      const pageNumber = highlight.position.pageNumber;
+      const pageElement = document.querySelector(`div[data-page-number="${pageNumber}"]`);
+      if (pageElement) {
+        const pageRect = pageElement.getBoundingClientRect();
+        window.scrollTo({
+          top: pageRect.top + window.pageYOffset - (window.innerHeight / 2),
+          behavior: 'smooth'
+        });
       }
-      setScrollTo(null);
     }
-  }, [scrollTo, highlights]);
+      setScrollTo(null);
+  }
+}, [scrollTo, highlights]);
 
   return (
     <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
