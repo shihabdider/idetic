@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useRef } from 'react';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
 import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
@@ -10,10 +9,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Sidebar from './Sidebar';
 
 function BookViewer() {
-  const scrollRef = useRef(null);
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
-  const scrollRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -47,52 +44,6 @@ function BookViewer() {
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
-
-  useEffect(() => {
-    const scrollableContainer = scrollRef.current;
-    if (scrollableContainer) {
-      const handleScroll = (event) => {
-        onScroll(event);
-      };
-      scrollableContainer.addEventListener('scroll', handleScroll);
-      return () => {
-        scrollableContainer.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    const scrollableContainer = scrollRef.current;
-    if (scrollableContainer) {
-      const handleScroll = (event) => {
-        onScroll(event);
-      };
-      scrollableContainer.addEventListener('scroll', handleScroll);
-      return () => {
-        scrollableContainer.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, []);
-
-  const onDocumentLoadSuccess = (pdf) => {
-    if (scrollPosition) {
-      const viewer = document.querySelector('.react-pdf__Document');
-      if (viewer) {
-        viewer.scrollTop = scrollPosition;
-      }
-    }
-  };
-
-  const onScroll = (event) => {
-    const currentScrollPosition = event.target.scrollTop;
-    if (scrollPosition !== currentScrollPosition) {
-      setScrollPosition(currentScrollPosition);
-      axios.put(`http://localhost:3001/books/${id}/scrollPosition`, { scrollPosition: currentScrollPosition }, { withCredentials: true })
-        .catch(error => {
-          console.error('Error updating scroll position:', error);
-        });
-    }
-  };
 
   const goBackToLibrary = () => {
     navigate('/');
@@ -293,11 +244,10 @@ function BookViewer() {
         </AppBar>
       <div style={{ display: 'flex', flexGrow: 1}}>
       {pdfDocument && highlights && (
-        <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>} >
+        <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
             <PdfHighlighter
               pdfDocument={pdfDocument}
-              onDocumentLoadSuccess={onDocumentLoadSuccess}
               enableAreaSelection={(event) => event.altKey}
               scrollRef={(scrollTo) => {}}
               onHighlight={addHighlight}
