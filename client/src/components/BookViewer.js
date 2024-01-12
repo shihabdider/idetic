@@ -20,6 +20,7 @@ function BookViewer() {
   const navigate = useNavigate();
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [sidebarVisible, setSidebarVisible] = useState(false); 
+  const pdfHighlighterContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
@@ -44,6 +45,31 @@ function BookViewer() {
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
+
+  useEffect(() => {
+    const handleScroll = (event) => {
+      const currentScrollPosition = event.target.scrollTop;
+      console.log('Scroll position:', currentScrollPosition);
+      if (scrollPosition !== currentScrollPosition) {
+        setScrollPosition(currentScrollPosition);
+        axios.put(`http://localhost:3001/books/${id}/scrollPosition`, { scrollPosition: currentScrollPosition }, { withCredentials: true })
+          .catch(error => {
+            console.error('Error updating scroll position:', error);
+          });
+      }
+    };
+
+    const pdfHighlighterContainer = pdfHighlighterContainerRef.current;
+    if (pdfHighlighterContainer) {
+      pdfHighlighterContainer.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (pdfHighlighterContainer) {
+        pdfHighlighterContainer.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [scrollPosition, id]);
 
   const onDocumentLoadSuccess = (pdf) => {
     if (scrollPosition) {
@@ -218,6 +244,7 @@ function BookViewer() {
   const scrollToHighlight = (highlightId) => {
     setScrollTo(highlightId);
   };
+  const pdfHighlighterContainerRef = useRef(null);
 
   useEffect(() => {
     if (scrollTo) {
@@ -271,7 +298,9 @@ function BookViewer() {
             <PdfHighlighter
               pdfDocument={pdfDocument}
               onDocumentLoadSuccess={onDocumentLoadSuccess}
-              onScroll={onScroll}
+              scrollRef={(scrollTo) => {
+                pdfHighlighterContainerRef.current = scrollTo;
+              }}
               scrollRef={() => {console.log('Scroll ref');}}
               enableAreaSelection={(event) => event.altKey}
               onHighlight={addHighlight}
