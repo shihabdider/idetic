@@ -35,9 +35,9 @@ function Sidebar({ highlights, onHighlightClick }) {
                     }
                   />
                 )}
-                {highlight.content.image && (
-                  <img src={`http://localhost:3001/${highlight.content.image}`} alt="Highlight" style={{ maxWidth: '100%', maxHeight: '100px' }} />
-                )}
+                {highlight.content.image && 
+                  <img src={highlight.content.image} alt="Highlight" style={{ maxWidth: '100%', maxHeight: '100px' }} />
+                }
               </div>
             </ListItem>
             <Divider />
