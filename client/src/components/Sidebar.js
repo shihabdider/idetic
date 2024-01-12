@@ -3,6 +3,7 @@ import axios from 'axios';
 import { List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
 
 function Sidebar({ highlights }) {
+  const { onHighlightClick } = props;
   const sortHighlights = (highlights) => {
     return highlights.sort((a, b) => {
       if (a.position.pageNumber === b.position.pageNumber) {
@@ -23,7 +24,7 @@ function Sidebar({ highlights }) {
       <List>
         {sortedHighlights.map((highlight, index) => (
           <React.Fragment key={highlight._id}>
-            <ListItem alignItems="flex-start">
+            <ListItem alignItems="flex-start" button onClick={() => onHighlightClick(highlight._id)}>
               <ListItemText
                 primary={`Page ${highlight.position.pageNumber}`}
                 secondary={highlight.content.text}

@@ -13,6 +13,7 @@ function BookViewer() {
   const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
+  const [scrollTo, setScrollTo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [highlightToDelete, setHighlightToDelete] = useState(null);
   const navigate = useNavigate();
@@ -176,6 +177,23 @@ function BookViewer() {
     return component
   };
 
+  const scrollToHighlight = (highlightId) => {
+    setScrollTo(highlightId);
+  };
+
+  useEffect(() => {
+    if (scrollTo) {
+      const highlight = highlights.find(h => h._id === scrollTo);
+      if (highlight) {
+        document.querySelector(`[data-pdf-annotate-id="${highlight._id}"]`).scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
+      setScrollTo(null);
+    }
+  }, [scrollTo, highlights]);
+
   return (
     <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
         <AppBar position="fixed" sx={{
@@ -222,7 +240,7 @@ function BookViewer() {
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
         <div style={{ width: '250px', marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column' }}>
-          <Sidebar highlights={highlights} />
+          <Sidebar highlights={highlights} onHighlightClick={scrollToHighlight} />
         </div>
       )}
       {renderDeletePopover()}
