@@ -185,10 +185,11 @@ function BookViewer() {
     if (scrollTo) {
       const highlight = highlights.find(h => h._id === scrollTo);
       if (highlight) {
-        document.querySelector(`[data-pdf-annotate-id="${highlight._id}"]`).scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
+        const pageNumber = highlight.position.pageNumber;
+        const pageElement = document.querySelector(`div[data-page-number="${pageNumber}"]`);
+        if (pageElement) {
+          pageElement.scrollIntoView();
+        }
       }
       setScrollTo(null);
     }
