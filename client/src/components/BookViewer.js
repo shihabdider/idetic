@@ -14,6 +14,7 @@ function BookViewer() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
+  const pdfViewerRef = useRef(null);
   const [scrollTo, setScrollTo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [highlightToDelete, setHighlightToDelete] = useState(null);
@@ -43,6 +44,18 @@ function BookViewer() {
 
     fetchPdfDocument();
     fetchHighlights();
+    // Attach scroll event listener
+    const pdfViewer = pdfViewerRef.current?.container?.querySelector('.react-pdf-highlighter__pdfViewer');
+    if (pdfViewer) {
+      pdfViewer.addEventListener('scroll', onScroll);
+    }
+
+    // Cleanup scroll event listener
+    return () => {
+      if (pdfViewer) {
+        pdfViewer.removeEventListener('scroll', onScroll);
+      }
+    };
   }, [id]);
 
   const onDocumentLoadSuccess = (pdf) => {
@@ -268,6 +281,7 @@ function BookViewer() {
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
             <PdfHighlighter
+              ref={pdfViewerRef}
               pdfDocument={pdfDocument}
               onDocumentLoadSuccess={onDocumentLoadSuccess}
               enableAreaSelection={(event) => event.altKey}
