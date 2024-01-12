@@ -14,13 +14,12 @@ function BookViewer() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
-  const [scrollTo, setScrollTo] = useState(null);
+  const [highlightIdOfScrolledTo, setHighlightIdOfScrolledTo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [highlightToDelete, setHighlightToDelete] = useState(null);
   const navigate = useNavigate();
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [sidebarVisible, setSidebarVisible] = useState(false); 
-  const pdfHighlighterContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
@@ -46,31 +45,6 @@ function BookViewer() {
     fetchHighlights();
   }, [id]);
 
-  useEffect(() => {
-    const handleScroll = (event) => {
-      const currentScrollPosition = event.target.scrollTop;
-      console.log('Scroll position:', currentScrollPosition);
-      if (scrollPosition !== currentScrollPosition) {
-        setScrollPosition(currentScrollPosition);
-        axios.put(`http://localhost:3001/books/${id}/scrollPosition`, { scrollPosition: currentScrollPosition }, { withCredentials: true })
-          .catch(error => {
-            console.error('Error updating scroll position:', error);
-          });
-      }
-    };
-
-    const pdfHighlighterContainer = pdfHighlighterContainerRef.current;
-    if (pdfHighlighterContainer) {
-      pdfHighlighterContainer.addEventListener('scroll', handleScroll);
-    }
-
-    return () => {
-      if (pdfHighlighterContainer) {
-        pdfHighlighterContainer.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [scrollPosition, id]);
-
   const onDocumentLoadSuccess = (pdf) => {
     if (scrollPosition) {
       const viewer = document.querySelector('.react-pdf__Document');
@@ -81,9 +55,7 @@ function BookViewer() {
   };
 
   const onScroll = (event) => {
-    console.log('Scrolling');
     const currentScrollPosition = event.target.scrollTop;
-    console.log('Scroll position:', currentScrollPosition);
     if (scrollPosition !== currentScrollPosition) {
       setScrollPosition(currentScrollPosition);
       axios.put(`http://localhost:3001/books/${id}/scrollPosition`, { scrollPosition: currentScrollPosition }, { withCredentials: true })
@@ -242,13 +214,12 @@ function BookViewer() {
   };
 
   const scrollToHighlight = (highlightId) => {
-    setScrollTo(highlightId);
+    setHighlightIdOfScrolledTo(highlightId);
   };
-  const pdfHighlighterContainerRef = useRef(null);
 
   useEffect(() => {
-    if (scrollTo) {
-      const highlight = highlights.find(h => h._id === scrollTo);
+    if (highlightIdOfScrolledTo) {
+      const highlight = highlights.find(h => h._id === highlightIdOfScrolledTo);
       if (highlight) {
         const pageNumber = highlight.position.pageNumber;
         const highlightElement = document.querySelector(`[id="${highlight._id}"]`);
@@ -265,9 +236,9 @@ function BookViewer() {
           }
         }
       }
-      setScrollTo(null);
+      setHighlightIdOfScrolledTo(null);
     }
-  }, [scrollTo, highlights]);
+  }, [highlightIdOfScrolledTo, highlights]);
 
   return (
     <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
@@ -293,16 +264,13 @@ function BookViewer() {
         </AppBar>
       <div style={{ display: 'flex', flexGrow: 1}}>
       {pdfDocument && highlights && (
-        <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
+        <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>} >
           {(pdfDocument) => (
             <PdfHighlighter
               pdfDocument={pdfDocument}
               onDocumentLoadSuccess={onDocumentLoadSuccess}
-              scrollRef={(scrollTo) => {
-                pdfHighlighterContainerRef.current = scrollTo;
-              }}
-              scrollRef={() => {console.log('Scroll ref');}}
               enableAreaSelection={(event) => event.altKey}
+              scrollRef={(scrollTo) => {}}
               onHighlight={addHighlight}
               onUpdateHighlight={updateHighlight}
               onSelectionFinished={onSelectionFinished}
