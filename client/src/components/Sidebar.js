@@ -20,16 +20,22 @@ function Sidebar({ highlights }) {
         Highlights
       </Typography>
       <Divider />
+function Sidebar({ highlights, onHighlightClick }) {
+  ...
+  return (
+    <div style={{ width: '250px', overflowY: 'auto' }}>
+      ...
       <List>
         {sortedHighlights.map((highlight, index) => (
           <React.Fragment key={highlight._id}>
-            <ListItem alignItems="flex-start">
+            <ListItem alignItems="flex-start" button onClick={() => onHighlightClick(highlight._id)}>
               <ListItemText
                 primary={`Page ${highlight.position.pageNumber}`}
                 secondary={highlight.content.text}
               />
             </ListItem>
             {index < highlights.length - 1 && <Divider />}
+            ...
           </React.Fragment>
         ))}
       </List>
