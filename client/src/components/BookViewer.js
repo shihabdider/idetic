@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
 import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
@@ -12,6 +13,7 @@ function BookViewer() {
   const scrollRef = useRef(null);
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
+  const scrollRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -45,6 +47,19 @@ function BookViewer() {
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
+
+  useEffect(() => {
+    const scrollableContainer = scrollRef.current;
+    if (scrollableContainer) {
+      const handleScroll = (event) => {
+        onScroll(event);
+      };
+      scrollableContainer.addEventListener('scroll', handleScroll);
+      return () => {
+        scrollableContainer.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const scrollableContainer = scrollRef.current;
