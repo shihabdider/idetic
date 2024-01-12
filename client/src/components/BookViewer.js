@@ -11,6 +11,7 @@ import Sidebar from './Sidebar';
 function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
+  const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
   const [scrollTo, setScrollTo] = useState(null);
@@ -27,6 +28,7 @@ function BookViewer() {
         const pdfTitle = response.data.title;
         setPdfTitle(pdfTitle);
         const pdfPath = response.data.filePath;
+        setScrollPosition(response.data.scrollPosition || 0);
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
       } catch (error) {
@@ -247,6 +249,7 @@ function BookViewer() {
           {(pdfDocument) => (
             <PdfHighlighter
               pdfDocument={pdfDocument}
+            onDocumentLoadSuccess={onDocumentLoadSuccess}
               enableAreaSelection={(event) => event.altKey}
               onHighlight={addHighlight}
               onUpdateHighlight={updateHighlight}
@@ -261,6 +264,7 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
+      <div onScroll={updateScrollPosition} />
       </div>
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
