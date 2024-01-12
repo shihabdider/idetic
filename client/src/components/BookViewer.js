@@ -104,7 +104,11 @@ function BookViewer() {
       });
   };
 
-  const renderDeletePopover = () => (
+  const generateFlashcards = () => {
+    console.log('Generating flashcards');
+  }
+
+  const renderHighlightPopover = () => (
     <Popover
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
@@ -122,6 +126,13 @@ function BookViewer() {
         startIcon={<DeleteOutlineIcon />}
         onClick={() => {deleteHighlight(highlightToDelete._id); handlePopoverClose()}}
         color="error"
+        size="small"
+      >
+      </Button>
+      <Button
+        size="small"
+        startIcon={<MenuIcon />}
+        onClick={() => {generateFlashcards(); handlePopoverClose()}}
       >
       </Button>
     </Popover>
@@ -153,26 +164,30 @@ function BookViewer() {
   const highlightTransform = (highlight, index, setTip, hideTip, viewportToScaled, screenshot, isScrolledTo) => {
     const isTextHighlight = !Boolean(highlight.content.image);
     const component = isTextHighlight ? (
-      <Highlight
-        key={highlight._id}
-        isScrolledTo={isScrolledTo}
-        position={highlight.position}
-        comment={highlight.comment}
-        onClick={(e) => handlePopoverOpen(e, highlight)}
-        onMouseLeave={handlePopoverClose}
-      />
+      <div id={highlight._id}>
+        <Highlight
+          key={highlight._id}
+          isScrolledTo={isScrolledTo}
+          position={highlight.position}
+          comment={highlight.comment}
+          onClick={(e) => handlePopoverOpen(e, highlight)}
+          onMouseLeave={handlePopoverClose}
+        />
+      </div>
     ) : (
-      <AreaHighlight
-        key={highlight._id}
-        highlight={highlight}
-        onChange={(boundingRect) => {
-          updateHighlight(highlight, {
-            boundingRect: viewportToScaled(boundingRect),
-            pageNumber: highlight.position.pageNumber
-          }, { image: screenshot(boundingRect)});
-        }}
-        onClick={(e) => handlePopoverOpen(e, highlight)}
-      />
+      <div id={highlight._id}>
+          <AreaHighlight
+            key={highlight._id}
+            highlight={highlight}
+            onChange={(boundingRect) => {
+              updateHighlight(highlight, {
+                boundingRect: viewportToScaled(boundingRect),
+                pageNumber: highlight.position.pageNumber
+              }, { image: screenshot(boundingRect)});
+            }}
+            onClick={(e) => handlePopoverOpen(e, highlight)}
+          />
+      </div>
     );
     return component
   };
@@ -182,25 +197,27 @@ function BookViewer() {
   };
 
   useEffect(() => {
-useEffect(() => {
-  if (scrollTo) {
-    const highlight = highlights.find(h => h._id === scrollTo);
-    if (highlight) {
-      const pageNumber = highlight.position.pageNumber;
-      const pageElement = document.querySelector(`div[data-page-number="${pageNumber}"]`);
-      const highlightElement = document.querySelector(`[data-highlight-id="${highlight._id}"]`);
-      if (pageElement && highlightElement) {
-        const highlightRect = highlightElement.getBoundingClientRect();
-        window.scrollTo({
-          top: highlightRect.top + window.pageYOffset - (window.innerHeight / 2) + (highlightRect.height / 2),
-          behavior: 'smooth'
-        });
+    if (scrollTo) {
+      const highlight = highlights.find(h => h._id === scrollTo);
+      if (highlight) {
+        const pageNumber = highlight.position.pageNumber;
+        const highlightElement = document.querySelector(`[id="${highlight._id}"]`);
+        console.log(highlightElement);
+        const pageElement = document.querySelector(`div[data-page-number="${pageNumber}"]`);
+        if (pageElement) {
+          pageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (highlightElement) {
+          const firstHighlightPart = highlightElement.querySelector('.Highlight__part');
+          console.log(firstHighlightPart);
+          if (firstHighlightPart) {
+            firstHighlightPart.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
       }
-    }
-    setScrollTo(null);
       setScrollTo(null);
-  }
-}, [scrollTo, highlights]);
+    }
+  }, [scrollTo, highlights]);
 
   return (
     <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
@@ -251,7 +268,7 @@ useEffect(() => {
           <Sidebar highlights={highlights} onHighlightClick={scrollToHighlight} />
         </div>
       )}
-      {renderDeletePopover()}
+      {renderHighlightPopover()}
     </div>
   );
 }
