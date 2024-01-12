@@ -24,11 +24,11 @@ function Sidebar({ highlights, onHighlightClick }) {
         {sortedHighlights.map((highlight) => (
           <React.Fragment key={highlight._id}>
             <ListItem alignItems="flex-start" button onClick={() => onHighlightClick(highlight._id)}>
-              <div style={{ height: '64px', overflow: 'hidden' }}>
+              <div style={{ height: '128px', overflow: 'hidden' }}>
                 <ListItemText
                   primary={`Page ${highlight.position.pageNumber}`}
                   secondary={
-                    <Typography noWrap>
+                    <Typography>
                       {highlight.content.text}
                     </Typography>
                   }
