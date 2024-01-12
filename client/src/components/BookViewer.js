@@ -182,19 +182,22 @@ function BookViewer() {
   };
 
   useEffect(() => {
+useEffect(() => {
   if (scrollTo) {
     const highlight = highlights.find(h => h._id === scrollTo);
     if (highlight) {
       const pageNumber = highlight.position.pageNumber;
       const pageElement = document.querySelector(`div[data-page-number="${pageNumber}"]`);
-      if (pageElement) {
-        const pageRect = pageElement.getBoundingClientRect();
+      const highlightElement = document.querySelector(`[data-highlight-id="${highlight._id}"]`);
+      if (pageElement && highlightElement) {
+        const highlightRect = highlightElement.getBoundingClientRect();
         window.scrollTo({
-          top: pageRect.top + window.pageYOffset - (window.innerHeight / 2),
+          top: highlightRect.top + window.pageYOffset - (window.innerHeight / 2) + (highlightRect.height / 2),
           behavior: 'smooth'
         });
       }
     }
+    setScrollTo(null);
       setScrollTo(null);
   }
 }, [scrollTo, highlights]);
