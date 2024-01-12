@@ -9,6 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Sidebar from './Sidebar';
 
 function BookViewer() {
+  const scrollRef = useRef(null);
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -44,6 +45,19 @@ function BookViewer() {
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
+
+  useEffect(() => {
+    const scrollableContainer = scrollRef.current;
+    if (scrollableContainer) {
+      const handleScroll = (event) => {
+        onScroll(event);
+      };
+      scrollableContainer.addEventListener('scroll', handleScroll);
+      return () => {
+        scrollableContainer.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
 
   const onDocumentLoadSuccess = (pdf) => {
     if (scrollPosition) {
