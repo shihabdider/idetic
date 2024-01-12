@@ -24,15 +24,20 @@ function Sidebar({ highlights, onHighlightClick }) {
         {sortedHighlights.map((highlight) => (
           <React.Fragment key={highlight._id}>
             <ListItem alignItems="flex-start" button onClick={() => onHighlightClick(highlight._id)}>
-              <div style={{ height: '128px', overflow: 'hidden' }}>
-                <ListItemText
-                  primary={`Page ${highlight.position.pageNumber}`}
-                  secondary={
-                    <Typography>
-                      {highlight.content.text}
-                    </Typography>
-                  }
-                />
+              <div style={{ height: '128px', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                {highlight.content.text && (
+                  <ListItemText
+                    primary={`Page ${highlight.position.pageNumber}`}
+                    secondary={
+                      <Typography noWrap>
+                        {highlight.content.text}
+                      </Typography>
+                    }
+                  />
+                )}
+                {highlight.content.image && (
+                  <img src={`http://localhost:3001/${highlight.content.image}`} alt="Highlight" style={{ maxWidth: '100%', maxHeight: '100px' }} />
+                )}
               </div>
             </ListItem>
             <Divider />
