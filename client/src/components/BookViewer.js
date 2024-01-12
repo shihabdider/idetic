@@ -11,6 +11,7 @@ import Sidebar from './Sidebar';
 function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
+  const [scrollPosition, setScrollPosition] = useState(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -28,6 +29,7 @@ function BookViewer() {
         const pdfTitle = response.data.title;
         setPdfTitle(pdfTitle);
         const pdfPath = response.data.filePath;
+        setScrollPosition(response.data.scrollPosition);
         setScrollPosition(response.data.scrollPosition || 0);
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
@@ -44,6 +46,27 @@ function BookViewer() {
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
+
+  const onDocumentLoadSuccess = (pdf) => {
+    if (scrollPosition) {
+      const viewer = document.querySelector('.react-pdf__Document');
+      if (viewer) {
+        viewer.scrollTop = scrollPosition;
+      }
+    }
+  };
+
+  const onScroll = (event) => {
+    const currentScrollPosition = event.target.scrollTop;
+    if (scrollPosition !== currentScrollPosition) {
+      setScrollPosition(currentScrollPosition);
+      // Debounce this call if necessary
+      axios.put(`http://localhost:3001/books/${id}/scrollPosition`, { scrollPosition: currentScrollPosition }, { withCredentials: true })
+        .catch(error => {
+          console.error('Error updating scroll position:', error);
+        });
+    }
+  };
 
   const goBackToLibrary = () => {
     navigate('/');
@@ -250,6 +273,7 @@ function BookViewer() {
             <PdfHighlighter
               pdfDocument={pdfDocument}
             onDocumentLoadSuccess={onDocumentLoadSuccess}
+            onDocumentLoadSuccess={onDocumentLoadSuccess}
               enableAreaSelection={(event) => event.altKey}
               onHighlight={addHighlight}
               onUpdateHighlight={updateHighlight}
@@ -264,6 +288,9 @@ function BookViewer() {
           )}
         </PdfLoader>
       )}
+      <div style={{ height: '100%', overflow: 'auto' }} onScroll={onScroll}>
+        {/* The rest of your content */}
+      </div>
       <div onScroll={updateScrollPosition} />
       </div>
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
