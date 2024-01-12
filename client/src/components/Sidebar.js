@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
 
-function Sidebar({ highlights }) {
-  const { onHighlightClick } = props;
+function Sidebar({ highlights, onHighlightClick }) {
   const sortHighlights = (highlights) => {
     return highlights.sort((a, b) => {
       if (a.position.pageNumber === b.position.pageNumber) {
