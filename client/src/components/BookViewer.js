@@ -68,8 +68,10 @@ function BookViewer() {
     const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
     if (pdfHighlighterElement) {
       pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+    } else {
+      console.log('PdfHighlighter element not found');
     }
-  }, [pdfDocument]); // This effect depends on the pdfDocument state, which changes once the document is loaded.
+  }, [pdfDocument]);
 
   useEffect(() => {
     const saveScrollPosition = _.debounce(async () => {
