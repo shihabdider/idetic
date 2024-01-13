@@ -11,7 +11,6 @@ import Sidebar from './Sidebar';
 function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
-  const [currentScrollPosition, setCurrentScrollPosition] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -29,9 +28,7 @@ function BookViewer() {
         const pdfTitle = response.data.title;
         setPdfTitle(pdfTitle);
         const pdfPath = response.data.filePath;
-        const storedScrollPosition = response.data.scrollPosition || 0;
-        setScrollPosition(storedScrollPosition);
-        setCurrentScrollPosition(storedScrollPosition);
+        setScrollPosition(response.data.scrollPosition || 0);
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
       } catch (error) {
@@ -47,21 +44,6 @@ function BookViewer() {
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
-
-  useEffect(() => {
-    const saveScrollPosition = async () => {
-      try {
-        await axios.patch(`http://localhost:3001/books/${id}/scroll-position`, { scrollPosition: currentScrollPosition }, { withCredentials: true });
-      } catch (error) {
-        console.error('Error saving scroll position:', error);
-      }
-    };
-
-    if (currentScrollPosition !== scrollPosition) {
-      saveScrollPosition();
-      setScrollPosition(currentScrollPosition);
-    }
-  }, [currentScrollPosition, id, scrollPosition]);
 
   const goBackToLibrary = () => {
     navigate('/');
@@ -173,11 +155,6 @@ function BookViewer() {
     setSidebarVisible(!sidebarVisible);
   };
 
-  const onScrollChange = (scrollTo) => {
-    setCurrentScrollPosition(scrollTo().scrollTop);
-  };
-
-
   const onSelectionFinished = (
     position,
     content
@@ -273,10 +250,6 @@ function BookViewer() {
             <PdfHighlighter
               pdfDocument={pdfDocument}
               enableAreaSelection={(event) => event.altKey}
-              scrollRef={(scrollTo) => {
-                scrollTo({ scrollTop: scrollPosition });
-                onScrollChange(scrollTo);
-              }}
               onUpdateHighlight={updateHighlight}
               onSelectionFinished={onSelectionFinished}
               highlightTransform={highlightTransform}
