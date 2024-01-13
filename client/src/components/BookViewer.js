@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
@@ -220,6 +220,7 @@ function BookViewer() {
     }
   }, [highlightIdOfScrolledTo, highlights]);
 
+
   return (
     <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
         <AppBar position="fixed" sx={{
@@ -250,15 +251,10 @@ function BookViewer() {
               pdfDocument={pdfDocument}
               enableAreaSelection={(event) => event.altKey}
               scrollRef={(scrollTo) => {}}
-              onHighlight={addHighlight}
               onUpdateHighlight={updateHighlight}
               onSelectionFinished={onSelectionFinished}
               highlightTransform={highlightTransform}
               highlights={highlights}
-              Tip={Tip}
-              Highlight={Highlight}
-              Popup={Popup}
-              AreaHighlight={AreaHighlight}
             />
           )}
         </PdfLoader>
