@@ -5,6 +5,7 @@ import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 
 import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import _ from 'lodash';
 import MenuIcon from '@mui/icons-material/Menu'; 
 import Sidebar from './Sidebar';
 
@@ -56,16 +57,26 @@ function BookViewer() {
 
     const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
 
-    if (pdfHighlighterElement) {
-      pdfHighlighterElement.addEventListener('scroll', handleScroll);
-    }
+    const handleScroll = _.debounce((event) => {
+      const currentScrollPosition = event.target.scrollTop;
+      setScrollPosition(currentScrollPosition);
+    }, 500);
 
-    return () => {
-      if (pdfHighlighterElement) {
-        pdfHighlighterElement.removeEventListener('scroll', handleScroll);
+    pdfHighlighterElement?.addEventListener('scroll', handleScroll);
+
+    return () => pdfHighlighterElement?.removeEventListener('scroll', handleScroll);
+  }, [setScrollPosition]);
+
+  useEffect(() => {
+    const saveScrollPosition = _.debounce(async () => {
+      try {
+        await axios.patch(`http://localhost:3001/books/${id}/scroll-position`, { scrollPosition }, { withCredentials: true });
+      } catch (error) {
+        console.error('Error updating scroll position:', error);
       }
-    };
-  }, []);
+    }, 2000);
+    saveScrollPosition();
+  }, [scrollPosition, id]);
 
   const addHighlight = (highlight) => {
     console.log('Saving highlight', highlight);
