@@ -44,9 +44,22 @@ function BookViewer() {
       setHighlights(response.data);
     };
 
+  useEffect(() => {
+    const fetchPdfDocument = async () => {
+      // ... existing code ...
+    };
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
+
+  useEffect(() => {
+    if (pdfDocument && pdfHighlighterRef.current) {
+      const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
+      if (pdfHighlighterElement) {
+        pdfHighlighterElement.scrollTop = scrollPosition;
+      }
+    }
+  }, [pdfDocument, scrollPosition]);
 
   useEffect(() => {
     const updateScrollPosition = async () => {
@@ -55,6 +68,7 @@ function BookViewer() {
       } catch (error) {
         console.error('Error updating scroll position:', error);
       }
+      // ... existing code ...
     };
 
     if (currentScrollPosition !== scrollPosition) {
@@ -266,6 +280,20 @@ function BookViewer() {
           </Toolbar>
         </AppBar>
       <div style={{ display: 'flex', flexGrow: 1}}>
+  // ... other existing code ...
+
+  const onScroll = () => {
+    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
+    if (pdfHighlighterElement) {
+      setCurrentScrollPosition(pdfHighlighterElement.scrollTop);
+    }
+  };
+
+  // ... other existing code ...
+
+  return (
+    <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
+      {/* ... existing code ... */}
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
@@ -277,11 +305,13 @@ function BookViewer() {
               highlightTransform={highlightTransform}
               highlights={highlights}
               scrollPosition={scrollPosition}
-              onScrollChange={onScrollChange}
+              onScrollChange={onScroll}
+              ref={pdfHighlighterRef}
             />
           )}
         </PdfLoader>
       )}
+      {/* ... existing code ... */}
       </div>
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
