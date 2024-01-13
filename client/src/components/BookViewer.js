@@ -65,6 +65,13 @@ function BookViewer() {
   }, [id]);
 
   useEffect(() => {
+    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
+    if (pdfHighlighterElement) {
+      pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+    }
+  }, [pdfDocument]); // This effect depends on the pdfDocument state, which changes once the document is loaded.
+
+  useEffect(() => {
     const saveScrollPosition = _.debounce(async () => {
       try {
         await axios.patch(`http://localhost:3001/books/${id}/scroll-position`, { scrollPosition }, { withCredentials: true });
@@ -72,6 +79,7 @@ function BookViewer() {
         console.error('Error updating scroll position:', error);
       }
     }, 500);
+    saveScrollPosition();
     saveScrollPosition();
   }, [scrollPosition, id]);
 
