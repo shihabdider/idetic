@@ -11,7 +11,6 @@ import Sidebar from './Sidebar';
 function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
-  const [currentScrollPosition, setCurrentScrollPosition] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -29,9 +28,7 @@ function BookViewer() {
         const pdfTitle = response.data.title;
         setPdfTitle(pdfTitle);
         const pdfPath = response.data.filePath;
-        const initialScrollPosition = response.data.scrollPosition || 0;
-        setScrollPosition(initialScrollPosition);
-        setCurrentScrollPosition(initialScrollPosition);
+        setScrollPosition(response.data.scrollPosition || 0);
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
       } catch (error) {
@@ -44,42 +41,31 @@ function BookViewer() {
       setHighlights(response.data);
     };
 
-  useEffect(() => {
-    const fetchPdfDocument = async () => {
-      // ... existing code ...
-    };
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
 
-  useEffect(() => {
-    if (pdfDocument && pdfHighlighterRef.current) {
-      const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
-      if (pdfHighlighterElement) {
-        pdfHighlighterElement.scrollTop = scrollPosition;
-      }
-    }
-  }, [pdfDocument, scrollPosition]);
-
-  useEffect(() => {
-    const updateScrollPosition = async () => {
-      try {
-        await axios.patch(`http://localhost:3001/books/${id}/scroll-position`, { scrollPosition: currentScrollPosition }, { withCredentials: true });
-      } catch (error) {
-        console.error('Error updating scroll position:', error);
-      }
-      // ... existing code ...
-    };
-
-    if (currentScrollPosition !== scrollPosition) {
-      updateScrollPosition();
-      setScrollPosition(currentScrollPosition);
-    }
-  }, [currentScrollPosition, id, scrollPosition]);
-
   const goBackToLibrary = () => {
     navigate('/');
   };
+
+  useEffect(() => {
+    const handleScroll = (event) => {
+      console.log('Scrolling');
+    };
+
+    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
+
+    if (pdfHighlighterElement) {
+      pdfHighlighterElement.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (pdfHighlighterElement) {
+        pdfHighlighterElement.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
 
   const addHighlight = (highlight) => {
     console.log('Saving highlight', highlight);
@@ -187,10 +173,6 @@ function BookViewer() {
     setSidebarVisible(!sidebarVisible);
   };
 
-  const onScrollChange = (scrollPosition) => {
-    setCurrentScrollPosition(scrollPosition);
-  };
-
   const onSelectionFinished = (
     position,
     content
@@ -198,6 +180,7 @@ function BookViewer() {
     const highlight = { content, position };
     addHighlight(highlight);
   };
+
 
   const highlightTransform = (highlight, index, viewportToScaled, screenshot) => {
     const isTextHighlight = !Boolean(highlight.content.image);
@@ -280,20 +263,6 @@ function BookViewer() {
           </Toolbar>
         </AppBar>
       <div style={{ display: 'flex', flexGrow: 1}}>
-  // ... other existing code ...
-
-  const onScroll = () => {
-    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
-    if (pdfHighlighterElement) {
-      setCurrentScrollPosition(pdfHighlighterElement.scrollTop);
-    }
-  };
-
-  // ... other existing code ...
-
-  return (
-    <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
-      {/* ... existing code ... */}
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
@@ -304,14 +273,10 @@ function BookViewer() {
               onSelectionFinished={onSelectionFinished}
               highlightTransform={highlightTransform}
               highlights={highlights}
-              scrollPosition={scrollPosition}
-              onScrollChange={onScroll}
-              ref={pdfHighlighterRef}
             />
           )}
         </PdfLoader>
       )}
-      {/* ... existing code ... */}
       </div>
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
