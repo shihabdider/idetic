@@ -11,6 +11,7 @@ import Sidebar from './Sidebar';
 function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
+  const [currentScrollPosition, setCurrentScrollPosition] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -28,7 +29,9 @@ function BookViewer() {
         const pdfTitle = response.data.title;
         setPdfTitle(pdfTitle);
         const pdfPath = response.data.filePath;
-        setScrollPosition(response.data.scrollPosition || 0);
+        const initialScrollPosition = response.data.scrollPosition || 0;
+        setScrollPosition(initialScrollPosition);
+        setCurrentScrollPosition(initialScrollPosition);
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
       } catch (error) {
@@ -44,6 +47,21 @@ function BookViewer() {
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
+
+  useEffect(() => {
+    const updateScrollPosition = async () => {
+      try {
+        await axios.patch(`http://localhost:3001/books/${id}/scroll-position`, { scrollPosition: currentScrollPosition }, { withCredentials: true });
+      } catch (error) {
+        console.error('Error updating scroll position:', error);
+      }
+    };
+
+    if (currentScrollPosition !== scrollPosition) {
+      updateScrollPosition();
+      setScrollPosition(currentScrollPosition);
+    }
+  }, [currentScrollPosition, id, scrollPosition]);
 
   const goBackToLibrary = () => {
     navigate('/');
@@ -155,6 +173,10 @@ function BookViewer() {
     setSidebarVisible(!sidebarVisible);
   };
 
+  const onScrollChange = (scrollPosition) => {
+    setCurrentScrollPosition(scrollPosition);
+  };
+
   const onSelectionFinished = (
     position,
     content
@@ -254,6 +276,8 @@ function BookViewer() {
               onSelectionFinished={onSelectionFinished}
               highlightTransform={highlightTransform}
               highlights={highlights}
+              scrollPosition={scrollPosition}
+              onScrollChange={onScrollChange}
             />
           )}
         </PdfLoader>
