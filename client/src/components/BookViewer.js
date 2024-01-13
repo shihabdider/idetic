@@ -51,21 +51,18 @@ function BookViewer() {
   };
 
   useEffect(() => {
-    const handleScroll = (event) => {
-      console.log('Scrolling');
-    };
-
-    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
-
     const handleScroll = _.debounce((event) => {
       const currentScrollPosition = event.target.scrollTop;
       setScrollPosition(currentScrollPosition);
-    }, 500);
+      console.log('Scroll position:', currentScrollPosition);
+    }, 100);
+
+    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
 
     pdfHighlighterElement?.addEventListener('scroll', handleScroll);
 
     return () => pdfHighlighterElement?.removeEventListener('scroll', handleScroll);
-  }, [setScrollPosition]);
+  }, [id]);
 
   useEffect(() => {
     const saveScrollPosition = _.debounce(async () => {
@@ -74,7 +71,7 @@ function BookViewer() {
       } catch (error) {
         console.error('Error updating scroll position:', error);
       }
-    }, 2000);
+    }, 500);
     saveScrollPosition();
   }, [scrollPosition, id]);
 
@@ -191,7 +188,6 @@ function BookViewer() {
     const highlight = { content, position };
     addHighlight(highlight);
   };
-
 
   const highlightTransform = (highlight, index, viewportToScaled, screenshot) => {
     const isTextHighlight = !Boolean(highlight.content.image);
