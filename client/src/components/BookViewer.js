@@ -12,6 +12,7 @@ import Sidebar from './Sidebar';
 function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
+  const pdfHighlighterRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -62,33 +63,16 @@ function BookViewer() {
     pdfHighlighterElement?.addEventListener('scroll', handleScroll);
 
     return () => pdfHighlighterElement?.removeEventListener('scroll', handleScroll);
-  }, [id]);
+  }, [setScrollPosition]);
 
   useEffect(() => {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (!mutation.addedNodes) return;
-
-        for (let i = 0; i < mutation.addedNodes.length; i++) {
-          // Check if the added node is the PdfHighlighter element
-          if (mutation.addedNodes[i].classList.contains('PdfHighlighter')) {
-            mutation.addedNodes[i].scrollTo({ top: scrollPosition, behavior: 'smooth' });
-            observer.disconnect(); // Stop observing after scrolling
-          }
-        }
-      });
-    });
-
-    const container = document.querySelector('#pdf-highlighter-container');
-    if (container) {
-      observer.observe(container, {
-        childList: true,
-        subtree: true,
-      });
+    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
+    if (pdfHighlighterElement) {
+      pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+    } else {
+      console.log('PdfHighlighter element not found');
     }
-
-    return () => observer.disconnect();
-  }, [scrollPosition]);
+  }, [setScrollPosition]);
 
   useEffect(() => {
     const saveScrollPosition = _.debounce(async () => {
@@ -98,7 +82,6 @@ function BookViewer() {
         console.error('Error updating scroll position:', error);
       }
     }, 500);
-    saveScrollPosition();
     saveScrollPosition();
   }, [scrollPosition, id]);
 
