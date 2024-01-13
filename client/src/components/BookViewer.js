@@ -65,13 +65,30 @@ function BookViewer() {
   }, [id]);
 
   useEffect(() => {
-    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
-    if (pdfHighlighterElement) {
-      pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
-    } else {
-      console.log('PdfHighlighter element not found');
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (!mutation.addedNodes) return;
+
+        for (let i = 0; i < mutation.addedNodes.length; i++) {
+          // Check if the added node is the PdfHighlighter element
+          if (mutation.addedNodes[i].classList.contains('PdfHighlighter')) {
+            mutation.addedNodes[i].scrollTo({ top: scrollPosition, behavior: 'smooth' });
+            observer.disconnect(); // Stop observing after scrolling
+          }
+        }
+      });
+    });
+
+    const container = document.querySelector('#pdf-highlighter-container');
+    if (container) {
+      observer.observe(container, {
+        childList: true,
+        subtree: true,
+      });
     }
-  }, [pdfDocument]);
+
+    return () => observer.disconnect();
+  }, [scrollPosition]);
 
   useEffect(() => {
     const saveScrollPosition = _.debounce(async () => {
