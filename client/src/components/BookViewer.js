@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import * as pdfjsLib from 'pdfjs-dist/build/pdf';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf';
+import { GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf.worker';
+GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.js`;
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
