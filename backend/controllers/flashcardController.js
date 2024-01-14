@@ -1,5 +1,7 @@
 const Flashcard = require('../models/flashcard');
 
+const { generateFlashcards } = require('../utils/generateFlashcard');
+
 exports.listFlashcards = async (req, res) => {
   try {
     const flashcards = await Flashcard.find({ userId: req.user._id });
@@ -64,6 +66,16 @@ exports.exportFlashcards = async (req, res) => {
     res.header('Content-Type', 'text/csv');
     res.attachment('flashcards.csv');
     res.send(csv);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+exports.generateFlashcardsWithGPT = async (req, res) => {
+  try {
+    const highlight = req.body.highlight;
+    const page = req.body.page;
+    const flashcards = await generateFlashcards(highlight, page);
+    res.json(JSON.parse(flashcards));
   } catch (error) {
     res.status(500).send(error);
   }
