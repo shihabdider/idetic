@@ -229,7 +229,16 @@ function BookViewer() {
   };
 
   const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
+    const newSidebarVisible = !sidebarVisible;
+    setSidebarVisible(newSidebarVisible);
+    const pdfViewerElement = document.querySelector('.pdf-viewer-container');
+    if (pdfViewerElement) {
+      if (newSidebarVisible) {
+        pdfViewerElement.style.transform = 'translateX(-250px)';
+      } else {
+        pdfViewerElement.style.transform = 'translateX(0)';
+      }
+    }
   };
 
   const onSelectionFinished = (
@@ -321,6 +330,7 @@ function BookViewer() {
           </Toolbar>
         </AppBar>
       <div style={{ display: 'flex', flexGrow: 1}}>
+      <div className="pdf-viewer-container" style={{ display: 'flex', flexGrow: 1, transition: 'transform 0.3s ease-in-out' }}>
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
@@ -339,7 +349,7 @@ function BookViewer() {
       </div>
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
-        <div style={{ width: '250px', marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: '250px', marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column', zIndex: 1000 }}>
           <Sidebar highlights={highlights} onHighlightClick={scrollToHighlight} />
         </div>
       )}

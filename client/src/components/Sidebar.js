@@ -15,7 +15,7 @@ function Sidebar({ highlights, onHighlightClick }) {
   const sortedHighlights = sortHighlights(highlights);
 
   return (
-    <div style={{ width: '250px', overflowY: 'auto' }}>
+    <div style={{ width: '250px', overflowY: 'auto', position: 'relative', zIndex: 1000 }}>
       <Typography variant="h6" sx={{ my: 2, mx: 2 }}>
         Highlights
       </Typography>
