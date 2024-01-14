@@ -162,6 +162,7 @@ function BookViewer() {
       }}
     >
       <Button
+        title="Delete Highlight"
         startIcon={<DeleteOutlineIcon />}
         onClick={() => {deleteHighlight(highlightToDelete._id); handlePopoverClose()}}
         color="error"
@@ -169,6 +170,7 @@ function BookViewer() {
       >
       </Button>
       <Button
+        title="Generate Flashcard"
         size="small"
         startIcon={<QuizIcon />}
         onClick={() => {generateFlashcards(); handlePopoverClose()}}
