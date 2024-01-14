@@ -18,3 +18,4 @@ router.delete('/:id', isAuthenticated, flashcardController.deleteFlashcard);
 router.post('/generate-with-gpt', isAuthenticated, flashcardController.generateFlashcardsWithGPT);
 
 module.exports = router;
+router.get('/book/:bookId', isAuthenticated, flashcardController.listFlashcardsByBook);

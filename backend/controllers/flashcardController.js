@@ -81,3 +81,11 @@ exports.generateFlashcardsWithGPT = async (req, res) => {
     res.status(500).send(error);
   }
 };
+exports.listFlashcardsByBook = async (req, res) => {
+  try {
+    const flashcards = await Flashcard.find({ bookId: req.params.bookId, userId: req.user._id });
+    res.json(flashcards);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
