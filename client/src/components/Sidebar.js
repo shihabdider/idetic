@@ -29,7 +29,7 @@ function Sidebar({ highlights, onHighlightClick }) {
                   <ListItemText
                     primary={`Page ${highlight.position.pageNumber}`}
                     secondary={
-                      <Typography noWrap>
+                      <Typography>
                         {highlight.content.text}
                       </Typography>
                     }

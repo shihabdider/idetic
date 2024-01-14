@@ -23,7 +23,7 @@ function BookViewer() {
   const [highlights, setHighlights] = useState([]);
   const [highlightIdOfScrolledTo, setHighlightIdOfScrolledTo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [highlightToDelete, setHighlightToDelete] = useState(null);
+  const [selectedHighlight, setSelectedHighlight] = useState(null);
   const navigate = useNavigate();
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [sidebarVisible, setSidebarVisible] = useState(false); 
@@ -95,7 +95,8 @@ function BookViewer() {
   useEffect(() => {
     const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
     if (pdfHighlighterElement) {
-      pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+      console.log('Scrolling to position:', scrollPosition);
+      //pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
     } else {
       console.log('PdfHighlighter element not found');
     }
@@ -162,7 +163,7 @@ function BookViewer() {
     axios.delete(`http://localhost:3001/highlights/${highlightId}`, { withCredentials: true })
       .then(() => {
         setHighlights(highlights.filter(h => h._id !== highlightId));
-        setHighlightToDelete(null);
+        setSelectedHighlight(null);
       })
       .catch(error => {
         console.error('Error deleting highlight:', error);
@@ -172,11 +173,13 @@ function BookViewer() {
   const generateFlashcards = async (highlight) => {
     try {
       const pageText = await getPageText(highlight.position.pageNumber);
+      console.log('Page text:', pageText);
+      console.log('Highlight text:', highlight.content.text);
       const response = await axios.post('http://localhost:3001/flashcards/generate-with-gpt', {
         highlight: highlight.content.text,
         page: pageText
       }, { withCredentials: true });
-      console.log('Generated flashcards:', response.data);
+      console.log('Generated flashcards:', response.data.flashcards);
     } catch (error) {
       console.error('Error generating flashcards:', error);
     }
@@ -199,7 +202,7 @@ function BookViewer() {
       <Button
         title="Delete Highlight"
         startIcon={<DeleteOutlineIcon />}
-        onClick={() => {deleteHighlight(highlightToDelete._id); handlePopoverClose()}}
+        onClick={() => {deleteHighlight(selectedHighlight._id); handlePopoverClose()}}
         color="error"
         size="small"
       >
@@ -208,7 +211,7 @@ function BookViewer() {
         title="Generate Flashcard"
         size="small"
         startIcon={<QuizIcon />}
-        onClick={() => {generateFlashcards(highlight); handlePopoverClose()}}
+        onClick={() => {generateFlashcards(selectedHighlight); handlePopoverClose()}}
       >
       </Button>
     </Popover>
@@ -217,12 +220,12 @@ function BookViewer() {
   const handlePopoverOpen = (event, highlight) => {
     console.log(event.currentTarget);
     setAnchorEl(event.currentTarget);
-    setHighlightToDelete(highlight);
+    setSelectedHighlight(highlight);
   };
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
-    setHighlightToDelete(null);
+    setSelectedHighlight(null);
   };
 
   const toggleSidebar = () => {
@@ -233,9 +236,6 @@ function BookViewer() {
     position,
     content
   ) => {
-    getPageText(position.pageNumber).then(text => {
-      console.log('page text:', text);
-    })
     const highlight = { content, position };
     addHighlight(highlight);
   };
