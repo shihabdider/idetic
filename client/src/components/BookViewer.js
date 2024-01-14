@@ -196,7 +196,8 @@ function BookViewer() {
       const response = await axios.post('http://localhost:3001/flashcards', {
         frontText: flashcard.question,
         backText: flashcard.answer,
-        highlightId: flashcard.highlightId
+        highlightId: flashcard.highlightId,
+        bookId: id
       }, { withCredentials: true });
       console.log('Flashcard added:', response.data);
     } catch (error) {
@@ -211,14 +212,6 @@ function BookViewer() {
     } catch (error) {
       console.error('Error deleting flashcard:', error);
     }
-  }
-
-  const addFlashcard = async (flashcard) => {
-    // add the flashcard to the database
-  }
-
-  const deleteFlashcard = async (flashcardId) => {
-    // delete the flashcard from the database
   }
 
   const renderHighlightPopover = () => (
