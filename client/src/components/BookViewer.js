@@ -143,8 +143,17 @@ function BookViewer() {
       });
   };
 
-  const generateFlashcards = () => {
-    console.log('Generating flashcards');
+  const generateFlashcards = async (highlight) => {
+    try {
+      const pageText = "The entire text of the page where the highlight is found"; // Replace with actual page text retrieval logic
+      const response = await axios.post('http://localhost:3001/flashcards/generate-with-gpt', {
+        highlight: highlight.content.text,
+        page: pageText
+      }, { withCredentials: true });
+      console.log('Generated flashcards:', response.data);
+    } catch (error) {
+      console.error('Error generating flashcards:', error);
+    }
   }
 
   const renderHighlightPopover = () => (
@@ -173,7 +182,7 @@ function BookViewer() {
         title="Generate Flashcard"
         size="small"
         startIcon={<QuizIcon />}
-        onClick={() => {generateFlashcards(); handlePopoverClose()}}
+        onClick={() => {generateFlashcards(highlightToDelete); handlePopoverClose()}}
       >
       </Button>
     </Popover>
