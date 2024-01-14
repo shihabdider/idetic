@@ -15,5 +15,6 @@ router.post('/', isAuthenticated, flashcardController.createFlashcard);
 router.get('/:id', isAuthenticated, flashcardController.getFlashcard);
 router.put('/:id', isAuthenticated, flashcardController.updateFlashcard);
 router.delete('/:id', isAuthenticated, flashcardController.deleteFlashcard);
+router.post('/generate-with-gpt', isAuthenticated, flashcardController.generateFlashcardsWithGPT);
 
 module.exports = router;
