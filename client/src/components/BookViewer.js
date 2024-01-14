@@ -182,7 +182,7 @@ function BookViewer() {
         title="Generate Flashcard"
         size="small"
         startIcon={<QuizIcon />}
-        onClick={() => {generateFlashcards(highlightToDelete); handlePopoverClose()}}
+        onClick={() => {generateFlashcards(highlight); handlePopoverClose()}}
       >
       </Button>
     </Popover>
