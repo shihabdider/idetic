@@ -21,12 +21,40 @@ function TabPanel(props) {
     </div>
   );
 }
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import Button from '@mui/material/Button';
 
 function Sidebar({ highlights, flashcards, onHighlightClick }) {
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+  };
+
+  const exportFlashcards = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/flashcards/export`, {
+        responseType: 'blob', // Important
+        withCredentials: true
+      });
+      // Create a new Blob object using the response data of the onload object
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      // Create a link element, hide it, direct it towards the blob, and then 'click' it programatically
+      const a = document.createElement('a');
+      a.style = 'display: none';
+      document.body.appendChild(a);
+      // Create a DOMString representing the blob and point the link element towards it
+      const url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = 'flashcards.csv';
+      // programatically click the link to trigger the download
+      a.click();
+      // release the reference to the file by revoking the Object URL
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error exporting flashcards:', error);
+    }
   };
 
   const sortHighlights = (highlights) => {
@@ -74,6 +102,15 @@ function Sidebar({ highlights, flashcards, onHighlightClick }) {
       </List>
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<FileDownloadIcon />}
+          onClick={exportFlashcards}
+          style={{ margin: '10px' }}
+        >
+          Export as CSV
+        </Button>
         <List>
           {flashcards.map((flashcard) => (
             <React.Fragment key={flashcard._id}>
