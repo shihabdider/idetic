@@ -1,8 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
+import { List, ListItem, ListItemText, Divider, Typography, Tabs, Tab, Box } from '@mui/material';
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
 function Sidebar({ highlights, onHighlightClick }) {
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   const sortHighlights = (highlights) => {
     return highlights.sort((a, b) => {
       if (a.position.pageNumber === b.position.pageNumber) {
