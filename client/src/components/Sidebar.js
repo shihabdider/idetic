@@ -2,7 +2,33 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
 
+import { Tabs, Tab } from '@mui/material';
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <div>{children}</div>
+      )}
+    </div>
+  );
+}
+
 function Sidebar({ highlights, onHighlightClick }) {
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   const sortHighlights = (highlights) => {
     return highlights.sort((a, b) => {
       if (a.position.pageNumber === b.position.pageNumber) {
@@ -16,6 +42,11 @@ function Sidebar({ highlights, onHighlightClick }) {
 
   return (
     <div style={{ width: '250px', overflowY: 'auto' }}>
+      <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
+        <Tab label="Highlights" />
+        <Tab label="Flashcards" />
+      </Tabs>
+      <TabPanel value={tabValue} index={0}>
       <Typography variant="h6" sx={{ my: 2, mx: 2 }}>
         Highlights
       </Typography>
@@ -44,6 +75,10 @@ function Sidebar({ highlights, onHighlightClick }) {
           </React.Fragment>
         ))}
       </List>
+      </TabPanel>
+      <TabPanel value={tabValue} index={1}>
+        {/* Flashcards content will go here */}
+      </TabPanel>
     </div>
   );
 }
