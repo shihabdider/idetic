@@ -17,6 +17,7 @@ exports.createFlashcard = async (req, res) => {
       frontText: req.body.frontText,
       backText: req.body.backText,
       highlightId: req.body.highlightId,
+      bookId: req.body.bookId,
       userId: req.user._id
     });
     const savedFlashcard = await newFlashcard.save();
