@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import * as pdfjsLib from 'pdfjs-dist';
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.js`;
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
@@ -36,7 +38,7 @@ function BookViewer() {
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
         // Load the PDF document instance
-        const loadingTask = window.PDFJS.getDocument(fullPdfUrl);
+        const loadingTask = pdfjsLib.getDocument(fullPdfUrl);
         loadingTask.promise.then((pdfDoc) => {
           console.log(pdfDoc);
           setPdfDocumentInstance(pdfDoc);
