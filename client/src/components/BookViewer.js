@@ -63,7 +63,7 @@ function BookViewer() {
     pdfHighlighterElement?.addEventListener('scroll', handleScroll);
 
     return () => pdfHighlighterElement?.removeEventListener('scroll', handleScroll);
-  }, [setScrollPosition]);
+  });
 
   useEffect(() => {
     const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
@@ -72,7 +72,7 @@ function BookViewer() {
     } else {
       console.log('PdfHighlighter element not found');
     }
-  }, [setScrollPosition]);
+  }, []);
 
   useEffect(() => {
     const saveScrollPosition = _.debounce(async () => {
@@ -284,6 +284,7 @@ function BookViewer() {
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
             <PdfHighlighter
+              scrollRef={() => {}}
               pdfDocument={pdfDocument}
               enableAreaSelection={(event) => event.altKey}
               onUpdateHighlight={updateHighlight}
