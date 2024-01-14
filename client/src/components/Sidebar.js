@@ -22,7 +22,7 @@ function TabPanel(props) {
   );
 }
 
-function Sidebar({ highlights, onHighlightClick }) {
+function Sidebar({ highlights, flashcards, onHighlightClick }) {
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -73,12 +73,6 @@ function Sidebar({ highlights, onHighlightClick }) {
         ))}
       </List>
       </TabPanel>
-function Sidebar({ highlights, onHighlightClick, flashcards }) {
-  // ... existing code ...
-
-  return (
-    <div style={{ width: '250px', overflowY: 'auto' }}>
-      {/* ... existing Tabs and TabPanel for highlights ... */}
       <TabPanel value={tabValue} index={1}>
         <List>
           {flashcards.map((flashcard) => (
