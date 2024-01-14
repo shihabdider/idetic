@@ -178,8 +178,38 @@ function BookViewer() {
         page: pageText
       }, { withCredentials: true });
       console.log('Generated flashcards:', response.data.flashcards);
+      // Assuming the response contains an array of flashcards
+      for (const flashcard of response.data.flashcards) {
+        await addFlashcard({
+          question: flashcard.question,
+          answer: flashcard.answer,
+          highlightId: highlight._id
+        });
+      }
     } catch (error) {
       console.error('Error generating flashcards:', error);
+    }
+  }
+
+  const addFlashcard = async (flashcard) => {
+    try {
+      const response = await axios.post('http://localhost:3001/flashcards', {
+        frontText: flashcard.question,
+        backText: flashcard.answer,
+        highlightId: flashcard.highlightId
+      }, { withCredentials: true });
+      console.log('Flashcard added:', response.data);
+    } catch (error) {
+      console.error('Error adding flashcard:', error);
+    }
+  }
+
+  const deleteFlashcard = async (flashcardId) => {
+    try {
+      await axios.delete(`http://localhost:3001/flashcards/${flashcardId}`, { withCredentials: true });
+      console.log('Flashcard deleted:', flashcardId);
+    } catch (error) {
+      console.error('Error deleting flashcard:', error);
     }
   }
 
