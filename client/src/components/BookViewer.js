@@ -6,7 +6,7 @@ import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button } fro
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import _ from 'lodash';
-import MenuIcon from '@mui/icons-material/Menu'; 
+import QuizIcon from '@mui/icons-material/Quiz';
 import Sidebar from './Sidebar';
 
 function BookViewer() {
@@ -169,7 +169,7 @@ function BookViewer() {
       </Button>
       <Button
         size="small"
-        startIcon={<MenuIcon />}
+        startIcon={<QuizIcon />}
         onClick={() => {generateFlashcards(); handlePopoverClose()}}
       >
       </Button>
