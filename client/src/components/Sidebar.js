@@ -74,7 +74,19 @@ function Sidebar({ highlights, onHighlightClick }) {
       </List>
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        {/* Flashcards content will go here */}
+        <List>
+          {flashcards.map((flashcard) => (
+            <React.Fragment key={flashcard._id}>
+              <ListItem alignItems="flex-start">
+                <ListItemText
+                  primary={flashcard.frontText}
+                  secondary={flashcard.backText}
+                />
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
+        </List>
       </TabPanel>
     </div>
   );

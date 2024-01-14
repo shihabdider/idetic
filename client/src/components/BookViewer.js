@@ -380,7 +380,7 @@ function BookViewer() {
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
         <div style={{ marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column', zIndex: 1000 }}>
-          <Sidebar highlights={highlights} onHighlightClick={scrollToHighlight} />
+          <Sidebar highlights={highlights} flashcards={flashcards} onHighlightClick={scrollToHighlight} />
         </div>
       )}
       {renderHighlightPopover()}
