@@ -47,9 +47,6 @@ function Sidebar({ highlights, onHighlightClick }) {
         <Tab label="Flashcards" />
       </Tabs>
       <TabPanel value={tabValue} index={0}>
-      <Typography variant="h6" sx={{ my: 2, mx: 2 }}>
-        Highlights
-      </Typography>
       <Divider />
       <List>
         {sortedHighlights.map((highlight) => (
