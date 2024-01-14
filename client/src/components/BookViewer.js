@@ -13,6 +13,7 @@ import Sidebar from './Sidebar';
 function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
+  const [pdfDocumentInstance, setPdfDocumentInstance] = useState(null);
   const pdfHighlighterRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
@@ -34,6 +35,11 @@ function BookViewer() {
         setScrollPosition(response.data.scrollPosition || 0);
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
+        // Load the PDF document instance
+        const loadingTask = window.PDFJS.getDocument(fullPdfUrl);
+        loadingTask.promise.then((pdfDoc) => {
+          setPdfDocumentInstance(pdfDoc);
+        });
       } catch (error) {
         console.error('Error fetching PDF document:', error);
       }
@@ -47,6 +53,22 @@ function BookViewer() {
     fetchPdfDocument();
     fetchHighlights();
   }, [id]);
+
+  const getPageText = async (pageNumber) => {
+    if (!pdfDocumentInstance) {
+      console.error('PDF document instance is not loaded yet.');
+      return '';
+    }
+    try {
+      const page = await pdfDocumentInstance.getPage(pageNumber);
+      const textContent = await page.getTextContent();
+      const textItems = textContent.items.map(item => item.str);
+      return textItems.join(' ');
+    } catch (error) {
+      console.error(`Error fetching text for page ${pageNumber}:`, error);
+      return '';
+    }
+  };
 
   const goBackToLibrary = () => {
     navigate('/');
@@ -145,7 +167,7 @@ function BookViewer() {
 
   const generateFlashcards = async (highlight) => {
     try {
-      const pageText = "The entire text of the page where the highlight is found"; // Replace with actual page text retrieval logic
+      const pageText = await getPageText(highlight.position.pageNumber);
       const response = await axios.post('http://localhost:3001/flashcards/generate-with-gpt', {
         highlight: highlight.content.text,
         page: pageText
