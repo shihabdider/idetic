@@ -21,6 +21,7 @@ function BookViewer() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
+  const [flashcards, setFlashcards] = useState([]);
   const [highlightIdOfScrolledTo, setHighlightIdOfScrolledTo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedHighlight, setSelectedHighlight] = useState(null);
@@ -52,6 +53,8 @@ function BookViewer() {
     const fetchHighlights = async () => {
       const response = await axios.get(`http://localhost:3001/highlights?bookId=${id}`, { withCredentials: true });
       setHighlights(response.data);
+      const flashcardsResponse = await axios.get(`http://localhost:3001/flashcards/book/${id}`, { withCredentials: true });
+      setFlashcards(flashcardsResponse.data);
     };
 
     fetchPdfDocument();
