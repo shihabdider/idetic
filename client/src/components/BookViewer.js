@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf';
 import { GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf';
-GlobalWorkerOptions.workerSrc = new URL('../public/pdf.worker.min.mjs', import.meta.url).href;
+GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.min.mjs`;
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
