@@ -38,6 +38,7 @@ function BookViewer() {
         // Load the PDF document instance
         const loadingTask = window.PDFJS.getDocument(fullPdfUrl);
         loadingTask.promise.then((pdfDoc) => {
+          console.log(pdfDoc);
           setPdfDocumentInstance(pdfDoc);
         });
       } catch (error) {
@@ -229,6 +230,9 @@ function BookViewer() {
     position,
     content
   ) => {
+    getPageText(position.pageNumber).then(text => {
+      console.log('page text:', text);
+    })
     const highlight = { content, position };
     addHighlight(highlight);
   };
