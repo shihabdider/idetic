@@ -173,8 +173,6 @@ function BookViewer() {
   const generateFlashcards = async (highlight) => {
     try {
       const pageText = await getPageText(highlight.position.pageNumber);
-      console.log('Page text:', pageText);
-      console.log('Highlight text:', highlight.content.text);
       const response = await axios.post('http://localhost:3001/flashcards/generate-with-gpt', {
         highlight: highlight.content.text,
         page: pageText
@@ -183,6 +181,14 @@ function BookViewer() {
     } catch (error) {
       console.error('Error generating flashcards:', error);
     }
+  }
+
+  const addFlashcard = async (flashcard) => {
+    // add the flashcard to the database
+  }
+
+  const deleteFlashcard = async (flashcardId) => {
+    // delete the flashcard from the database
   }
 
   const renderHighlightPopover = () => (
@@ -234,7 +240,6 @@ function BookViewer() {
     const pdfViewerElement = document.querySelector('.pdf-viewer-container');
     if (pdfViewerElement) {
       if (newSidebarVisible) {
-        pdfViewerElement.style.transform = 'translateX(-250px)';
       } else {
         pdfViewerElement.style.transform = 'translateX(0)';
       }
@@ -329,8 +334,7 @@ function BookViewer() {
             </IconButton>
           </Toolbar>
         </AppBar>
-      <div style={{ display: 'flex', flexGrow: 1}}>
-      <div className="pdf-viewer-container" style={{ display: 'flex', flexGrow: 1, transition: 'transform 0.3s ease-in-out' }}>
+      <div className="pdf-viewer-container" style={{ display: 'flex', flexGrow: 1, transition: 'transform 0.1s ease-in-out' }}>
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
@@ -349,7 +353,7 @@ function BookViewer() {
       </div>
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
-        <div style={{ width: '250px', marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column', zIndex: 1000 }}>
+        <div style={{ marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column', zIndex: 1000 }}>
           <Sidebar highlights={highlights} onHighlightClick={scrollToHighlight} />
         </div>
       )}
