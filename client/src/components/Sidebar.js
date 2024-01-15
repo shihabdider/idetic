@@ -26,6 +26,9 @@ function TabPanel(props) {
 }
 
 function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcardDelete, onFlashcardEdit }) {
+  const [editingFlashcardId, setEditingFlashcardId] = useState(null);
+  const [editingField, setEditingField] = useState(null); // 'frontText' or 'backText'
+  const [editText, setEditText] = useState('');
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -111,10 +114,38 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
           {flashcards.map((flashcard) => (
             <React.Fragment key={flashcard._id}>
               <ListItem alignItems="flex-start" >
-                <ListItemText
-                  primary={flashcard.frontText}
-                  secondary={flashcard.backText}
-                />
+                {editingFlashcardId === flashcard._id && editingField === 'frontText' ? (
+                  <TextField
+                    fullWidth
+                    variant="standard"
+                    value={editText}
+                    onChange={handleEditChange}
+                    onBlur={handleEditBlur}
+                    onKeyPress={handleKeyPress}
+                    autoFocus
+                  />
+                ) : (
+                  <ListItemText
+                    primary={flashcard.frontText}
+                    onClick={() => handleFlashcardEdit(flashcard._id, 'frontText')}
+                  />
+                )}
+                {editingFlashcardId === flashcard._id && editingField === 'backText' ? (
+                  <TextField
+                    fullWidth
+                    variant="standard"
+                    value={editText}
+                    onChange={handleEditChange}
+                    onBlur={handleEditBlur}
+                    onKeyPress={handleKeyPress}
+                    autoFocus
+                  />
+                ) : (
+                  <ListItemText
+                    secondary={flashcard.backText}
+                    onClick={() => handleFlashcardEdit(flashcard._id, 'backText')}
+                  />
+                )}
                 <div style={{ marginLeft: 'auto' }}>
                   <IconButton
                     size="small"
@@ -140,3 +171,29 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
 }
 
 export default Sidebar;
+import TextField from '@mui/material/TextField';
+  const handleFlashcardEdit = (flashcardId, field) => {
+    setEditingFlashcardId(flashcardId);
+    setEditingField(field);
+    const flashcard = flashcards.find(fc => fc._id === flashcardId);
+    setEditText(flashcard ? flashcard[field] : '');
+  };
+
+  const handleEditChange = (event) => {
+    setEditText(event.target.value);
+  };
+
+  const handleEditBlur = () => {
+    if (editingFlashcardId && editingField) {
+      onFlashcardEdit(editingFlashcardId, editingField, editText);
+    }
+    setEditingFlashcardId(null);
+    setEditingField(null);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleEditBlur();
+    }
+  };
+
