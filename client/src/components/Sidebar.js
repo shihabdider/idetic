@@ -3,7 +3,7 @@ import axios from 'axios';
 import { List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
 import { Tabs, Tab } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton, Button } from '@mui/material';
 
@@ -120,11 +120,11 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
                     size="small"
                     onClick={() => onHighlightClick(flashcard.highlightId)}
                   >
-                    <EditIcon fontSize="small" />
+                    <VisibilityIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
-                    onClick={onFlashcardDelete(flashcard._id)}
+                    onClick={() => onFlashcardDelete(flashcard._id)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
