@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useReducer } from 'react';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf';
 import { GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf';
 GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.min.mjs`;
@@ -18,7 +18,6 @@ function BookViewer() {
   const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocumentInstance, setPdfDocumentInstance] = useState(null);
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [forceRender, setForceRender] = useState(false);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
   const [flashcards, setFlashcards] = useState([]);
@@ -28,10 +27,6 @@ function BookViewer() {
   const navigate = useNavigate();
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [sidebarVisible, setSidebarVisible] = useState(false); 
-
-  useEffect(() => {
-    setForceRender(true);
-  }, []);
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
@@ -46,7 +41,6 @@ function BookViewer() {
         // Load the PDF document instance
         const loadingTask = pdfjsLib.getDocument(fullPdfUrl);
         loadingTask.promise.then((pdfDoc) => {
-          console.log(pdfDoc);
           setPdfDocumentInstance(pdfDoc);
         });
       } catch (error) {
@@ -95,15 +89,16 @@ function BookViewer() {
     const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
 
     pdfHighlighterElement?.addEventListener('scroll', handleScroll);
+    
 
     return () => pdfHighlighterElement?.removeEventListener('scroll', handleScroll);
-  });
+  }, []);
 
   useEffect(() => {
     const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
     if (pdfHighlighterElement) {
       console.log('Scrolling to position:', scrollPosition);
-      //pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+      // pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
     } else {
       console.log('PdfHighlighter element not found');
     }
@@ -344,7 +339,6 @@ function BookViewer() {
   }, [highlightIdOfScrolledTo, highlights]);
 
 
-  console.log(id)
   return (
     <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
         <AppBar position="fixed" sx={{
