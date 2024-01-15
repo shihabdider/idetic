@@ -266,7 +266,9 @@ function BookViewer() {
     setSidebarVisible(newSidebarVisible);
     const pdfViewerElement = document.querySelector('.pdf-viewer-container');
     if (pdfViewerElement) {
+      pdfViewerElement.style.transition = 'transform 0.1s ease-in-out';
       if (newSidebarVisible) {
+        pdfViewerElement.style.transform = 'translateX(-300px)'; // Adjust the value as needed for your sidebar width
       } else {
         pdfViewerElement.style.transform = 'translateX(0)';
       }
