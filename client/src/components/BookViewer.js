@@ -18,6 +18,7 @@ function BookViewer() {
   const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocumentInstance, setPdfDocumentInstance] = useState(null);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [forceRender, setForceRender] = useState(false);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
   const [flashcards, setFlashcards] = useState([]);
@@ -27,6 +28,10 @@ function BookViewer() {
   const navigate = useNavigate();
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [sidebarVisible, setSidebarVisible] = useState(false); 
+
+  useEffect(() => {
+    setForceRender(true);
+  }, []);
 
   useEffect(() => {
     const fetchPdfDocument = async () => {
