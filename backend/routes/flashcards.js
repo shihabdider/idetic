@@ -10,12 +10,12 @@ function isAuthenticated(req, res, next) {
 }
 
 router.get('/', isAuthenticated, flashcardController.listFlashcards);
-router.get('/export', isAuthenticated, flashcardController.exportFlashcards);
+router.get('/export/:bookId', isAuthenticated, flashcardController.exportFlashcards);
 router.post('/', isAuthenticated, flashcardController.createFlashcard);
 router.get('/:id', isAuthenticated, flashcardController.getFlashcard);
 router.put('/:id', isAuthenticated, flashcardController.updateFlashcard);
 router.delete('/:id', isAuthenticated, flashcardController.deleteFlashcard);
 router.post('/generate-with-gpt', isAuthenticated, flashcardController.generateFlashcardsWithGPT);
+router.get('/book/:bookId', isAuthenticated, flashcardController.listFlashcardsByBook);
 
 module.exports = router;
-router.get('/book/:bookId', isAuthenticated, flashcardController.listFlashcardsByBook);

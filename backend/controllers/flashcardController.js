@@ -60,9 +60,9 @@ const { Parser } = require('json2csv');
 
 exports.exportFlashcards = async (req, res) => {
   try {
-    const flashcards = await Flashcard.find({ userId: req.user._id });
+    const flashcards = await Flashcard.find({ bookId: req.params.bookId, userId: req.user._id });
     const fields = ['frontText', 'backText'];
-    const json2csvParser = new Parser({ fields, delimiter: '|' });
+    const json2csvParser = new Parser({ fields, delimiter: ',' });
     const csv = json2csvParser.parse(flashcards);
     res.header('Content-Type', 'text/csv');
     res.attachment('flashcards.csv');

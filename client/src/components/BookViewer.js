@@ -91,7 +91,7 @@ function BookViewer() {
     console.log(pdfHighlighterElement);
 
     pdfHighlighterElement?.addEventListener('scroll', handleScroll);
-    
+
 
     return () => pdfHighlighterElement?.removeEventListener('scroll', handleScroll);
   }, []);
@@ -207,6 +207,24 @@ function BookViewer() {
       console.log('Flashcard added:', response.data);
     } catch (error) {
       console.error('Error adding flashcard:', error);
+    }
+  }
+
+  const updateFlashcard = async (flashcardId, updatingField, updatingText) => {
+    try {
+      const response = await axios.put(`http://localhost:3001/flashcards/${flashcardId}`, {
+        [updatingField]: updatingText,
+      }, { withCredentials: true });
+      const updatedFlashcards = flashcards.map(flashcard => {
+        if (flashcard._id === flashcardId) {
+          return { ...flashcard, [updatingField]: updatingText };
+        }
+        return flashcard;
+      });
+      setFlashcards(updatedFlashcards);
+      console.log('Flashcard updated:', response.data);
+    } catch (error) {
+      console.error('Error updating flashcard:', error);
     }
   }
 
