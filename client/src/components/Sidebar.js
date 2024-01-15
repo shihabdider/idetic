@@ -3,6 +3,8 @@ import axios from 'axios';
 import { List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
 import { Tabs, Tab } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 
 function TabPanel(props) {
@@ -113,6 +115,26 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick }) {
                   primary={flashcard.frontText}
                   secondary={flashcard.backText}
                 />
+                <div style={{ marginLeft: 'auto' }}>
+                  <IconButton
+                    size="small"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      // Implement the edit flashcard logic
+                    }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      // Implement the delete flashcard logic
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </div>
               </ListItem>
               <Divider />
             </React.Fragment>
