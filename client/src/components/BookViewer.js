@@ -17,7 +17,6 @@ function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocumentInstance, setPdfDocumentInstance] = useState(null);
-  const pdfHighlighterRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -202,6 +201,7 @@ function BookViewer() {
         highlightId: flashcard.highlightId,
         bookId: id
       }, { withCredentials: true });
+      setFlashcards([...flashcards, response.data]);
       console.log('Flashcard added:', response.data);
     } catch (error) {
       console.error('Error adding flashcard:', error);
@@ -211,6 +211,7 @@ function BookViewer() {
   const deleteFlashcard = async (flashcardId) => {
     try {
       await axios.delete(`http://localhost:3001/flashcards/${flashcardId}`, { withCredentials: true });
+      setFlashcards(flashcards.filter(h => h._id !== flashcardId));
       console.log('Flashcard deleted:', flashcardId);
     } catch (error) {
       console.error('Error deleting flashcard:', error);
@@ -338,6 +339,7 @@ function BookViewer() {
   }, [highlightIdOfScrolledTo, highlights]);
 
 
+  console.log(id)
   return (
     <div style={{ display: 'flex', height: '100vh', flexDirection: 'row' }}>
         <AppBar position="fixed" sx={{
@@ -379,8 +381,8 @@ function BookViewer() {
       </div>
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
-        <div style={{ marginTop: '64px', marginRight: '48px', display: 'flex', flexDirection: 'column', zIndex: 1000 }}>
-          <Sidebar highlights={highlights} flashcards={flashcards} onHighlightClick={scrollToHighlight} />
+        <div style={{ background: "white", marginTop: '64px', marginRight: '8px', display: 'flex', flexDirection: 'column', zIndex: 1000 }}>
+          <Sidebar bookId={id} highlights={highlights} flashcards={flashcards} onHighlightClick={scrollToHighlight} />
         </div>
       )}
       {renderHighlightPopover()}
