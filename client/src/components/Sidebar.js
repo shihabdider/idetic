@@ -5,7 +5,7 @@ import { Tabs, Tab } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Button from '@mui/material/Button';
+import { IconButton, Button } from '@mui/material';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -25,7 +25,7 @@ function TabPanel(props) {
   );
 }
 
-function Sidebar({ bookId, highlights, flashcards, onHighlightClick }) {
+function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcardDelete, onFlashcardEdit }) {
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -110,7 +110,7 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick }) {
         <List>
           {flashcards.map((flashcard) => (
             <React.Fragment key={flashcard._id}>
-              <ListItem alignItems="flex-start" button onClick={() => onHighlightClick(flashcard.highlightId)}>
+              <ListItem alignItems="flex-start" >
                 <ListItemText
                   primary={flashcard.frontText}
                   secondary={flashcard.backText}
@@ -118,19 +118,13 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick }) {
                 <div style={{ marginLeft: 'auto' }}>
                   <IconButton
                     size="small"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      // Implement the edit flashcard logic
-                    }}
+                    onClick={() => onHighlightClick(flashcard.highlightId)}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      // Implement the delete flashcard logic
-                    }}
+                    onClick={onFlashcardDelete(flashcard._id)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
