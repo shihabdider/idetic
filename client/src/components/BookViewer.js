@@ -17,6 +17,7 @@ function BookViewer() {
   const { id } = useParams();
   const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocumentInstance, setPdfDocumentInstance] = useState(null);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
@@ -87,6 +88,7 @@ function BookViewer() {
     }, 100);
 
     const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
+    console.log(pdfHighlighterElement);
 
     pdfHighlighterElement?.addEventListener('scroll', handleScroll);
     
@@ -268,9 +270,7 @@ function BookViewer() {
     if (pdfViewerElement) {
       pdfViewerElement.style.transition = 'transform 0.1s ease-in-out';
       if (newSidebarVisible) {
-        pdfViewerElement.style.transform = 'translateX(-300px)'; // Adjust the value as needed for your sidebar width
-      } else {
-        pdfViewerElement.style.transform = 'translateX(0)';
+        pdfViewerElement.style.transform = 'translateX(0)'; // Adjust the value as needed for your sidebar width
       }
     }
   };
@@ -363,7 +363,7 @@ function BookViewer() {
             </IconButton>
           </Toolbar>
         </AppBar>
-      <div className="pdf-viewer-container" style={{ display: 'flex', flexGrow: 1, transition: 'transform 0.1s ease-in-out' }}>
+      <div className="pdf-viewer-container" style={{ display: 'flex', flexGrow: 1}}>
       {pdfDocument && highlights && (
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
@@ -383,7 +383,10 @@ function BookViewer() {
       {sidebarVisible && <Divider orientation="vertical" flexItem style={{ marginRight: '12px' }}/>}
       {sidebarVisible && (
         <div style={{ background: "white", marginTop: '64px', marginRight: '8px', display: 'flex', flexDirection: 'column', zIndex: 1000 }}>
-          <Sidebar bookId={id} highlights={highlights} flashcards={flashcards} onHighlightClick={scrollToHighlight} />
+          <Sidebar bookId={id} highlights={highlights} flashcards={flashcards}
+            onHighlightClick={scrollToHighlight}
+            onFlashcardDelete={deleteFlashcard}
+            onFlashcardEdit={updateFlashcard}/>
         </div>
       )}
       {renderHighlightPopover()}
