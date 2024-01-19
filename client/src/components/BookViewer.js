@@ -8,6 +8,7 @@ import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 
 import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import CircularProgress from '@mui/material/CircularProgress';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import _ from 'lodash';
 import QuizIcon from '@mui/icons-material/Quiz';
@@ -176,6 +177,7 @@ function BookViewer() {
   };
 
   const generateFlashcards = async (highlight) => {
+    setIsGeneratingFlashcards(true);
     try {
       const pageText = await getPageText(highlight.position.pageNumber);
       const response = await axios.post('http://localhost:3001/flashcards/generate-with-gpt', {
@@ -196,6 +198,9 @@ function BookViewer() {
     } catch (error) {
       console.error('Error generating flashcards:', error);
     }
+    setIsGeneratingFlashcards(false);
+  };
+
   }
 
 
