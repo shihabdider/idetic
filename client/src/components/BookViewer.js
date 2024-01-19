@@ -182,33 +182,22 @@ function BookViewer() {
         page: pageText
       }, { withCredentials: true });
       console.log('Generated flashcards:', response.data.flashcards);
-      // Assuming the response contains an array of flashcards
-      for (const flashcard of response.data.flashcards) {
-        await addFlashcard({
-          question: flashcard.question,
-          answer: flashcard.answer,
-          highlightId: highlight._id
-        });
-      }
+      // Collect all new flashcards in a batch to update the state at once
+      const newFlashcards = await Promise.all(response.data.flashcards.map(flashcard =>
+        axios.post('http://localhost:3001/flashcards', {
+          frontText: flashcard.question,
+          backText: flashcard.answer,
+          highlightId: highlight._id,
+          bookId: id
+        }, { withCredentials: true }).then(response => response.data)
+      ));
+      setFlashcards([...flashcards, ...newFlashcards]);
     } catch (error) {
       console.error('Error generating flashcards:', error);
     }
   }
 
-  const addFlashcard = async (flashcard) => {
-    try {
-      const response = await axios.post('http://localhost:3001/flashcards', {
-        frontText: flashcard.question,
-        backText: flashcard.answer,
-        highlightId: flashcard.highlightId,
-        bookId: id
-      }, { withCredentials: true });
-      setFlashcards([...flashcards, response.data]);
-      console.log('Flashcard added:', response.data);
-    } catch (error) {
-      console.error('Error adding flashcard:', error);
-    }
-  }
+
 
   const updateFlashcard = async (flashcardId, updatingField, updatingText) => {
     try {
