@@ -66,6 +66,10 @@
 
 ## Development Approach
 
+## Demo Video
+
+![iDetic Demo](idetic.webm)
+
 ### Backend Development Steps:
 
  ### Directory Structure:
