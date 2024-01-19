@@ -20,7 +20,7 @@ async function generateFlashcards(highlight, page) {
                       { question: "Question 2", answer: "Answer 2" } 
                     ] 
                   }
-                  The flashcards should only be on the highlight. The page can be used for context. Do not include commas in the answer.`,
+                  The flashcards should only be on the highlight. The page can be used for context. Do not include commas in the answer. Always latex formatting for math.`,
       },
       {
         role: 'user',

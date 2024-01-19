@@ -8,7 +8,6 @@ import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 
 import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import CircularProgress from '@mui/material/CircularProgress';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import _ from 'lodash';
 import QuizIcon from '@mui/icons-material/Quiz';
@@ -27,6 +26,7 @@ function BookViewer() {
   const [highlightIdOfScrolledTo, setHighlightIdOfScrolledTo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedHighlight, setSelectedHighlight] = useState(null);
+  const [isGeneratingFlashcards, setIsGeneratingFlashcards] = useState(false);
   const navigate = useNavigate();
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [sidebarVisible, setSidebarVisible] = useState(false); 
@@ -201,10 +201,6 @@ function BookViewer() {
     setIsGeneratingFlashcards(false);
   };
 
-  }
-
-
-
   const updateFlashcard = async (flashcardId, updatingField, updatingText) => {
     try {
       const response = await axios.put(`http://localhost:3001/flashcards/${flashcardId}`, {
@@ -255,13 +251,18 @@ function BookViewer() {
         size="small"
       >
       </Button>
-      <Button
-        title="Generate Flashcard"
-        size="small"
-        startIcon={<QuizIcon />}
-        onClick={() => {generateFlashcards(selectedHighlight); handlePopoverClose()}}
-      >
-      </Button>
+    {isGeneratingFlashcards ? (
+      <CircularProgress size={14} style={{ marginRight: 10 }} />
+    ) : (
+        <Button
+          title="Generate Flashcard"
+          size="small"
+          startIcon={<QuizIcon />}
+          onClick={() => {generateFlashcards(selectedHighlight)}}
+          disabled={isGeneratingFlashcards}
+        >
+        </Button>
+      )}
     </Popover>
   );
 
