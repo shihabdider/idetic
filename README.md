@@ -7,7 +7,7 @@ as the context. This is an MVP with further improvements planned.
 
 ## Demo
 
-[!(iDetic Demo)](https://github.com/shihabdider/idetic/blob/main/idetic_demo.mp4)
+![iDetic Demo](idetic_demo.mp4)
 
 ## Features
 

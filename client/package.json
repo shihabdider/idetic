@@ -18,8 +18,9 @@
     "pdfjs-dist": "^4.0.379",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.49.2",
-    "react-pdf": "^7.6.0",
+    "react-pdf-highlighter": "github:shihabdider/react-pdf-highlighter",
     "react-router-dom": "^6.21.1",
     "react-scripts": "^5.0.1"
   },

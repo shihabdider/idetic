@@ -19,7 +19,7 @@ function BookViewer() {
   const [pdfTitle, setPdfTitle] = useState('');
   const [pdfDocumentInstance, setPdfDocumentInstance] = useState(null);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [lastViewedPageNumber, setLastViewedPageNumber] = useState(0);
   const [pdfDocument, setPdfDocument] = useState(null);
   const [highlights, setHighlights] = useState([]);
   const [flashcards, setFlashcards] = useState([]);
@@ -38,7 +38,7 @@ function BookViewer() {
         const pdfTitle = response.data.title;
         setPdfTitle(pdfTitle);
         const pdfPath = response.data.filePath;
-        setScrollPosition(response.data.scrollPosition || 0);
+        setLastViewedPageNumber(response.data.lastViewedPageNumber || 0);
         const fullPdfUrl = `http://localhost:3001/${pdfPath}`;
         setPdfDocument(fullPdfUrl);
         // Load the PDF document instance
@@ -82,42 +82,30 @@ function BookViewer() {
     navigate('/');
   };
 
-  useEffect(() => {
-    const handleScroll = _.debounce((event) => {
-      const currentScrollPosition = event.target.scrollTop;
-      setScrollPosition(currentScrollPosition);
-      console.log('Scroll position:', currentScrollPosition);
-    }, 100);
+  const handleScroll = _.debounce((pos) => {
+    const { pageNumber } = pos
+    setLastViewedPageNumber(pageNumber);
+    console.log('Page:', pageNumber);
+  }, 100);
 
-    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
-    console.log(pdfHighlighterElement);
-
-    pdfHighlighterElement?.addEventListener('scroll', handleScroll);
-
-
-    return () => pdfHighlighterElement?.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const pdfHighlighterElement = document.querySelector('.PdfHighlighter');
-    if (pdfHighlighterElement) {
-      console.log('Scrolling to position:', scrollPosition);
-      // pdfHighlighterElement.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+  const onViewerLoaded = (viewer) => {
+    if (viewer) {
+      viewer.scrollPageIntoView({ pageNumber: lastViewedPageNumber });
     } else {
-      console.log('PdfHighlighter element not found');
+      console.log('PDFviewer element not found');
     }
-  }, []);
+  }
 
   useEffect(() => {
     const saveScrollPosition = _.debounce(async () => {
       try {
-        await axios.patch(`http://localhost:3001/books/${id}/scroll-position`, { scrollPosition }, { withCredentials: true });
+        await axios.patch(`http://localhost:3001/books/${id}/last-viewed-page-number`, { lastViewedPageNumber }, { withCredentials: true });
       } catch (error) {
         console.error('Error updating scroll position:', error);
       }
     }, 500);
     saveScrollPosition();
-  }, [scrollPosition, id]);
+  }, [lastViewedPageNumber, id]);
 
   const addHighlight = (highlight) => {
     console.log('Saving highlight', highlight);
@@ -382,8 +370,9 @@ function BookViewer() {
         <PdfLoader url={pdfDocument} beforeLoad={<div>Loading...</div>}>
           {(pdfDocument) => (
             <PdfHighlighter
-              scrollRef={() => {}}
+              onViewerLoaded={onViewerLoaded}
               pdfDocument={pdfDocument}
+              onScroll={handleScroll}
               enableAreaSelection={(event) => event.altKey}
               onUpdateHighlight={updateHighlight}
               onSelectionFinished={onSelectionFinished}

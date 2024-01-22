@@ -14,7 +14,7 @@ router.get('/', bookController.listBooks);
 router.post('/', isAuthenticated, bookController.createBook);
 router.get('/:id', bookController.getBook);
 router.put('/:id', bookController.updateBook);
-router.patch('/:id/scroll-position', isAuthenticated, bookController.updateScrollPosition);
+router.patch('/:id/last-viewed-page-number', isAuthenticated, bookController.updateLastViewedPageNumber);
 router.delete('/:id', bookController.deleteBook);
 
 module.exports = router;

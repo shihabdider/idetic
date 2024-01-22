@@ -80,14 +80,14 @@ exports.updateBook = async (req, res) => {
   }
 };
 
-exports.updateScrollPosition = async (req, res) => {
+exports.updateLastViewedPageNumber = async (req, res) => {
   try {
     const bookId = req.params.id;
-    const scrollPosition = req.body.scrollPosition;
-    if (typeof scrollPosition !== 'number') {
-      return res.status(400).send({ message: 'Invalid scroll position value' });
+    const lastViewedPageNumber = req.body.lastViewedPageNumber;
+    if (typeof lastViewedPageNumber !== 'number') {
+      return res.status(400).send({ message: 'Invalid page number value' });
     }
-    const updatedBook = await Book.findByIdAndUpdate(bookId, { scrollPosition: scrollPosition }, { new: true });
+    const updatedBook = await Book.findByIdAndUpdate(bookId, { lastViewedPageNumber: lastViewedPageNumber }, { new: true });
     res.status(200).json(updatedBook);
   } catch (error) {
     res.status(500).send(error);
