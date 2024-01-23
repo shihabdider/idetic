@@ -8,6 +8,7 @@ import {
   MessageInput
 } from "@chatscope/chat-ui-kit-react";
 import { useState } from 'react';
+import RobotIcon from '@material-ui/icons/Android'; // Assuming you're using Material-UI for icons
 
 function GPTChat() {
   const [messages, setMessages] = useState([
@@ -15,6 +16,7 @@ function GPTChat() {
       message: "Hi! I'm iDeticon. What would you like to know about this text?",
       timestamp: new Date().toLocaleTimeString(),
       sender: "GPT",
+      avatar: <RobotIcon />,
     }
   ]);
 
@@ -43,6 +45,7 @@ function GPTChat() {
                   sentTime: msg.timestamp,
                   sender: msg.sender,
                   direction: msg.direction,
+                  avatar: msg.avatar,
                 }}
               />
             ))}
