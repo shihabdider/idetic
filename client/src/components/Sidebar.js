@@ -7,6 +7,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton, Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import HighlightIcon from '@mui/icons-material/Highlight';
+import StyleIcon from '@mui/icons-material/Style';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -98,9 +101,9 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
   return (
     <div style={{ width: '300px', overflowY: 'auto' }}>
       <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
-        <Tab label="Highlights" />
-        <Tab label="Flashcards" />
-        <Tab label="Chat" />
+        <Tab icon={<HighlightIcon />} aria-label="Highlights" />
+        <Tab icon={<StyleIcon />} aria-label="Flashcards" />
+        <Tab icon={<ChatBubbleOutlineIcon />} aria-label="Chat" />
       </Tabs>
       <TabPanel value={tabValue} index={0}>
       <Divider />
