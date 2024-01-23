@@ -12,7 +12,7 @@ import { useState } from 'react';
 function GPTChat() {
   const [messages, setMessages] = useState([
     {
-      message: "Hello my friend",
+      message: "Hi! I'm iDeticon. What would you like to know about this text?",
       timestamp: new Date().toLocaleTimeString(),
       sender: "GPT",
     }
@@ -24,6 +24,7 @@ function GPTChat() {
         message: text,
         timestamp: new Date().toLocaleTimeString(),
         sender: "User",
+        direction: "outgoing",
       };
       setMessages([...messages, newMessage]);
     }
@@ -41,6 +42,7 @@ function GPTChat() {
                   message: msg.message,
                   sentTime: msg.timestamp,
                   sender: msg.sender,
+                  direction: msg.direction,
                 }}
               />
             ))}
