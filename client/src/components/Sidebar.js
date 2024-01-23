@@ -11,6 +11,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import StyleIcon from '@mui/icons-material/Style';
 import SimpleChat from './SimpleChat';
+import { MessageInput } from "@chatscope/chat-ui-kit-react";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -200,9 +201,10 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
         </List>
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        <SimpleChat />
+        {/* Removed SimpleChat and placed MessageInput at the bottom */}
       </TabPanel>
     </div>
+    <MessageInput placeholder="Type message here" style={{ position: "absolute", bottom: 0, width: "100%" }} />
   );
 }
 

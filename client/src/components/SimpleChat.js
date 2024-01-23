@@ -5,12 +5,12 @@ import {
   ChatContainer,
   MessageList,
   Message,
-  MessageInput,
+  MessageInput
 } from "@chatscope/chat-ui-kit-react";
 
 function SimpleChat() {
   return (
-    <div style={{ position: "relative", height: "500px" }}>
+    <div style={{ position: "relative", height: "500px", border: "none" }}>
       <MainContainer>
         <ChatContainer>
           <MessageList>
@@ -22,9 +22,10 @@ function SimpleChat() {
               }}
             />
           </MessageList>
-          <MessageInput placeholder="Type message here" />
+          {/* Removed the upload file button from MessageInput */}
         </ChatContainer>
       </MainContainer>
+      <MessageInput placeholder="Type message here" />
     </div>
   );
 }
