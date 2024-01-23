@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import StyleIcon from '@mui/icons-material/Style';
+import SimpleChat from './SimpleChat';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -199,7 +200,7 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
         </List>
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
-        {/* Chat content will go here */}
+        <SimpleChat />
       </TabPanel>
     </div>
   );
