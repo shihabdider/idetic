@@ -100,6 +100,7 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
       <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
         <Tab label="Highlights" />
         <Tab label="Flashcards" />
+        <Tab label="Chat" />
       </Tabs>
       <TabPanel value={tabValue} index={0}>
       <Divider />
@@ -193,6 +194,9 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
             </React.Fragment>
           ))}
         </List>
+      </TabPanel>
+      <TabPanel value={tabValue} index={2}>
+        {/* Chat content will go here */}
       </TabPanel>
     </div>
   );
