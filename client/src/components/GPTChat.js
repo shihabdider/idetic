@@ -39,16 +39,18 @@ function GPTChat(bookId) {
         sender: "User",
         direction: "outgoing",
       };
-      setMessages([...messages, newMessage]);
+      setMessages(messages => [...messages, newMessage]);
 
-      generateGPTResponse(text).then((response) => {
-        const newGPTMessage = {
-          message: response,
-          timestamp: new Date().toLocaleTimeString(),
-          sender: "GPT",
-          direction: "incoming",
-        };
-        setMessages([...messages, newGPTMessage]);
+      generateGPTResponse(text).then((gptResponse) => {
+        setMessages(messages => [
+          ...messages,
+          {
+            message: gptResponse,
+            timestamp: new Date().toLocaleTimeString(),
+            sender: "GPT",
+            direction: "incoming",
+          }
+        ]);
       });
     }
   };
