@@ -8,7 +8,6 @@ import {
   Message,
   MessageInput,
 } from "@chatscope/chat-ui-kit-react";
-import { useState } from 'react';
 import { useState, useEffect } from 'react';
 
 function GPTChat(bookId) {
