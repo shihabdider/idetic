@@ -8,8 +8,11 @@ import {
   Message,
   MessageInput,
   Button,
-  TypingIndicator
+  TypingIndicator,
+  InputToolbox
 } from "@chatscope/chat-ui-kit-react";
+import { IconButton, Tooltip } from '@mui/material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useState, useEffect } from 'react';
 
 function GPTChat(bookId) {
@@ -75,7 +78,7 @@ function GPTChat(bookId) {
 
   return (
     <div style={{ position: "relative", height: "600px", border: "none" }}>
-      <MainContainer style={{ border: "none", marginTop: "16px" }}>
+      <MainContainer style={{ border: "none", height: "600px", marginTop: "16px", display: "block" }}>
         <ChatContainer>
           <MessageList typingIndicator={isGPTTyping && <TypingIndicator content="Thinking" />}>
             {messages.map((msg, index) => (
@@ -94,10 +97,15 @@ function GPTChat(bookId) {
             placeholder="Type message here"
             onSend={handleSend}
             attachButton={false}
+            sendButton={false}
           />
-          <Button onClick={handleClearMessages} style={{ marginTop: "10px" }}>
-            Clear Messages
-          </Button>
+          <InputToolbox>
+          <Tooltip title="Clear messages">
+            <IconButton onClick={handleClearMessages} style={{ marginTop: "10px" }}>
+                <DeleteOutlineIcon />
+            </IconButton>
+          </Tooltip>
+          </InputToolbox>
         </ChatContainer>
       </MainContainer>
     </div>
