@@ -9,15 +9,15 @@ import {
   MessageInput,
 } from "@chatscope/chat-ui-kit-react";
 import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function GPTChat(bookId) {
-  const [messages, setMessages] = useState([
-    {
-      message: "Hi! I'm iDeticon. What would you like to know about this text?",
-      timestamp: new Date().toLocaleTimeString(),
-      sender: "GPT",
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
+    setMessages(storedMessages);
+  }, []);
 
   const generateGPTResponse = async (question) => {
     try {
@@ -39,18 +39,26 @@ function GPTChat(bookId) {
         sender: "User",
         direction: "outgoing",
       };
-      setMessages(messages => [...messages, newMessage]);
+      setMessages(messages => {
+        const updatedMessages = [...messages, newMessage].slice(-100);
+        localStorage.setItem('messages', JSON.stringify(updatedMessages));
+        return updatedMessages;
+      });
 
       generateGPTResponse(text).then((gptResponse) => {
-        setMessages(messages => [
-          ...messages,
-          {
-            message: gptResponse,
-            timestamp: new Date().toLocaleTimeString(),
-            sender: "GPT",
-            direction: "incoming",
-          }
-        ]);
+        setMessages(messages => {
+          const updatedMessages = [
+            ...messages,
+            {
+              message: gptResponse,
+              timestamp: new Date().toLocaleTimeString(),
+              sender: "GPT",
+              direction: "incoming",
+            }
+          ].slice(-100);
+          localStorage.setItem('messages', JSON.stringify(updatedMessages));
+          return updatedMessages;
+        });
       });
     }
   };
