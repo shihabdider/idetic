@@ -71,7 +71,7 @@ function GPTChat(bookId) {
     <div style={{ position: "relative", height: "600px", border: "none" }}>
       <MainContainer style={{ border: "none", marginTop: "16px" }}>
         <ChatContainer>
-          <MessageList typingIndicator={isGPTTyping && <TypingIndicator content="GPT is typing" />}>
+          <MessageList typingIndicator={isGPTTyping && <TypingIndicator content="Thinking" />}>
             {messages.map((msg, index) => (
               <Message
                 key={index}
