@@ -11,6 +11,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import StyleIcon from '@mui/icons-material/Style';
 import GPTChat from './GPTChat';
+import { CHAT_TAB_INDEX } from './BookViewer';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -35,6 +36,12 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
   const [editingField, setEditingField] = useState(null); // 'frontText' or 'backText'
   const [editText, setEditText] = useState('');
   const [tabValue, setTabValue] = useState(0);
+
+  useEffect(() => {
+    if (preFilledChatMessage) {
+      setTabValue(CHAT_TAB_INDEX);
+    }
+  }, [preFilledChatMessage]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);

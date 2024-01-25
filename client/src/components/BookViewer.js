@@ -396,4 +396,5 @@ function BookViewer() {
     </div>
   );
 }
+export { CHAT_TAB_INDEX };
 export default BookViewer;
