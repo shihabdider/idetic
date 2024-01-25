@@ -12,6 +12,7 @@ import {
   InputToolbox
 } from "@chatscope/chat-ui-kit-react";
 import { IconButton, Tooltip } from '@mui/material';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useState, useEffect } from 'react';
 
@@ -76,6 +77,16 @@ function GPTChat(bookId) {
     localStorage.removeItem('messages');
   };
 
+  const handleExportMessages = () => {
+    const messageText = messages.map(msg => `${msg.sender}: ${msg.message}\n\n`).join('');
+    const blob = new Blob([messageText], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'chat_history.txt';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
   return (
     <div style={{ position: "relative", height: "600px", border: "none" }}>
       <MainContainer style={{ border: "none", height: "600px", marginTop: "16px", display: "block" }}>
@@ -103,6 +114,11 @@ function GPTChat(bookId) {
           <Tooltip title="Clear messages">
             <IconButton onClick={handleClearMessages} style={{ marginTop: "10px" }}>
                 <DeleteOutlineIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Export messages">
+            <IconButton onClick={handleExportMessages} style={{ marginTop: "10px" }}>
+                <SaveAltIcon />
             </IconButton>
           </Tooltip>
           </InputToolbox>
