@@ -88,8 +88,8 @@ function GPTChat(bookId) {
   };
 
   return (
-    <div style={{ position: "relative", height: "600px", border: "none" }}>
-      <MainContainer style={{ border: "none", height: "600px", marginTop: "16px", display: "block" }}>
+    <div style={{ position: "relative", height: "640px",  border: "none" }}>
+      <MainContainer style={{ border: "none", marginTop: "16px", display: "block" }}>
         <ChatContainer>
           <MessageList typingIndicator={isGPTTyping && <TypingIndicator content="Thinking" />}>
             {messages.map((msg, index) => (
