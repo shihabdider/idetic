@@ -7,11 +7,13 @@ import {
   MessageList,
   Message,
   MessageInput,
+  TypingIndicator
 } from "@chatscope/chat-ui-kit-react";
 import { useState, useEffect } from 'react';
 
 function GPTChat(bookId) {
   const [messages, setMessages] = useState([]);
+  const [isGPTTyping, setIsGPTTyping] = useState(false);
 
   useEffect(() => {
     const storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
@@ -19,13 +21,16 @@ function GPTChat(bookId) {
   }, []);
 
   const generateGPTResponse = async (question) => {
+    setIsGPTTyping(true);
     try {
       const response = await axios.post(`http://localhost:3001/highlights/${bookId}/query-gpt`, {
         question: question
       }, { withCredentials: true });
       console.log('Answer:', response.data.answer);
+      setIsGPTTyping(false);
       return response.data.answer;
     } catch (error) {
+      setIsGPTTyping(false);
       console.error('Error generating gpt answer:', error);
     }
   }
@@ -66,7 +71,7 @@ function GPTChat(bookId) {
     <div style={{ position: "relative", height: "600px", border: "none" }}>
       <MainContainer style={{ border: "none", marginTop: "16px" }}>
         <ChatContainer>
-          <MessageList>
+          <MessageList typingIndicator={isGPTTyping && <TypingIndicator content="GPT is typing" />}>
             {messages.map((msg, index) => (
               <Message
                 key={index}
