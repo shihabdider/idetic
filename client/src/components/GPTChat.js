@@ -9,6 +9,8 @@ import {
   MessageInput,
   TypingIndicator
 } from "@chatscope/chat-ui-kit-react";
+import { IconButton } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { useState, useEffect } from 'react';
 
 function GPTChat(bookId) {
@@ -19,6 +21,11 @@ function GPTChat(bookId) {
     const storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
     setMessages(storedMessages);
   }, []);
+
+  const clearMessages = () => {
+    setMessages([]);
+    localStorage.removeItem('messages');
+  };
 
   const generateGPTResponse = async (question) => {
     setIsGPTTyping(true);
@@ -69,6 +76,9 @@ function GPTChat(bookId) {
 
   return (
     <div style={{ position: "relative", height: "600px", border: "none" }}>
+      <IconButton onClick={clearMessages} style={{ position: "absolute", right: "1rem", top: "1rem", zIndex: 1000 }}>
+        <DeleteIcon />
+      </IconButton>
       <MainContainer style={{ border: "none", marginTop: "16px" }}>
         <ChatContainer>
           <MessageList typingIndicator={isGPTTyping && <TypingIndicator content="Thinking" />}>
