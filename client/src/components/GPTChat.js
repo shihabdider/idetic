@@ -7,6 +7,7 @@ import {
   MessageList,
   Message,
   MessageInput,
+  Button,
   TypingIndicator
 } from "@chatscope/chat-ui-kit-react";
 import { useState, useEffect } from 'react';
@@ -67,6 +68,11 @@ function GPTChat(bookId) {
     }
   };
 
+  const handleClearMessages = () => {
+    setMessages([]);
+    localStorage.removeItem('messages');
+  };
+
   return (
     <div style={{ position: "relative", height: "600px", border: "none" }}>
       <MainContainer style={{ border: "none", marginTop: "16px" }}>
@@ -89,6 +95,9 @@ function GPTChat(bookId) {
             onSend={handleSend}
             attachButton={false}
           />
+          <Button onClick={handleClearMessages} style={{ marginTop: "10px" }}>
+            Clear Messages
+          </Button>
         </ChatContainer>
       </MainContainer>
     </div>
