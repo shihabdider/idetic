@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search as SearchIcon } from '@mui/icons-material';
-import { Container, Grid, Paper, TextField, Button, Box, IconButton, LinearProgress } from '@mui/material';
 import { Container, Grid, Paper, TextField, Button, Box, IconButton, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -74,7 +73,7 @@ function BookLibrary() {
   return (
     <Container component="main">
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 1}}>
-        <img src={logoPath} alt="Idetic Logo" style={{ maxHeight: '240px', marginRight: 'auto' }} />
+        <img src={logoPath} alt="Idetic Logo" style={{ maxHeight: '180px', marginRight: 'auto' }} />
         <TextField
           variant="outlined"
           placeholder="Search for books..."
