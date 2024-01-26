@@ -89,3 +89,11 @@ exports.listFlashcardsByBook = async (req, res) => {
     res.status(500).send(error);
   }
 };
+exports.deleteAllFlashcardsByBook = async (req, res) => {
+  try {
+    await Flashcard.deleteMany({ bookId: req.params.bookId, userId: req.user._id });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
