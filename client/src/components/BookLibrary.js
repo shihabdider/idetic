@@ -46,10 +46,8 @@ function BookLibrary() {
 
   return (
     <Container component="main">
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <img src={logoPath} alt="Idetic Logo" style={{ maxHeight: '100px' }} />
-      </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2}}>
+        <img src={logoPath} alt="Idetic Logo" style={{ maxHeight: '240px' }} />
         <TextField
           variant="outlined"
           placeholder="Search for books..."
