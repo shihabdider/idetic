@@ -85,10 +85,10 @@ function BookLibrary() {
           });
         }}>
           {({getRootProps, getInputProps}) => (
-            <section>
+            <section style={{ display: 'flex', alignItems: 'center' }}>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <Button variant="contained">Upload</Button>
+                <Button variant="contained" style={{ height: '56px' }}>Upload</Button>
               </div>
             </section>
           )}
