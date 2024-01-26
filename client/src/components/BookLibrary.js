@@ -73,7 +73,7 @@ function BookLibrary() {
 
   return (
     <Container component="main">
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2}}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 1}}>
         <img src={logoPath} alt="Idetic Logo" style={{ maxHeight: '240px', marginRight: 'auto' }} />
         <TextField
           variant="outlined"
@@ -84,18 +84,17 @@ function BookLibrary() {
           }}
           style={{ flexGrow: 1, alignSelf: 'center' }}
         />
-        {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
-        <Dropzone accept={{"application/pdf": [".pdf"]}} onDrop={acceptedFiles => {
-          onDrop={onDrop}
+        <Dropzone accept={{"application/pdf": [".pdf"]}} onDrop={onDrop}>
           {({getRootProps, getInputProps}) => (
             <section style={{ display: 'flex', alignItems: 'center' }}>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <Button variant="contained" style={{ height: '56px' }}>Upload</Button>
+                <Button variant="contained" style={{ height: '48px' }}>Upload</Button>
               </div>
             </section>
           )}
         </Dropzone>
+        {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
