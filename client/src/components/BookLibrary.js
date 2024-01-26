@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { Container, Grid, Paper, TextField, Button, Box, IconButton, LinearProgress } from '@mui/material';
+import { Container, Grid, Paper, TextField, Button, Box, IconButton, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Dropzone from 'react-dropzone';
@@ -9,7 +10,7 @@ import Dropzone from 'react-dropzone';
 function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
 
   const logoPath = '/idetic_logo.png';
@@ -18,6 +19,7 @@ function BookLibrary() {
     const file = acceptedFiles[0];
     const formData = new FormData();
     formData.append('book', file);
+    setIsUploading(true);
 
     axios.post('http://localhost:3001/books', formData, {
       withCredentials: true,
@@ -25,19 +27,17 @@ function BookLibrary() {
         'Content-Type': 'multipart/form-data',
         'Authorization': 'Bearer ' + localStorage.getItem('authToken')
       },
-      onUploadProgress: (progressEvent) => {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        setUploadProgress(percentCompleted);
-      }
     })
     .then(response => {
       // Handle success
       console.log('Book uploaded successfully', response);
       setBooks([...books, response.data]);
+      setIsUploading(false);
     })
     .catch(error => {
       // Handle error
       console.error('Error uploading book:', error);
+      setIsUploading(false);
     });
   };
 
@@ -89,12 +89,15 @@ function BookLibrary() {
             <section style={{ display: 'flex', alignItems: 'center' }}>
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
-                <Button variant="contained" style={{ height: '48px' }}>Upload</Button>
+                {isUploading ? (
+                  <CircularProgress />
+                ) : (
+                  <Button variant="contained" style={{ height: '48px' }}>Upload</Button>
+                )}
               </div>
             </section>
           )}
         </Dropzone>
-        {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
       </Box>
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {filteredBooks.length > 0 ? filteredBooks.map((book) => (
