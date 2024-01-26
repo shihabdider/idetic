@@ -17,4 +17,13 @@ router.get('/google/callback',
 );
 
 
+// Route to verify if the user is authenticated
+router.get('/verify', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.status(200).send({ message: 'User is authenticated' });
+  } else {
+    res.status(401).send({ message: 'User is not authenticated' });
+  }
+});
+
 module.exports = router;
