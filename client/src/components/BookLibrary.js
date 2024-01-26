@@ -12,6 +12,8 @@ function BookLibrary() {
   const [uploadProgress, setUploadProgress] = useState(10);
   const navigate = useNavigate();
 
+  const logoPath = '/idetic_logo.png';
+
   const deleteBook = async (bookId) => {
     try {
       await axios.delete(`http://localhost:3001/books/${bookId}`, { withCredentials: true });
@@ -44,6 +46,9 @@ function BookLibrary() {
 
   return (
     <Container component="main">
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <img src={logoPath} alt="Idetic Logo" style={{ maxHeight: '100px' }} />
+      </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2}}>
         <TextField
           variant="outlined"
