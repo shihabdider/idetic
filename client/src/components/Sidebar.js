@@ -141,6 +141,13 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
         >
           Export as CSV
         </Button>
+        <IconButton
+          color="secondary"
+          onClick={onDeleteAllFlashcards}
+          style={{ margin: '10px' }}
+        >
+          <DeleteForeverIcon />
+        </IconButton>
         <List>
           {flashcards.map((flashcard) => (
             <React.Fragment key={flashcard._id}>
