@@ -100,12 +100,14 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
   };
 
   return (
-    <div style={{ width: '300px', overflowY: 'auto' }}>
-      <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
-        <Tab icon={<HighlightIcon />} aria-label="Highlights" />
-        <Tab icon={<StyleIcon />} aria-label="Flashcards" />
-        <Tab icon={<ChatBubbleOutlineIcon />} aria-label="Chat" />
-      </Tabs>
+    <div style={{ width: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white' }}>
+        <Tabs value={tabValue} onChange={handleTabChange} aria-label="simple tabs example">
+          <Tab icon={<HighlightIcon />} aria-label="Highlights" />
+          <Tab icon={<StyleIcon />} aria-label="Flashcards" />
+          <Tab icon={<ChatBubbleOutlineIcon />} aria-label="Chat" />
+        </Tabs>
+      </div>
       <TabPanel value={tabValue} index={0}>
       <Divider />
       <List>
