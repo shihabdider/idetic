@@ -15,6 +15,7 @@ router.post('/', isAuthenticated, flashcardController.createFlashcard);
 router.get('/:id', isAuthenticated, flashcardController.getFlashcard);
 router.put('/:id', isAuthenticated, flashcardController.updateFlashcard);
 router.delete('/:id', isAuthenticated, flashcardController.deleteFlashcard);
+router.delete('/:bookId/all', isAuthenticated, flashcardController.deleteAllFlashcardsByBook);
 router.post('/generate-with-gpt', isAuthenticated, flashcardController.generateFlashcardsWithGPT);
 router.get('/book/:bookId', isAuthenticated, flashcardController.listFlashcardsByBook);
 
