@@ -233,17 +233,6 @@ function BookViewer() {
       }}
     >
       <Button
-        title="Copy Text"
-        startIcon={<ContentCopyIcon />}
-        onClick={() => {
-          navigator.clipboard.writeText(selectedHighlight.content.text);
-          handlePopoverClose();
-        }}
-        size="small"
-      >
-        Copy
-      </Button>
-      <Button
         title="Delete Highlight"
         startIcon={<DeleteOutlineIcon />}
         onClick={() => {deleteHighlight(selectedHighlight._id); handlePopoverClose()}}
@@ -263,6 +252,16 @@ function BookViewer() {
         >
         </Button>
       )}
+      <Button
+        title="Copy Text"
+        startIcon={<ContentCopyIcon />}
+        onClick={() => {
+          navigator.clipboard.writeText(selectedHighlight.content.text);
+          handlePopoverClose();
+        }}
+        size="small"
+      >
+      </Button>
     </Popover>
   );
 
@@ -360,9 +359,8 @@ function BookViewer() {
         <AppBar position="fixed" sx={{
              background: 'white',
              color: 'black',
-             boxShadow: sidebarVisible ? '0px 2px 4px -1px rgba(0,0,0,0.2)' : 'none',
+             boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
              transition: 'box-shadow 0s',
-             marginRight: '16px',
              }}
           >
           <Toolbar>
@@ -399,6 +397,7 @@ function BookViewer() {
       {sidebarVisible && (
         <div style={{ background: "white", marginTop: '64px', marginRight: '8px', display: 'flex', flexDirection: 'column', zIndex: 1000 }}>
           <Sidebar bookId={id} highlights={highlights} flashcards={flashcards}
+            setFlashcards={setFlashcards}
             onHighlightClick={scrollToHighlight}
             onFlashcardDelete={deleteFlashcard}
             onFlashcardEdit={updateFlashcard}/>

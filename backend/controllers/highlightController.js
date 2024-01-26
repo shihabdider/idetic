@@ -1,4 +1,5 @@
 const Highlight = require('../models/highlight');
+const { queryGPT } = require('../utils/queryGPT');
 
 exports.listHighlights = async (req, res) => {
   try {
@@ -78,6 +79,16 @@ exports.exportHighlights = async (req, res) => {
     res.header('Content-Type', 'text/markdown');
     res.attachment('highlights.md');
     res.send(markdown);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+exports.queryGPT = async (req, res) => {
+  try {
+    const question = req.body.question;
+    const answer = await queryGPT(question);
+    res.json({ answer: answer });
   } catch (error) {
     res.status(500).send(error);
   }

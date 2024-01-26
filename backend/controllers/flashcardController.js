@@ -1,6 +1,7 @@
 const Flashcard = require('../models/flashcard');
 
 const { generateFlashcards } = require('../utils/generateFlashcard');
+const { Parser } = require('json2csv');
 
 exports.listFlashcards = async (req, res) => {
   try {
@@ -56,7 +57,7 @@ exports.deleteFlashcard = async (req, res) => {
     res.status(500).send(error);
   }
 };
-const { Parser } = require('json2csv');
+
 
 exports.exportFlashcards = async (req, res) => {
   try {
@@ -71,6 +72,7 @@ exports.exportFlashcards = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
 exports.generateFlashcardsWithGPT = async (req, res) => {
   try {
     const highlight = req.body.highlight;
@@ -81,6 +83,7 @@ exports.generateFlashcardsWithGPT = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
 exports.listFlashcardsByBook = async (req, res) => {
   try {
     const flashcards = await Flashcard.find({ bookId: req.params.bookId, userId: req.user._id });
@@ -89,6 +92,7 @@ exports.listFlashcardsByBook = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
 exports.deleteAllFlashcardsByBook = async (req, res) => {
   try {
     await Flashcard.deleteMany({ bookId: req.params.bookId, userId: req.user._id });

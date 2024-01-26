@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 
 function LoginPage() {
   const handleLogin = () => {
-    // Implement login logic or redirect to OAuth provider
     window.location.href = 'http://localhost:3001/auth/google';
   };
 

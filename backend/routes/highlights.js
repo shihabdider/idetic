@@ -15,5 +15,6 @@ router.post('/', isAuthenticated, highlightController.createHighlight);
 router.get('/:id', isAuthenticated, highlightController.getHighlight);
 router.put('/:id', isAuthenticated, highlightController.updateHighlight);
 router.delete('/:id', isAuthenticated, highlightController.deleteHighlight);
+router.post('/:id/query-gpt', isAuthenticated, highlightController.queryGPT);
 
 module.exports = router;
