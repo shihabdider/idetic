@@ -9,7 +9,7 @@ import Dropzone from 'react-dropzone';
 function BookLibrary() {
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [uploadProgress, setUploadProgress] = useState(10);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const navigate = useNavigate();
 
   const logoPath = '/idetic_logo.png';
