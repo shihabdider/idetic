@@ -50,6 +50,10 @@ function BookLibrary() {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem('authToken')) {
+      navigate('/login');
+    }
+
     const fetchBooks = async () => {
       try {
         const response = await axios.get('http://localhost:3001/books', { withCredentials: true });
