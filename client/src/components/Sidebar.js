@@ -30,21 +30,20 @@ function TabPanel(props) {
   );
 }
 
-function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcardDelete, onFlashcardEdit }) {
-  const onDeleteAllFlashcards = async () => {
-    try {
-      await axios.delete(`http://localhost:3001/flashcards/${bookId}/all`, { withCredentials: true });
-      // Assuming there's a prop function to update the flashcards list after deletion
-      onFlashcardDelete(null, true); // Passing true to indicate all flashcards are deleted
-    } catch (error) {
-      console.error('Error deleting all flashcards:', error);
-    }
-  };
-
+function Sidebar({ bookId, highlights, flashcards, setFlashcards, onHighlightClick, onFlashcardDelete, onFlashcardEdit }) {
   const [editingFlashcardId, setEditingFlashcardId] = useState(null);
   const [editingField, setEditingField] = useState(null); // 'frontText' or 'backText'
   const [editText, setEditText] = useState('');
   const [tabValue, setTabValue] = useState(0);
+
+  const onDeleteAllFlashcards = async () => {
+    try {
+      await axios.delete(`http://localhost:3001/flashcards/${bookId}/all`, { withCredentials: true });
+      setFlashcards([]);
+    } catch (error) {
+      console.error('Error deleting all flashcards:', error);
+    }
+  };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -152,11 +151,11 @@ function Sidebar({ bookId, highlights, flashcards, onHighlightClick, onFlashcard
           Export as CSV
         </Button>
         <IconButton
-          color="secondary"
+          color="error"
           onClick={onDeleteAllFlashcards} // This now calls the function defined above
           style={{ margin: '10px' }}
         >
-          <DeleteForeverIcon />
+          <DeleteIcon />
         </IconButton>
         <List>
           {flashcards.map((flashcard) => (
