@@ -47,7 +47,7 @@ function BookLibrary() {
   return (
     <Container component="main">
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2}}>
-        <img src={logoPath} alt="Idetic Logo" style={{ maxHeight: '240px' }} />
+        <img src={logoPath} alt="Idetic Logo" style={{ maxHeight: '240px', marginRight: 'auto' }} />
         <TextField
           variant="outlined"
           placeholder="Search for books..."
@@ -55,6 +55,7 @@ function BookLibrary() {
           InputProps={{
             endAdornment: <SearchIcon />,
           }}
+          style={{ flexGrow: 1, alignSelf: 'center' }}
         />
         {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
         <Dropzone accept={{"application/pdf": [".pdf"]}} onDrop={acceptedFiles => {
