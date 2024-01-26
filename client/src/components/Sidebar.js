@@ -36,12 +36,14 @@ function Sidebar({ bookId, highlights, flashcards, setFlashcards, onHighlightCli
   const [editText, setEditText] = useState('');
   const [tabValue, setTabValue] = useState(0);
 
-  const onDeleteAllFlashcards = async () => {
-    try {
-      await axios.delete(`http://localhost:3001/flashcards/${bookId}/all`, { withCredentials: true });
-      setFlashcards([]);
-    } catch (error) {
-      console.error('Error deleting all flashcards:', error);
+  const onDeleteAllFlashcards = () => {
+    if (window.confirm('Are you sure you want to delete all flashcards?')) {
+      try {
+        await axios.delete(`http://localhost:3001/flashcards/${bookId}/all`, { withCredentials: true });
+        setFlashcards([]);
+      } catch (error) {
+        console.error('Error deleting all flashcards:', error);
+      }
     }
   };
 
