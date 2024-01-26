@@ -14,6 +14,33 @@ function BookLibrary() {
 
   const logoPath = '/idetic_logo.png';
 
+  const onDrop = (acceptedFiles) => {
+    const file = acceptedFiles[0];
+    const formData = new FormData();
+    formData.append('book', file);
+
+    axios.post('http://localhost:3001/books', formData, {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+      },
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(percentCompleted);
+      }
+    })
+    .then(response => {
+      // Handle success
+      console.log('Book uploaded successfully', response);
+      setBooks([...books, response.data]);
+    })
+    .catch(error => {
+      // Handle error
+      console.error('Error uploading book:', error);
+    });
+  };
+
   const deleteBook = async (bookId) => {
     try {
       await axios.delete(`http://localhost:3001/books/${bookId}`, { withCredentials: true });
@@ -59,31 +86,7 @@ function BookLibrary() {
         />
         {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} />}
         <Dropzone accept={{"application/pdf": [".pdf"]}} onDrop={acceptedFiles => {
-          const file = acceptedFiles[0];
-          const formData = new FormData();
-          formData.append('book', file);
-
-          axios.post('http://localhost:3001/books', formData, {
-            withCredentials: true,
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': 'Bearer ' + localStorage.getItem('authToken')
-            },
-            onUploadProgress: (progressEvent) => {
-              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-              setUploadProgress(percentCompleted);
-            }
-          })
-          .then(response => {
-            // Handle success
-            console.log('Book uploaded successfully', response);
-            setBooks([...books, response.data]);
-          })
-          .catch(error => {
-            // Handle error
-            console.error('Error uploading book:', error);
-          });
-        }}>
+          onDrop={onDrop}
           {({getRootProps, getInputProps}) => (
             <section style={{ display: 'flex', alignItems: 'center' }}>
               <div {...getRootProps()}>
