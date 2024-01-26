@@ -50,9 +50,17 @@ function BookLibrary() {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem('authToken')) {
-      navigate('/login');
-    }
+    const verifyUser = async () => {
+      try {
+        await axios.get('http://localhost:3001/auth/verify', { withCredentials: true });
+        // If the request succeeds, the user is authenticated
+      } catch (error) {
+        // If the request fails, redirect to the login page
+        navigate('/login');
+      }
+    };
+
+    verifyUser();
 
     const fetchBooks = async () => {
       try {
