@@ -5,7 +5,8 @@ GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.min.mjs`;
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PdfLoader, PdfHighlighter, Tip, Highlight, Popup, AreaHighlight } from 'react-pdf-highlighter';
-import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button } from '@mui/material';
+import { AppBar, Divider, Toolbar, Typography, IconButton, Popover, Button, Tooltip } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -231,6 +232,17 @@ function BookViewer() {
         horizontal: 'center',
       }}
     >
+      <Button
+        title="Copy Text"
+        startIcon={<ContentCopyIcon />}
+        onClick={() => {
+          navigator.clipboard.writeText(selectedHighlight.content.text);
+          handlePopoverClose();
+        }}
+        size="small"
+      >
+        Copy
+      </Button>
       <Button
         title="Delete Highlight"
         startIcon={<DeleteOutlineIcon />}
