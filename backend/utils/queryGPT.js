@@ -21,7 +21,7 @@ async function queryGPT(question) {
         content: `The user asks: ${question}.`
       },
     ],
-    model: 'gpt-3.5-turbo-1106',
+    model: 'gpt-4-turbo-preview',
   });
 
   return completion.choices[0].message.content;
