@@ -25,8 +25,8 @@ function start_mongodb {
       echo "MongoDB service could not be started. Please ensure MongoDB is installed."
       exit 1
     fi
-    echo "Creating 'idetic' database if it doesn't exist..."
-    mongo idetic --eval "db.createCollection('books')"
+    echo "Creating 'idetic' database and collections if they don't exist..."
+    mongo idetic --eval "db.createCollection('books'); db.createCollection('flashcards'); db.createCollection('highlights');"
   fi
 }
 
