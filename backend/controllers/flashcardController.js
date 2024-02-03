@@ -5,7 +5,7 @@ const { Parser } = require('json2csv');
 
 exports.listFlashcards = async (req, res) => {
   try {
-    const flashcards = await Flashcard.find({ userId: req.user._id });
+    const flashcards = await Flashcard.find({});
     res.json(flashcards);
   } catch (error) {
     res.status(500).send(error);
@@ -19,7 +19,6 @@ exports.createFlashcard = async (req, res) => {
       backText: req.body.backText,
       highlightId: req.body.highlightId,
       bookId: req.body.bookId,
-      userId: req.user._id
     });
     const savedFlashcard = await newFlashcard.save();
     res.status(201).send(savedFlashcard);
@@ -61,7 +60,7 @@ exports.deleteFlashcard = async (req, res) => {
 
 exports.exportFlashcards = async (req, res) => {
   try {
-    const flashcards = await Flashcard.find({ bookId: req.params.bookId, userId: req.user._id });
+    const flashcards = await Flashcard.find({ bookId: req.params.bookId });
     const fields = ['frontText', 'backText'];
     const json2csvParser = new Parser({ fields, delimiter: ',' });
     const csv = json2csvParser.parse(flashcards);
@@ -86,7 +85,7 @@ exports.generateFlashcardsWithGPT = async (req, res) => {
 
 exports.listFlashcardsByBook = async (req, res) => {
   try {
-    const flashcards = await Flashcard.find({ bookId: req.params.bookId, userId: req.user._id });
+    const flashcards = await Flashcard.find({ bookId: req.params.bookId });
     res.json(flashcards);
   } catch (error) {
     res.status(500).send(error);
@@ -95,7 +94,7 @@ exports.listFlashcardsByBook = async (req, res) => {
 
 exports.deleteAllFlashcardsByBook = async (req, res) => {
   try {
-    await Flashcard.deleteMany({ bookId: req.params.bookId, userId: req.user._id });
+    await Flashcard.deleteMany({ bookId: req.params.bookId });
     res.status(204).send();
   } catch (error) {
     res.status(500).send(error);

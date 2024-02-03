@@ -21,7 +21,6 @@ function BookLibrary() {
     setIsUploading(true);
 
     axios.post('http://localhost:3001/books', formData, {
-      withCredentials: true,
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': 'Bearer ' + localStorage.getItem('authToken')
@@ -42,7 +41,7 @@ function BookLibrary() {
 
   const deleteBook = async (bookId) => {
     try {
-      await axios.delete(`http://localhost:3001/books/${bookId}`, { withCredentials: true });
+      await axios.delete(`http://localhost:3001/books/${bookId}`);
       setBooks(books.filter(book => book._id !== bookId));
     } catch (error) {
       console.error('Error deleting book:', error);
@@ -50,21 +49,10 @@ function BookLibrary() {
   };
 
   useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        await axios.get('http://localhost:3001/auth/verify', { withCredentials: true });
-        // If the request succeeds, the user is authenticated
-      } catch (error) {
-        // If the request fails, redirect to the login page
-        navigate('/login');
-      }
-    };
-
-    verifyUser();
 
     const fetchBooks = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/books', { withCredentials: true });
+        const response = await axios.get('http://localhost:3001/books');
         setBooks(response.data);
       } catch (error) {
         console.error('Error fetching books:', error);

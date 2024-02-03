@@ -35,7 +35,7 @@ function BookViewer() {
   useEffect(() => {
     const fetchPdfDocument = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/books/${id}`, { withCredentials: true });
+        const response = await axios.get(`http://localhost:3001/books/${id}`);
         const pdfTitle = response.data.title;
         setPdfTitle(pdfTitle);
         const pdfPath = response.data.filePath;
@@ -53,9 +53,9 @@ function BookViewer() {
     };
 
     const fetchHighlights = async () => {
-      const response = await axios.get(`http://localhost:3001/highlights?bookId=${id}`, { withCredentials: true });
+      const response = await axios.get(`http://localhost:3001/highlights?bookId=${id}`);
       setHighlights(response.data);
-      const flashcardsResponse = await axios.get(`http://localhost:3001/flashcards/book/${id}`, { withCredentials: true });
+      const flashcardsResponse = await axios.get(`http://localhost:3001/flashcards/book/${id}`);
       setFlashcards(flashcardsResponse.data);
     };
 
@@ -100,7 +100,7 @@ function BookViewer() {
   useEffect(() => {
     const saveScrollPosition = _.debounce(async () => {
       try {
-        await axios.patch(`http://localhost:3001/books/${id}/last-viewed-page-number`, { lastViewedPageNumber }, { withCredentials: true });
+        await axios.patch(`http://localhost:3001/books/${id}/last-viewed-page-number`, { lastViewedPageNumber });
       } catch (error) {
         console.error('Error updating scroll position:', error);
       }
@@ -118,7 +118,7 @@ function BookViewer() {
       position: highlight.position,
       comment: highlight.comment, 
       bookId: id 
-    }, { withCredentials: true })
+    })
     .then(response => {
       setHighlights([...highlights, response.data]);
       console.log('Highlights:', highlights); 
@@ -140,7 +140,7 @@ function BookViewer() {
         rects: position?.rects,
         pageNumber: position?.pageNumber
       }
-    }, { withCredentials: true })
+    })
     .then(response => {
       const index = highlights.findIndex(h => h._id === highlight._id);
       if (index !== -1) {
@@ -155,7 +155,7 @@ function BookViewer() {
   };
 
   const deleteHighlight = (highlightId) => {
-    axios.delete(`http://localhost:3001/highlights/${highlightId}`, { withCredentials: true })
+    axios.delete(`http://localhost:3001/highlights/${highlightId}`)
       .then(() => {
         setHighlights(highlights.filter(h => h._id !== highlightId));
         setSelectedHighlight(null);
@@ -172,7 +172,7 @@ function BookViewer() {
       const response = await axios.post('http://localhost:3001/flashcards/generate-with-gpt', {
         highlight: highlight.content.text,
         page: pageText
-      }, { withCredentials: true });
+      });
       console.log('Generated flashcards:', response.data.flashcards);
       // Collect all new flashcards in a batch to update the state at once
       const newFlashcards = await Promise.all(response.data.flashcards.map(flashcard =>
@@ -181,7 +181,7 @@ function BookViewer() {
           backText: flashcard.answer,
           highlightId: highlight._id,
           bookId: id
-        }, { withCredentials: true }).then(response => response.data)
+        }).then(response => response.data)
       ));
       setFlashcards([...flashcards, ...newFlashcards]);
     } catch (error) {
@@ -194,7 +194,7 @@ function BookViewer() {
     try {
       const response = await axios.put(`http://localhost:3001/flashcards/${flashcardId}`, {
         [updatingField]: updatingText,
-      }, { withCredentials: true });
+      });
       const updatedFlashcards = flashcards.map(flashcard => {
         if (flashcard._id === flashcardId) {
           return { ...flashcard, [updatingField]: updatingText };
@@ -210,7 +210,7 @@ function BookViewer() {
 
   const deleteFlashcard = async (flashcardId) => {
     try {
-      await axios.delete(`http://localhost:3001/flashcards/${flashcardId}`, { withCredentials: true });
+      await axios.delete(`http://localhost:3001/flashcards/${flashcardId}`);
       setFlashcards(flashcards.filter(h => h._id !== flashcardId));
       console.log('Flashcard deleted:', flashcardId);
     } catch (error) {

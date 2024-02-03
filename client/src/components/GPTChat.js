@@ -28,10 +28,9 @@ function GPTChat(bookId) {
   const generateGPTResponse = async (question) => {
     setIsGPTTyping(true);
     try {
-      const response = await axios.post(`http://localhost:3001/highlights/${bookId}/query-gpt`, {
+      const response = await axios.post(`http://localhost:3001/highlights/${bookId.bookId}/query-gpt`, {
         question: question
-      }, { withCredentials: true });
-      console.log('Answer:', response.data.answer);
+      });
       setIsGPTTyping(false);
       return response.data.answer;
     } catch (error) {

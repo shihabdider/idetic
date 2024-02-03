@@ -39,7 +39,7 @@ function Sidebar({ bookId, highlights, flashcards, setFlashcards, onHighlightCli
   const onDeleteAllFlashcards = async () => {
     if (window.confirm('Are you sure you want to delete all flashcards?')) {
       try {
-        await axios.delete(`http://localhost:3001/flashcards/${bookId}/all`, { withCredentials: true });
+        await axios.delete(`http://localhost:3001/flashcards/${bookId}/all`);
         setFlashcards([]);
       } catch (error) {
         console.error('Error deleting all flashcards:', error);
@@ -55,7 +55,6 @@ function Sidebar({ bookId, highlights, flashcards, setFlashcards, onHighlightCli
     try {
       const response = await axios.get(`http://localhost:3001/flashcards/export/${bookId}`, {
         responseType: 'blob',
-        withCredentials: true
       });
       const blob = new Blob([response.data], { type: 'text/csv' });
       const a = document.createElement('a');
@@ -88,12 +87,10 @@ function Sidebar({ bookId, highlights, flashcards, setFlashcards, onHighlightCli
     setEditingField(field);
     const flashcard = flashcards.find(fc => fc._id === flashcardId);
     setEditText(flashcard ? flashcard[field] : '');
-    console.log(editText);
   };
 
   const handleEditChange = (event) => {
     setEditText(event.target.value);
-    console.log('editText', editText);
   };
 
   const handleEditBlur = () => {

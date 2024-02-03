@@ -12,21 +12,19 @@ as the context. This is an MVP with further improvements planned.
 ## Features
 
 **Core Features Overview:**
-1. **User Authentication:**
-   - Google OAuth integration for secure login.
    
-2. **Book Reader Mode:**
+**Book Reader Mode:**
    - Book library browser with search functionality.
    - Options to upload and delete books.
    - Reading interface with highlights 
    - Flashcard creation from highlighted text using GPT-3.5
 
-3. **Highlights/Flashcard Browser:**
+**Highlights/Flashcard Browser:**
    - Navigable list of all highlights within a book.
    - Option to generate flashcards directly from highlights.
    - Edit, delete and export flashcards
 
-4. **Cloud-based Data Storage:**
+**Cloud-based Data Storage:**
    - Synchronization of books, highlights, and flashcards across devices.
    - Support for offline use with resynchronization upon reconnecting to the internet.
    - Can export flashcards to a text/csv file
@@ -37,7 +35,6 @@ as the context. This is an MVP with further improvements planned.
 - [npm](https://www.npmjs.com/) v6.14.10 or higher
 - [MongoDB](https://www.mongodb.com/) v4.4.3 or higher
 - openai API key
-- Google OAuth credentials
 
 ## Installation
 1. Clone the repository

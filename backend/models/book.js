@@ -6,7 +6,6 @@ const bookSchema = new mongoose.Schema({
   filePath: String,
   coverImagePath: String,
   lastViewedPageNumber: Number,
-  userId: mongoose.Schema.Types.ObjectId
 });
 
 const Book = mongoose.model('Book', bookSchema);

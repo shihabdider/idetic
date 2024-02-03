@@ -3,7 +3,7 @@ const { queryGPT } = require('../utils/queryGPT');
 
 exports.listHighlights = async (req, res) => {
   try {
-    const highlights = await Highlight.find({ userId: req.user._id, bookId: req.query.bookId });
+    const highlights = await Highlight.find({ bookId: req.query.bookId });
     res.json(highlights);
   } catch (error) {
     res.status(500).send(error);
@@ -18,7 +18,6 @@ exports.createHighlight = async (req, res) => {
       comment: req.body.comment,
       id: req.body.id,
       bookId: req.body.bookId,
-      userId: req.user._id
     });
     const savedHighlight = await newHighlight.save();
     res.status(201).send(savedHighlight);
@@ -46,9 +45,7 @@ exports.updateHighlight = async (req, res) => {
       position: req.body.position,
       comment: req.body.comment,
       id: req.body.id,
-      // Only update bookId and userId if they are provided
       ...(req.body.bookId && { bookId: req.body.bookId }),
-      ...(req.body.userId && { userId: req.body.userId })
     };
     const updatedHighlight = await Highlight.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     res.status(200).json(updatedHighlight);
@@ -68,7 +65,7 @@ exports.deleteHighlight = async (req, res) => {
 
 exports.exportHighlights = async (req, res) => {
   try {
-    const highlights = await Highlight.find({ userId: req.user._id, bookId: req.query.bookId });
+    const highlights = await Highlight.find({ bookId: req.query.bookId });
     let markdown = '';
     highlights.forEach(highlight => {
       markdown += `## Highlight ID: ${highlight.id}\n`;

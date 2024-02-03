@@ -7,7 +7,7 @@ const fs = require('fs');
 
 exports.listBooks = async (req, res) => {
   try {
-    const books = await Book.find({ userId: req.user._id });
+    const books = await Book.find({});
     res.json(books);
   } catch (error) {
     res.status(500).send(error);
@@ -39,7 +39,6 @@ exports.createBook = [upload.single('book'), async (req, res) => {
       title,
       author,
       filePath: bookFile.path,
-      userId: req.user._id
     });
     const savedBook = await newBook.save();
 

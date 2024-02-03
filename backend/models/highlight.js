@@ -30,7 +30,6 @@ const highlightSchema = new mongoose.Schema({
   position: positionSchema,
   comment: commentSchema,
   bookId: { type: mongoose.Schema.Types.ObjectId, ref: 'books' },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' }
 });
 
 const Highlight = mongoose.model('Highlight', highlightSchema);
