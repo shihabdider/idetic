@@ -26,7 +26,7 @@ function start_mongodb {
       exit 1
     fi
     echo "Creating 'idetic' database if it doesn't exist..."
-    mongo idetic --eval "db.createCollection('init')"
+    mongo idetic --eval "db.createCollection('books')"
   fi
 }
 
