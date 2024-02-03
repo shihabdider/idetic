@@ -1,9 +1,17 @@
 #!/bin/bash
 
 function check_env_file {
-  if ! grep -q "MONGO_URI" backend/.env && ! grep -q "OPENAI_API_KEY" backend/.env; then
-    echo "Environment variables MONGO_URI and OPENAI_API_KEY not set."
-    read -p "Enter MONGO_URI: " mongo_uri
+  if ! grep -q "OPENAI_API_KEY" backend/.env; then
+    echo "Environment variable OPENAI_API_KEY not set."
+    read -p "Enter OPENAI_API_KEY: " openai_api_key
+    echo "OPENAI_API_KEY=$openai_api_key" > backend/.env
+  fi
+  if ! grep -q "MONGO_URI" backend/.env; then
+    echo "Setting default MONGO_URI in .env"
+    echo "MONGO_URI=mongodb://localhost:27017/idetic" >> backend/.env
+  fi
+}
+
     read -p "Enter OPENAI_API_KEY: " openai_api_key
     echo "MONGO_URI=$mongo_uri" > backend/.env
     echo "OPENAI_API_KEY=$openai_api_key" >> backend/.env
@@ -17,6 +25,8 @@ function start_mongodb {
       echo "MongoDB service could not be started. Please ensure MongoDB is installed."
       exit 1
     fi
+    echo "Creating 'idetic' database if it doesn't exist..."
+    mongo idetic --eval "db.createCollection('init')"
   fi
 }
 
