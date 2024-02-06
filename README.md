@@ -38,19 +38,8 @@ as the context. This is an MVP with further improvements planned.
 
 ## Installation
 1. Clone the repository
-2. Install dependencies
-```bash
-npm install
-```
-3. Create a `.env` file in the root directory of the project and add the following environment variables:
-```
-MONGO_URI=<your_mongodb_uri>
-OPENAI_API_KEY=<your_openai_api_key>
-GOOGLE_CLIENT_ID=<your_google_client_id>
-GOOGLE_CLIENT_SECRET=<your_google_client_secret>
-```
-4. Run the app (do this for both the server and client)
-```bash
-npm start
-```
+2. Run `deploy.sh`
+3. Enter openai api key when prompted
+4. If mongodb is not installed, install it (`brew install mongodb` on macos)
 5. Navigate to `localhost:3000` in your browser
+
