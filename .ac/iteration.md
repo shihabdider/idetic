@@ -2,29 +2,47 @@
 
 ## Current Slice
 
-Prepare implementation kickoff for archiving the legacy app and scaffolding the fresh Idetic MV3 extension.
+Spike direct OpenAI/Codex from the MV3 service worker.
 
 ## Goal
 
-Move from approved alignment and architecture into the first safe implementation step without losing the legacy React/Express/Mongo app.
+Verify the riskiest AI boundary before building the full popup workflow: exported Skim OpenAI/Codex credentials should let the MV3 service worker make a direct plain-text AI request, or the project should explicitly route to the native-host/local-gateway fallback.
+
+## Completed
+
+- Autocode theory, DSL, architecture, todos, and iteration artifacts are present.
+- Legacy app was archived by committing the alignment state and creating `archive/legacy-react-express-mongo`.
+- The active main worktree was replaced with a Bun + TypeScript MV3 extension scaffold.
+- Popup UI was polished toward the warm Vim-like TUI direction with a bottom status bar.
+- Status badges use full lowercase `anki` and `ai` labels aligned right.
+- Card draft input persists across popup close.
+- Chat draft input now persists across popup close and clears on send or `:cl[ear]`.
+- `bun run verify` passes.
+- `bun run check:no-secrets` passes.
 
 ## Scope
 
-- Treat `.ac/theory.md`, `.ac/dsl.md`, and `.ac/architecture.md` as the approved product and architecture context.
-- Keep implementation bounded by the architecture module boundaries and watchpoints.
-- Make the next implementation action explicit: archive the legacy app before deleting or replacing it.
-- Do not modify or delete app code during this preparation slice.
+- Use the committed placeholder credentials module as the safe default.
+- Export local Skim OpenAI/Codex credentials only for local testing and do not commit real credentials.
+- Verify service-worker status can classify AI credentials as connected, disconnected, expired, or failed.
+- Verify the service worker can call the required Codex endpoint directly and parse a plain-text response.
+- Keep broad popup workflow implementation deferred until the AI and Anki external seams are understood.
+- Preserve architecture watchpoints: no content scripts, no Markdown/LaTeX rendering, no Anki metadata beyond Front/Back/Tags.
 
 ## Acceptance Signals
 
-- `.ac/todos.md` marks architecture complete and shows archive as the next implementation dependency.
-- The next action is clear: create branch `archive/legacy-react-express-mongo`, commit the current legacy app there, then return to main.
-- The old React/Express/Mongo app remains untouched until the archive step begins.
-- No `.htdp` artifacts are created or used.
+- `bun run export:skim-creds` can seed local extension credentials from Skim.
+- `bun run check:no-secrets` detects if real generated credentials would be committed.
+- The unpacked extension reports `ai` connected when valid exported credentials are present.
+- A service-worker AI spike produces one plain-text response from Codex, or fails with enough detail to choose the native-host/local-gateway fallback.
+- Any changed hidden decision is routed back through `.ac/architecture.md` before broad implementation.
 
-## First Implementation Checkpoint After Archive
+## Fresh Session Start
 
-After the archive branch exists, scaffold a fresh Bun + TypeScript MV3 extension monorepo. The first risk-reducing work should verify direct MV3 OpenAI/Codex calls using exported Skim credentials and verify MV3 AnkiConnect calls to `127.0.0.1:8765`.
+- Read `.ac/theory.md`, `.ac/dsl.md`, `.ac/architecture.md`, `.ac/todos.md`, and this file.
+- Check `git status --short --branch`; the MV3 scaffold and UI polish are currently uncommitted in the active worktree.
+- Run `bun run verify` and `bun run check:no-secrets` before continuing.
+- Begin I07, the direct OpenAI/Codex MV3 spike.
 
 ## First Customer-Facing Checkpoint
 
@@ -32,4 +50,4 @@ Load the unpacked extension, open the popup with `MacCtrl+Shift+I`, see a plain 
 
 ## Status
 
-Theory, DSL, and architecture are approved. Implementation gates are clean. Current focus is kickoff preparation before archive and scaffold.
+Popup scaffold, UI polish, and draft persistence are complete. Current focus is the direct OpenAI/Codex MV3 risk spike.

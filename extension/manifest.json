@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Idetic",
+  "version": "0.1.0",
+  "description": "Keyboard-first AI-assisted Anki card creation from the browser.",
+  "action": {
+    "default_title": "Idetic",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "dist/background/service-worker.js",
+    "type": "module"
+  },
+  "permissions": ["activeTab", "storage", "tabs"],
+  "host_permissions": [
+    "http://127.0.0.1:8765/*",
+    "https://chatgpt.com/backend-api/codex/*",
+    "https://auth.openai.com/oauth/token"
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "mac": "MacCtrl+Shift+I"
+      },
+      "description": "Open Idetic"
+    }
+  }
+}

@@ -1,0 +1,193 @@
+:root {
+  color-scheme: dark;
+  --bg: #15100c;
+  --panel: #1d160f;
+  --panel-strong: #261b12;
+  --field: #120e0b;
+  --line: #4a3322;
+  --line-soft: #332417;
+  --fg: #ead7b7;
+  --muted: #b89b72;
+  --dim: #826b50;
+  --amber: #f0b35b;
+  --orange: #d98a3f;
+  --green: #a8c47a;
+  --red: #df785f;
+  --yellow: #e6c36a;
+  font-family: Monaco, Menlo, "SF Mono", "DejaVu Sans Mono", "Liberation Mono", Consolas, monospace;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 520px;
+  height: 680px;
+  margin: 0;
+  background: var(--bg);
+}
+
+#app {
+  height: 100vh;
+}
+
+.shell {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  padding: 10px;
+  gap: 0;
+  background: radial-gradient(circle at top left, #21170f 0, var(--bg) 340px);
+}
+
+.view {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--line-soft);
+  border-bottom: 0;
+  background: color-mix(in srgb, var(--panel) 92%, black);
+  padding: 10px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+
+.field.selected .label {
+  color: var(--amber);
+}
+
+textarea,
+input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--field);
+  color: var(--fg);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.45;
+  padding: 8px;
+  outline: none;
+  caret-color: var(--yellow);
+}
+
+textarea:focus,
+input:focus {
+  border-color: var(--amber);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--amber) 55%, transparent);
+}
+
+textarea {
+  resize: none;
+}
+
+.card-front,
+.card-back {
+  min-height: 150px;
+}
+
+.chat-log {
+  min-height: 420px;
+  white-space: pre-wrap;
+  padding: 8px;
+  border: 1px solid var(--line-soft);
+  background: var(--field);
+  color: var(--fg);
+  margin-bottom: 10px;
+}
+
+.context {
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.statusbar {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(120px, 2fr) minmax(70px, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 28px;
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+  color: var(--fg);
+  padding: 3px 8px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.status-left {
+  color: var(--amber);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-center {
+  color: var(--muted);
+  text-align: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-right {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.badge {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.badge.checking {
+  color: var(--yellow);
+}
+
+.badge.connected {
+  color: var(--green);
+}
+
+.badge.disconnected,
+.badge.error {
+  color: var(--red);
+}
+
+.command {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.command span {
+  color: var(--amber);
+}
+
+.command input {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+  color: var(--fg);
+  text-align: left;
+}
+
+.help {
+  white-space: pre-wrap;
+  line-height: 1.45;
+  color: var(--fg);
+}

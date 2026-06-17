@@ -57,11 +57,12 @@ Must not leak:
 
 ### Persistent State Store
 
-Hidden decision: how AC, BC, CD, ST suggestion, and screenshot bytes persist across popup closes and browser restarts.
+Hidden decision: how AC, BC, CD, ChD, ST suggestion, and screenshot bytes persist across popup closes and browser restarts.
 
 Stable surface:
 - Load and save one active conversation.
 - Load and save one card draft.
+- Load and save one chat draft.
 - Load, replace, and clear one browser context screenshot.
 - Persist until explicit clear.
 - Hide whether screenshot bytes live in `chrome.storage.local` or IndexedDB.
@@ -137,6 +138,7 @@ Must not leak:
 - AC: one active conversation with plain user/assistant turns.
 - BC: one screenshot plus captured title/domain/time.
 - CD: Front, Back, Tags.
+- ChD: unsent chat input text.
 - ST: one optional hidden source tag suggestion.
 - Connection status: checking, connected, disconnected, error.
 - Save result:

@@ -1,59 +1,45 @@
-# iDetic
+# Idetic
 
-A cloud-based book reader application with GPT-powered flashcard generation.
-The app allows users to generate flashcards from highlighted text within books
-and export them to Anki. The cards (currently) take the page of the highlight
-as the context. This is an MVP with further improvements planned.
+Idetic is a local-first Chrome Manifest V3 extension for browser-based AI-assisted learning and manual Anki card creation.
 
-## Demo
+The MVP opens as a keyboard-first TUI popup, lets the user ask AI about the current visible browser context, manually author a Basic Anki card, save it to Anki deck `all`, and sync immediately.
 
-![iDetic Demo](idetic_demo.mp4)
+## Current direction
 
-## Features
+The old React/Express/Mongo PDF reader has been archived on `archive/legacy-react-express-mongo`. The active project is a fresh Bun + TypeScript MV3 extension.
 
-**Core Features Overview:**
-1. **User Authentication:**
-   - Google OAuth integration for secure login.
-   
-2. **Book Reader Mode:**
-   - Book library browser with search functionality.
-   - Options to upload and delete books.
-   - Reading interface with highlights 
-   - Flashcard creation from highlighted text using GPT-3.5
+## Development
 
-3. **Highlights/Flashcard Browser:**
-   - Navigable list of all highlights within a book.
-   - Option to generate flashcards directly from highlights.
-   - Edit, delete and export flashcards
-
-4. **Cloud-based Data Storage:**
-   - Synchronization of books, highlights, and flashcards across devices.
-   - Support for offline use with resynchronization upon reconnecting to the internet.
-   - Can export flashcards to a text/csv file
-
-## Requirements
-
-- [Node.js](https://nodejs.org/en/) v14.15.4 or higher
-- [npm](https://www.npmjs.com/) v6.14.10 or higher
-- [MongoDB](https://www.mongodb.com/) v4.4.3 or higher
-- openai API key
-- Google OAuth credentials
-
-## Installation
-1. Clone the repository
-2. Install dependencies
 ```bash
-npm install
+bun install
+bun run verify
 ```
-3. Create a `.env` file in the root directory of the project and add the following environment variables:
-```
-MONGO_URI=<your_mongodb_uri>
-OPENAI_API_KEY=<your_openai_api_key>
-GOOGLE_CLIENT_ID=<your_google_client_id>
-GOOGLE_CLIENT_SECRET=<your_google_client_secret>
-```
-4. Run the app (do this for both the server and client)
+
+Build the unpacked extension:
+
 ```bash
-npm start
+bun run build
 ```
-5. Navigate to `localhost:3000` in your browser
+
+Load `extension/` as an unpacked Chrome extension.
+
+## MVP constraints
+
+- Chrome MV3 action popup, not side panel.
+- Vanilla TypeScript/JavaScript and CSS.
+- No React.
+- No content scripts.
+- Anki through AnkiConnect at `http://127.0.0.1:8765`.
+- AI through direct MV3 OpenAI/Codex calls seeded from exported Skim credentials.
+- Basic Anki model only, deck `all` only.
+- Cards contain exactly Front and Back; provenance is only a source tag.
+
+## OpenAI/Codex credentials
+
+The committed credentials module is a placeholder. For local MVP testing, export Skim credentials into the placeholder module:
+
+```bash
+bun run export:skim-creds
+```
+
+Do not commit real credentials. Use `bun run check:no-secrets` before committing credential-related changes.

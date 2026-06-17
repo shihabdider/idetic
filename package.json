@@ -1,0 +1,18 @@
+{
+  "name": "idetic",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun scripts/build-extension.ts",
+    "check": "tsc --noEmit",
+    "test": "bun test",
+    "verify": "bun run check && bun test && bun run build",
+    "export:skim-creds": "bun scripts/export-skim-openai-creds.ts",
+    "check:no-secrets": "bun scripts/check-no-secrets.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "latest"
+  }
+}

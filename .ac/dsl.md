@@ -28,6 +28,10 @@ Abbreviations are shared glossary shortcuts, not mandatory code symbol names. Pr
   - Abbr: CD
   - Meaning: The persisted manual Basic card form containing Front, Back, and Tags.
 
+- Full name: Chat draft
+  - Abbr: ChD
+  - Meaning: The persisted unsent chat input text.
+
 - Full name: Source tag
   - Abbr: ST
   - Meaning: The sole provenance marker saved on cards.
