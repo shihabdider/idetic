@@ -30,16 +30,10 @@ Load `extension/` as an unpacked Chrome extension.
 - No React.
 - No content scripts.
 - Anki through AnkiConnect at `http://127.0.0.1:8765`.
-- AI through direct MV3 OpenAI/Codex calls seeded from exported Skim credentials.
+- AI through direct MV3 OpenAI/Codex calls authenticated by extension OAuth login.
 - Basic Anki model only, deck `all` only.
 - Cards contain exactly Front and Back; provenance is only a source tag.
 
-## OpenAI/Codex credentials
+## OpenAI/Codex login
 
-The committed credentials module is a placeholder. For local MVP testing, export Skim credentials into the placeholder module:
-
-```bash
-bun run export:skim-creds
-```
-
-Do not commit real credentials. Use `bun run check:no-secrets` before committing credential-related changes.
+Idetic connects to an OpenAI/Codex subscription from inside the extension. Load the unpacked extension, open the popup, run `:connect` (or `:co`), and complete the OpenAI login tab. Tokens are stored locally in Chrome extension storage and refreshed automatically.

@@ -6,11 +6,12 @@ describe("resolveCommand", () => {
     expect(resolveCommand(":w")).toEqual({ kind: "resolved", command: { name: "write", summary: "create card and sync" } });
     expect(resolveCommand("se")).toEqual({ kind: "resolved", command: { name: "send", summary: "send chat draft" } });
     expect(resolveCommand("sy")).toEqual({ kind: "resolved", command: { name: "sync", summary: "retry Anki sync" } });
+    expect(resolveCommand("co")).toEqual({ kind: "resolved", command: { name: "connect", summary: "connect OpenAI/Codex" } });
   });
 
   test("reports ambiguous vim-style prefixes", () => {
     expect(resolveCommand("s")).toEqual({ kind: "ambiguous", input: "s", matches: ["send", "sync", "status"] });
-    expect(resolveCommand("c")).toEqual({ kind: "ambiguous", input: "c", matches: ["card", "chat", "clear"] });
+    expect(resolveCommand("c")).toEqual({ kind: "ambiguous", input: "c", matches: ["card", "chat", "connect", "clear"] });
   });
 
   test("reports unknown and empty commands", () => {

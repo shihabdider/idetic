@@ -4,6 +4,7 @@ export type CommandName =
   | "write"
   | "card"
   | "chat"
+  | "connect"
   | "refresh"
   | "clear"
   | "status"
@@ -21,6 +22,7 @@ export const COMMANDS: readonly CommandSpec[] = [
   { name: "write", summary: "create card and sync" },
   { name: "card", summary: "switch to card view" },
   { name: "chat", summary: "switch to chat view" },
+  { name: "connect", summary: "connect OpenAI/Codex" },
   { name: "refresh", summary: "replace browser context" },
   { name: "clear", summary: "clear conversation context" },
   { name: "status", summary: "refresh connection status" },

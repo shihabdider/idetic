@@ -91,6 +91,7 @@ function helpText(): string {
     "  :w[rite]   create card and sync",
     "  :ca[rd]    card view",
     "  :ch[at]    chat view",
+    "  :co[nnect] open OpenAI login",
     "  :r[efresh] replace context",
     "  :cl[ear]   clear conversation context",
     "  :st[atus]  refresh status",
@@ -356,6 +357,25 @@ async function captureContext(): Promise<void> {
   render();
 }
 
+async function connectAI(): Promise<void> {
+  state.ai = { kind: "checking", label: "ai", detail: "opening OpenAI login" };
+  state.statusLine = "opening OpenAI login";
+  render();
+
+  const response = await sendRuntimeMessage<unknown>({ type: "idetic.ai-connect" });
+  if (response.ai) state.ai = response.ai;
+
+  if (!response.ok) {
+    state.ai = { kind: "error", label: "ai", detail: response.error };
+    state.statusLine = response.error ?? "OpenAI login failed";
+    render();
+    return;
+  }
+
+  state.statusLine = "OpenAI login tab opened; reopen popup and :status after login";
+  render();
+}
+
 async function sendChatDraft(): Promise<void> {
   if (assistantWaiting) {
     state.statusLine = "assistant still responding";
@@ -420,6 +440,7 @@ async function executeCommand(input: string): Promise<void> {
   if (command === "help") state.mode = "help";
   if (command === "quit") window.close();
   if (command === "status") await refreshStatus();
+  if (command === "connect") await connectAI();
   if (command === "refresh") await captureContext();
   if (command === "clear") {
     state.activeConversation = await clearConversationOnly();

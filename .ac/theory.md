@@ -33,7 +33,7 @@ From Chrome, the user can open Idetic with `MacCtrl+Shift+I`, ask an AI question
 - No React.
 - No content scripts.
 - Anki integration through AnkiConnect at `127.0.0.1:8765`.
-- AI integration through direct MV3 OpenAI/Codex calls seeded from exported Skim credentials.
+- AI integration through direct MV3 OpenAI/Codex calls authenticated by extension OAuth login.
 - Basic note model only.
 - Deck is always `all`.
 

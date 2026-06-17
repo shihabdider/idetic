@@ -165,7 +165,7 @@ Must not leak:
 ### Direct AI from MV3
 
 Verify:
-- exported Skim credentials can seed extension storage
+- extension OAuth login can store OpenAI/Codex credentials
 - service worker can call required Codex endpoint
 - token refresh works or fails clearly
 - plain text response can be parsed

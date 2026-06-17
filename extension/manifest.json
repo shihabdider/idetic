@@ -26,6 +26,7 @@
   "permissions": ["activeTab", "storage", "tabs"],
   "host_permissions": [
     "http://127.0.0.1:8765/*",
+    "http://localhost:1455/*",
     "https://chatgpt.com/backend-api/codex/*",
     "https://auth.openai.com/oauth/token"
   ],

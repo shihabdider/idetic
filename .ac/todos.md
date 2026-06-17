@@ -34,7 +34,7 @@
 
 - [x] I07 — Spike direct OpenAI/Codex from MV3
   - depends on: I06a
-  - outcome: exported Skim OAuth credentials support direct service-worker Codex calls; live `gpt-5.5` plain-text response verified; popup Chat view now uses the AI path with improved chat-first UI polish
+  - outcome: extension `:connect` OAuth login stores credentials in Chrome extension storage; direct service-worker Codex calls work; live `gpt-5.5` plain-text response verified; popup Chat view now uses the AI path with improved chat-first UI polish
 
 - [ ] I08 — Spike AnkiConnect from MV3
   - depends on: I06a
@@ -50,4 +50,4 @@
 - Legacy app is preserved on `archive/legacy-react-express-mongo`.
 - Keep implementation bounded by `.ac/architecture.md`.
 - Use `autocode isolate` before independent worktree implementation.
-- Do not commit real exported OpenAI/Codex credentials; keep the generated credentials module in placeholder form before commits.
+- Do not commit token dumps or generated credential source files; OpenAI/Codex credentials live only in local Chrome extension storage.

@@ -84,7 +84,7 @@ Abbreviations are shared glossary shortcuts, not mandatory code symbol names. Pr
 
 - Full name: OpenAI/Codex credentials
   - Abbr: OC
-  - Meaning: OAuth credentials exported from Skim into a gitignored/generated extension module for MVP AI calls.
+  - Meaning: OAuth credentials stored locally in Chrome extension storage after `:connect` login.
 
 ## General Abbreviations
 

@@ -1,13 +1,16 @@
 import type { ActiveConversation, BrowserContext, ConnectionStatus } from "../core/types";
-import { OPENAI_CODEX_CREDENTIALS } from "../private/openai-creds.generated";
 
 const CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann";
+const AUTHORIZE_URL = "https://auth.openai.com/oauth/authorize";
 const TOKEN_URL = "https://auth.openai.com/oauth/token";
+const REDIRECT_URI = "http://localhost:1455/auth/callback";
+const SCOPE = "openid profile email offline_access";
 const CODEX_RESPONSES_URL = "https://chatgpt.com/backend-api/codex/responses";
 const OPENAI_CODEX_MODEL = "gpt-5.5";
 const OPENAI_CODEX_CREDENTIALS_KEY = "idetic.openaiCodexCredentials";
 const CREDENTIAL_REFRESH_SKEW_MS = 60_000;
 const JWT_CLAIM_PATH = "https://api.openai.com/auth";
+const ORIGINATOR = "pi";
 
 const IDETIC_AI_INSTRUCTIONS = [
   "You are Idetic's AI assistant inside a keyboard-first browser popup.",
@@ -30,6 +33,16 @@ export interface OpenAICodexReadiness {
   status: ConnectionStatus;
   credentialState: OpenAICodexCredentialState;
 }
+
+export interface OpenAICodexOAuthSession {
+  authUrl: string;
+  state: string;
+  verifier: string;
+}
+
+export type OpenAICodexOAuthCallback =
+  | { kind: "code"; code: string }
+  | { kind: "error"; error: string };
 
 export interface OpenAICodexChatRequest {
   message: string;
@@ -112,15 +125,11 @@ async function persistOpenAICodexCredentials(
   await chrome.storage.local.set({ [OPENAI_CODEX_CREDENTIALS_KEY]: credentials });
 }
 
-function preferredCredentials(candidates: Array<OpenAICodexCredentials | undefined>): OpenAICodexCredentials | undefined {
-  return candidates.filter(isOpenAICodexCredentials).sort((left, right) => right.expires - left.expires)[0];
-}
-
 async function loadOpenAICodexCredentials(
   options: OpenAICodexRuntimeOptions = {},
 ): Promise<OpenAICodexCredentials | undefined> {
   if ("credentials" in options) return options.credentials ?? undefined;
-  return preferredCredentials([await readStoredOpenAICodexCredentials(), OPENAI_CODEX_CREDENTIALS]);
+  return readStoredOpenAICodexCredentials();
 }
 
 function decodeJwtPayload(token: string): Record<string, unknown> | undefined {
@@ -141,36 +150,148 @@ function accountIdFromAccessToken(accessToken: string): string | undefined {
   return typeof auth?.chatgpt_account_id === "string" && auth.chatgpt_account_id.length > 0 ? auth.chatgpt_account_id : undefined;
 }
 
-async function refreshOpenAICodexCredentials(
-  credentials: OpenAICodexCredentials,
+function base64Url(bytes: Uint8Array): string {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return globalThis.btoa(binary).replaceAll("=", "").replaceAll("+", "-").replaceAll("/", "_");
+}
+
+function randomBytes(length: number): Uint8Array {
+  const bytes = new Uint8Array(length);
+  globalThis.crypto.getRandomValues(bytes);
+  return bytes;
+}
+
+function randomState(): string {
+  return Array.from(randomBytes(16), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function createPkceVerifier(): string {
+  return base64Url(randomBytes(32));
+}
+
+async function createPkceChallenge(verifier: string): Promise<string> {
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
+  return base64Url(new Uint8Array(digest));
+}
+
+export async function createOpenAICodexAuthorizationUrl(verifier: string, state: string): Promise<string> {
+  const url = new URL(AUTHORIZE_URL);
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("client_id", CLIENT_ID);
+  url.searchParams.set("redirect_uri", REDIRECT_URI);
+  url.searchParams.set("scope", SCOPE);
+  url.searchParams.set("code_challenge", await createPkceChallenge(verifier));
+  url.searchParams.set("code_challenge_method", "S256");
+  url.searchParams.set("state", state);
+  url.searchParams.set("id_token_add_organizations", "true");
+  url.searchParams.set("codex_cli_simplified_flow", "true");
+  url.searchParams.set("originator", ORIGINATOR);
+  return url.toString();
+}
+
+export async function createOpenAICodexOAuthSession(): Promise<OpenAICodexOAuthSession> {
+  const verifier = createPkceVerifier();
+  const state = randomState();
+  return { authUrl: await createOpenAICodexAuthorizationUrl(verifier, state), state, verifier };
+}
+
+export function parseOpenAICodexOAuthCallbackUrl(
+  value: string | undefined,
+  expectedState: string,
+): OpenAICodexOAuthCallback | undefined {
+  if (!value) return undefined;
+
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return undefined;
+  }
+
+  const redirectUrl = new URL(REDIRECT_URI);
+  if (url.origin !== redirectUrl.origin || url.pathname !== redirectUrl.pathname) return undefined;
+
+  if (url.searchParams.get("state") !== expectedState) {
+    return { kind: "error", error: "OpenAI OAuth state mismatch" };
+  }
+
+  const oauthError = url.searchParams.get("error");
+  if (oauthError) {
+    const description = url.searchParams.get("error_description");
+    return { kind: "error", error: description ? `${oauthError}: ${description}` : oauthError };
+  }
+
+  const code = url.searchParams.get("code");
+  if (!code) return { kind: "error", error: "OpenAI OAuth callback was missing a code" };
+  return { kind: "code", code };
+}
+
+async function exchangeOpenAICodexToken(
+  body: URLSearchParams,
   options: OpenAICodexRuntimeOptions = {},
+  fallbackRefreshToken?: string,
+  fallbackAccountId?: string,
 ): Promise<OpenAICodexCredentials> {
-  const fetchImpl = options.fetchImpl ?? fetch;
-  const response = await fetchImpl(TOKEN_URL, {
+  const response = await (options.fetchImpl ?? fetch)(TOKEN_URL, {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: credentials.refresh, client_id: CLIENT_ID }),
+    body,
   });
 
   if (!response.ok) {
     const text = await response.text().catch(() => "");
-    throw new Error(`OpenAI Codex OAuth refresh failed with HTTP ${response.status}: ${text}`);
+    throw new Error(`OpenAI Codex OAuth token exchange failed with HTTP ${response.status}: ${text}`);
   }
 
   const json = (await response.json()) as { access_token?: unknown; refresh_token?: unknown; expires_in?: unknown };
   const access = typeof json.access_token === "string" ? json.access_token : undefined;
-  const refresh = typeof json.refresh_token === "string" ? json.refresh_token : credentials.refresh;
+  const refresh = typeof json.refresh_token === "string" ? json.refresh_token : fallbackRefreshToken;
   const expiresIn = typeof json.expires_in === "number" ? json.expires_in : undefined;
   if (!access || !refresh || expiresIn === undefined) {
-    throw new Error("OpenAI Codex OAuth refresh response was missing tokens.");
+    throw new Error("OpenAI Codex OAuth token response was missing tokens.");
   }
+
+  const accountId = accountIdFromAccessToken(access) ?? fallbackAccountId;
+  if (!accountId) throw new Error("OpenAI Codex OAuth token did not include a ChatGPT account id.");
 
   return {
     access,
     refresh,
     expires: nowFrom(options) + expiresIn * 1000,
-    accountId: accountIdFromAccessToken(access) ?? credentials.accountId,
+    accountId,
   };
+}
+
+export async function completeOpenAICodexOAuthConnection(
+  code: string,
+  verifier: string,
+  options: OpenAICodexRuntimeOptions = {},
+): Promise<OpenAICodexCredentials> {
+  const credentials = await exchangeOpenAICodexToken(
+    new URLSearchParams({
+      grant_type: "authorization_code",
+      client_id: CLIENT_ID,
+      code,
+      code_verifier: verifier,
+      redirect_uri: REDIRECT_URI,
+    }),
+    options,
+  );
+  await persistOpenAICodexCredentials(credentials, options);
+  return credentials;
+}
+
+async function refreshOpenAICodexCredentials(
+  credentials: OpenAICodexCredentials,
+  options: OpenAICodexRuntimeOptions = {},
+): Promise<OpenAICodexCredentials> {
+  return exchangeOpenAICodexToken(
+    new URLSearchParams({ grant_type: "refresh_token", refresh_token: credentials.refresh, client_id: CLIENT_ID }),
+    options,
+    credentials.refresh,
+    credentials.accountId,
+  );
 }
 
 async function loadValidOpenAICodexCredentials(
@@ -178,7 +299,7 @@ async function loadValidOpenAICodexCredentials(
 ): Promise<OpenAICodexCredentials> {
   const credentials = await loadOpenAICodexCredentials(options);
   if (!credentials) {
-    throw new OpenAICodexError("no exported OpenAI/Codex credentials", "disconnected");
+    throw new OpenAICodexError("OpenAI/Codex is not connected; run :connect", "disconnected");
   }
 
   const now = nowFrom(options);
@@ -190,7 +311,7 @@ async function loadValidOpenAICodexCredentials(
     return refreshed;
   } catch (error) {
     const credentialState: Exclude<OpenAICodexCredentialState, "connected"> = now >= credentials.expires ? "expired" : "failed";
-    const prefix = credentialState === "expired" ? "exported OpenAI/Codex credentials are expired" : "OpenAI/Codex refresh failed";
+    const prefix = credentialState === "expired" ? "OpenAI/Codex credentials are expired; run :connect" : "OpenAI/Codex refresh failed";
     throw new OpenAICodexError(`${prefix}: ${safeErrorDetail(error)}`, credentialState, error);
   }
 }
@@ -212,18 +333,6 @@ function readinessFromError(error: unknown): OpenAICodexReadiness {
 
 export function openAICodexErrorStatus(error: unknown): ConnectionStatus {
   return readinessFromError(error).status;
-}
-
-export function openAICredentialStatus(now: number = Date.now()): ConnectionStatus {
-  if (OPENAI_CODEX_CREDENTIALS === undefined) {
-    return { kind: "disconnected", label: "ai", detail: "no exported OpenAI/Codex credentials" };
-  }
-
-  if (now >= OPENAI_CODEX_CREDENTIALS.expires) {
-    return { kind: "error", label: "ai", detail: "exported OpenAI/Codex credentials are expired" };
-  }
-
-  return { kind: "connected", label: "ai", detail: "OpenAI/Codex credentials seeded" };
 }
 
 export async function readOpenAICodexReadiness(options: OpenAICodexRuntimeOptions = {}): Promise<OpenAICodexReadiness> {
@@ -270,7 +379,7 @@ function codexHeaders(credentials: OpenAICodexCredentials): Headers {
   headers.set("authorization", `Bearer ${credentials.access}`);
   headers.set("chatgpt-account-id", credentials.accountId);
   headers.set("openai-beta", "responses=experimental");
-  headers.set("originator", "pi");
+  headers.set("originator", ORIGINATOR);
   headers.set("accept", "text/event-stream");
   headers.set("content-type", "application/json");
   return headers;
