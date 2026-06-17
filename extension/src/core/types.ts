@@ -64,7 +64,7 @@ export const EMPTY_CONVERSATION: ActiveConversation = {
 export function createInitialAppState(): AppState {
   return {
     mode: "normal",
-    view: "card",
+    view: "chat",
     cardSelection: "front",
     chatSelection: "input",
     cardDraft: { ...EMPTY_CARD_DRAFT },

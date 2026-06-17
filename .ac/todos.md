@@ -32,9 +32,9 @@
   - depends on: I06
   - outcome: warm Vim-like bottom status bar, full right-aligned `anki` and `ai` labels, card draft persistence, chat draft persistence, and checks passing
 
-- [ ] I07 — Spike direct OpenAI/Codex from MV3
+- [x] I07 — Spike direct OpenAI/Codex from MV3
   - depends on: I06a
-  - outcome: verify exported Skim OAuth credentials can support direct service-worker AI calls, or route to native-host/local-gateway fallback
+  - outcome: exported Skim OAuth credentials support direct service-worker Codex calls; live `gpt-5.5` plain-text response verified; popup Chat view now uses the AI path with improved chat-first UI polish
 
 - [ ] I08 — Spike AnkiConnect from MV3
   - depends on: I06a
@@ -50,3 +50,4 @@
 - Legacy app is preserved on `archive/legacy-react-express-mongo`.
 - Keep implementation bounded by `.ac/architecture.md`.
 - Use `autocode isolate` before independent worktree implementation.
+- Do not commit real exported OpenAI/Codex credentials; keep the generated credentials module in placeholder form before commits.

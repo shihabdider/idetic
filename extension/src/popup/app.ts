@@ -1,6 +1,6 @@
 import { resolveCommand } from "../core/commands";
 import { nextCardField, previousCardField, toggleViewFromAnyMode } from "../core/modal";
-import type { ActiveConversation, AppState, CardField, ChatField, ConnectionStatus, Mode } from "../core/types";
+import type { ActiveConversation, AppState, CardField, ChatField, ChatTurn, ConnectionStatus, Mode } from "../core/types";
 import { createInitialAppState } from "../core/types";
 import {
   clearChatDraft,
@@ -22,6 +22,7 @@ let commandDraft = "";
 let chatDraft = "";
 let knownTags: string[] = [];
 let modeBeforeHelp: Mode = "normal";
+let assistantWaiting = false;
 
 interface RuntimeResponse<T> {
   ok: boolean;
@@ -52,6 +53,10 @@ function selectedCardClass(field: CardField): string {
   return state.cardSelection === field ? "field selected" : "field";
 }
 
+function selectedChatClass(selection: ChatField, baseClass: string): string {
+  return state.chatSelection === selection ? `${baseClass} selected` : baseClass;
+}
+
 function contextLine(): string {
   const context = state.activeConversation.context;
   if (!context) return "context none";
@@ -75,6 +80,7 @@ function helpText(): string {
     "  ?          help",
     "  :          command",
     "  j k        move selection in normal mode",
+    "  [ ]        scroll selected chat messages",
     "  Enter      chat insert sends; card insert advances field",
     "  Shift+Enter newline in insert",
     "  Ctrl+K     accept tag autocomplete candidate",
@@ -143,13 +149,69 @@ function renderCardView(): string {
   `;
 }
 
+function chatTranscript(includeWaiting = true): string {
+  const lines = state.activeConversation.turns.map((turn) => `${turn.role}> ${turn.text}`);
+  if (includeWaiting && assistantWaiting) lines.push("assistant> Assistant is responding...");
+  return lines.join("\n");
+}
+
+function renderChatTurn(turn: ChatTurn): string {
+  return `
+    <div class="chat-message ${turn.role}">
+      <div class="chat-role">${turn.role}</div>
+      <div class="chat-text">${escapeHtml(turn.text)}</div>
+    </div>
+  `;
+}
+
+function renderChatMessages(): string {
+  const renderedTurns = state.activeConversation.turns.map(renderChatTurn).join("");
+  const waiting = assistantWaiting
+    ? `<div class="chat-message assistant pending"><div class="chat-role">assistant</div><div class="chat-text">Assistant is responding...</div></div>`
+    : "";
+  return renderedTurns || waiting ? `${renderedTurns}${waiting}` : `<div class="chat-empty">no messages</div>`;
+}
+
+function parseChatTranscript(value: string, existingTurns: ChatTurn[] = state.activeConversation.turns): ChatTurn[] {
+  const turns: ChatTurn[] = [];
+  let role: ChatTurn["role"] | undefined;
+  let textLines: string[] = [];
+  const createdAt = new Date().toISOString();
+
+  function flush(): void {
+    if (!role) return;
+    const text = textLines.join("\n").trim();
+    if (text.length > 0) {
+      turns.push({ role, text, createdAt: existingTurns[turns.length]?.createdAt ?? createdAt });
+    }
+    role = undefined;
+    textLines = [];
+  }
+
+  for (const line of value.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n")) {
+    const match = /^(user|assistant)>\s?(.*)$/.exec(line);
+    if (match) {
+      flush();
+      role = match[1] as ChatTurn["role"];
+      textLines = [match[2]];
+      continue;
+    }
+    if (role) textLines.push(line);
+  }
+  flush();
+  return turns;
+}
+
 function renderChatView(): string {
-  const turns = state.activeConversation.turns.map((turn) => `${turn.role}> ${turn.text}`).join("\n\n");
+  const editingMessages = state.mode === "insert" && state.chatSelection === "messages" && !assistantWaiting;
+  const messages = editingMessages
+    ? `<textarea class="${selectedChatClass("messages", "chat-log")}" data-field="chat-messages" data-chat-log>${escapeHtml(chatTranscript(false))}</textarea>`
+    : `<div class="${selectedChatClass("messages", "chat-log")}" data-chat-log>${renderChatMessages()}</div>`;
   return `
     <section class="view" data-view="chat">
-      <div class="context">${escapeHtml(contextLine())}</div>
-      <div class="chat-log">${escapeHtml(turns || "")}</div>
-      <div class="field selected">
+      <div class="${selectedChatClass("context", "context")}">${escapeHtml(contextLine())}</div>
+      ${messages}
+      <div class="${selectedChatClass("input", "field")}">
         <div class="label">Chat</div>
         <textarea class="chat-input" data-field="chat-input">${escapeHtml(chatDraft)}</textarea>
       </div>
@@ -176,6 +238,7 @@ function render(): void {
   `;
 
   bindInputs();
+  scrollChatLogToBottom();
   focusSelectedIfInsert();
   if (state.mode === "command") focusCommandInput();
 }
@@ -193,12 +256,17 @@ function bindInputs(): void {
         chatDraft = element.value;
         void saveChatDraft(chatDraft);
       }
+      if (field === "chat-messages") {
+        state.activeConversation = { ...state.activeConversation, turns: parseChatTranscript(element.value) };
+        void saveActiveConversation(state.activeConversation);
+      }
     });
 
     element.addEventListener("focus", () => {
       const field = element.dataset.field;
       if (field === "front" || field === "back" || field === "tags") state.cardSelection = field;
       if (field === "chat-input") state.chatSelection = "input";
+      if (field === "chat-messages") state.chatSelection = "messages";
     });
   }
 
@@ -214,14 +282,31 @@ function updateRenderedStatusMessage(): void {
   if (statusMessage) statusMessage.textContent = defaultStatusLine();
 }
 
+function scrollChatLogToBottom(): void {
+  const log = app.querySelector<HTMLElement>("[data-chat-log]");
+  if (log) log.scrollTop = log.scrollHeight;
+}
+
+function scrollSelectedChatMessages(direction: 1 | -1): void {
+  if (state.view !== "chat" || state.chatSelection !== "messages") return;
+  const log = app.querySelector<HTMLElement>("[data-chat-log]");
+  if (!log) return;
+  log.scrollBy({ top: direction * 72, behavior: "smooth" });
+}
+
 function focusSelectedIfInsert(): void {
   if (state.mode !== "insert") return;
-  const selector = state.view === "card" ? `[data-field="${state.cardSelection}"]` : `[data-field="chat-input"]`;
+  const selector = state.view === "card"
+    ? `[data-field="${state.cardSelection}"]`
+    : state.chatSelection === "messages"
+      ? `[data-field="chat-messages"]`
+      : `[data-field="chat-input"]`;
   const element = app.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector);
   if (!element) return;
   element.focus();
   const caret = element.value.length;
   element.setSelectionRange(caret, caret);
+  if (state.view === "chat" && state.chatSelection === "messages") element.scrollTop = element.scrollHeight;
 }
 
 function focusCommandInput(): void {
@@ -272,16 +357,37 @@ async function captureContext(): Promise<void> {
 }
 
 async function sendChatDraft(): Promise<void> {
+  if (assistantWaiting) {
+    state.statusLine = "assistant still responding";
+    render();
+    return;
+  }
+
   const text = chatDraft.trim();
   if (!text) return;
-  if (!state.activeConversation.context) await captureContext();
+
+  chatDraft = "";
+  assistantWaiting = true;
   state.activeConversation = {
     ...state.activeConversation,
     turns: [...state.activeConversation.turns, { role: "user", text, createdAt: new Date().toISOString() }],
   };
-  chatDraft = "";
-  state.statusLine = "AI spike pending";
-  await Promise.all([saveActiveConversation(state.activeConversation), saveChatDraft(chatDraft)]);
+  state.statusLine = "Assistant is responding...";
+  await saveChatDraft(chatDraft);
+  render();
+
+  const response = await sendRuntimeMessage<unknown>({ type: "idetic.ai-chat", text });
+  assistantWaiting = false;
+  if (response.conversation) state.activeConversation = response.conversation;
+  if (response.ai) state.ai = response.ai;
+
+  if (!response.ok) {
+    state.statusLine = response.error ?? "AI request failed";
+    render();
+    return;
+  }
+
+  state.statusLine = "AI answered";
   render();
 }
 
@@ -389,7 +495,7 @@ document.addEventListener("keydown", (event) => {
       return;
     }
     if (event.key === "Enter" && !event.shiftKey) {
-      if (state.view === "chat") {
+      if (state.view === "chat" && state.chatSelection === "input") {
         event.preventDefault();
         void sendChatDraft();
         return;
@@ -413,6 +519,12 @@ document.addEventListener("keydown", (event) => {
     }
     if (event.key === "i") {
       event.preventDefault();
+      if (state.view === "chat" && state.chatSelection === "messages" && assistantWaiting) {
+        state.statusLine = "assistant still responding";
+        render();
+        return;
+      }
+      if (state.view === "chat" && state.chatSelection === "context") state.chatSelection = "input";
       state.mode = "insert";
       render();
       return;
@@ -439,6 +551,11 @@ document.addEventListener("keydown", (event) => {
     if (event.key === "k") {
       event.preventDefault();
       moveSelection(-1);
+      return;
+    }
+    if (event.key === "[" || event.key === "]") {
+      event.preventDefault();
+      scrollSelectedChatMessages(event.key === "]" ? 1 : -1);
       return;
     }
   }

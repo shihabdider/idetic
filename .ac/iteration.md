@@ -2,52 +2,56 @@
 
 ## Current Slice
 
-Spike direct OpenAI/Codex from the MV3 service worker.
+Spike AnkiConnect from the MV3 service worker.
 
 ## Goal
 
-Verify the riskiest AI boundary before building the full popup workflow: exported Skim OpenAI/Codex credentials should let the MV3 service worker make a direct plain-text AI request, or the project should explicitly route to the native-host/local-gateway fallback.
+Verify the Anki boundary before building the full save workflow: the MV3 service worker should be able to reach AnkiConnect at `127.0.0.1:8765`, classify readiness, verify deck `all` and model `Basic`, fetch tags, create a Basic note, classify duplicates, and sync.
 
 ## Completed
 
 - Autocode theory, DSL, architecture, todos, and iteration artifacts are present.
 - Legacy app was archived by committing the alignment state and creating `archive/legacy-react-express-mongo`.
 - The active main worktree was replaced with a Bun + TypeScript MV3 extension scaffold.
-- Popup UI was polished toward the warm Vim-like TUI direction with a bottom status bar.
-- Status badges use full lowercase `anki` and `ai` labels aligned right.
-- Card draft input persists across popup close.
-- Chat draft input now persists across popup close and clears on send or `:cl[ear]`.
+- Popup UI was polished into a keyboard-first TUI shell with bottom status bar and full `anki` and `ai` badges.
+- Card draft and chat draft persistence are implemented.
+- Chat is now the default popup entry view.
+- The Idetic pink brain/circuit icon was restored for the MV3 extension and popup favicon.
+- The popup theme now uses light gray flat colors with pink/teal/yellow accents from the icon.
+- Direct OpenAI/Codex calls from the service worker are implemented through the AI Provider Adapter.
+- Exported Skim OpenAI/Codex credentials were verified locally with a live plain-text `gpt-5.5` response.
+- AI readiness classifies credentials as connected, disconnected, expired, or failed.
+- The chat UI clears input immediately on send, shows the sent user message, displays a waiting assistant message, supports editable chat transcript mode, and has normal-mode message scrolling.
 - `bun run verify` passes.
-- `bun run check:no-secrets` passes.
+- `bun run check:no-secrets` passes when the generated credentials module is restored to the committed placeholder.
 
 ## Scope
 
-- Use the committed placeholder credentials module as the safe default.
-- Export local Skim OpenAI/Codex credentials only for local testing and do not commit real credentials.
-- Verify service-worker status can classify AI credentials as connected, disconnected, expired, or failed.
-- Verify the service worker can call the required Codex endpoint directly and parse a plain-text response.
-- Keep broad popup workflow implementation deferred until the AI and Anki external seams are understood.
-- Preserve architecture watchpoints: no content scripts, no Markdown/LaTeX rendering, no Anki metadata beyond Front/Back/Tags.
+- Keep direct Anki protocol details inside the Anki Gateway and service-worker runtime shell.
+- Verify MV3 can POST to `http://127.0.0.1:8765`.
+- Verify AnkiConnect `version`, `deckNames`, `modelNames`, `getTags`, `addNote`, duplicate classification, and `sync` behavior.
+- Keep broad card-save workflow implementation deferred until the Anki seam is understood.
+- Preserve architecture watchpoints: no content scripts, no Markdown/LaTeX rendering, no URL/title/screenshot metadata saved to Anki cards.
 
 ## Acceptance Signals
 
-- `bun run export:skim-creds` can seed local extension credentials from Skim.
-- `bun run check:no-secrets` detects if real generated credentials would be committed.
-- The unpacked extension reports `ai` connected when valid exported credentials are present.
-- A service-worker AI spike produces one plain-text response from Codex, or fails with enough detail to choose the native-host/local-gateway fallback.
-- Any changed hidden decision is routed back through `.ac/architecture.md` before broad implementation.
+- The unpacked extension reports `anki` connected when AnkiConnect is available with deck `all` and model `Basic`.
+- Anki unavailable, missing deck/model, duplicate note, create success, sync success, and sync failure are distinguishable enough for workflow status messages.
+- A local spike can create one Basic note in deck `all` through AnkiConnect and sync it, or fails with enough detail to choose a fallback or revise scope.
+- `bun run verify` passes.
+- `bun run check:no-secrets` passes before committing.
 
 ## Fresh Session Start
 
 - Read `.ac/theory.md`, `.ac/dsl.md`, `.ac/architecture.md`, `.ac/todos.md`, and this file.
-- Check `git status --short --branch`; the MV3 scaffold and UI polish are currently uncommitted in the active worktree.
+- Check `git status --short --branch`.
 - Run `bun run verify` and `bun run check:no-secrets` before continuing.
-- Begin I07, the direct OpenAI/Codex MV3 spike.
+- Begin I08, the AnkiConnect MV3 spike.
 
 ## First Customer-Facing Checkpoint
 
-Load the unpacked extension, open the popup with `MacCtrl+Shift+I`, see a plain TUI Card view with connection badges, switch to Chat with `Tab`, ask an AI question about captured visible-browser context, manually fill Front/Back/Tags, run `:w`, create a Basic note in Anki deck `all`, sync, and see Front/Back clear while Tags remain.
+Load the unpacked extension, open the popup with `MacCtrl+Shift+I`, see Chat view by default with connection badges, ask an AI question about captured visible-browser context, manually fill Front/Back/Tags, run `:w`, create a Basic note in Anki deck `all`, sync, and see Front/Back clear while Tags remain.
 
 ## Status
 
-Popup scaffold, UI polish, and draft persistence are complete. Current focus is the direct OpenAI/Codex MV3 risk spike.
+I07 is complete. Current focus is the AnkiConnect MV3 risk spike.

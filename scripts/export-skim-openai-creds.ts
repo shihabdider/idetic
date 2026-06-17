@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { access, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 interface SkimCredentials {
@@ -25,6 +25,14 @@ function parseCredentials(raw: string): SkimCredentials {
     throw new Error(`Skim credentials at ${sourcePath} are missing required OpenAI/Codex fields.`);
   }
   return parsed as SkimCredentials;
+}
+
+try {
+  await access(sourcePath);
+} catch {
+  console.error(`Skim OpenAI/Codex credentials were not found at ${sourcePath}.`);
+  console.error("Run Skim's OpenAI/Codex connection flow first, or set SKIM_OPENAI_CREDS_PATH to an exported credentials JSON file.");
+  process.exit(1);
 }
 
 const credentials = parseCredentials(await readFile(sourcePath, "utf8"));

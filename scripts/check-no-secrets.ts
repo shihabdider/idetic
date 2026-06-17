@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 
 const path = "extension/src/private/openai-creds.generated.ts";
 const content = await readFile(path, "utf8");
-const hasRealCredentialShape = /access\s*:\s*"[^"]+"/.test(content) || /refresh\s*:\s*"[^"]+"/.test(content);
+const hasRealCredentialShape = /["']?access["']?\s*:\s*"[^"]+"/.test(content) || /["']?refresh["']?\s*:\s*"[^"]+"/.test(content);
 
 if (hasRealCredentialShape) {
   console.error(`${path} appears to contain real OpenAI/Codex credentials.`);
