@@ -36,9 +36,9 @@
   - depends on: I06a
   - outcome: extension `:connect` OAuth login stores credentials in Chrome extension storage; direct service-worker Codex calls work; live `gpt-5.5` plain-text response verified; popup Chat view now uses the AI path with improved chat-first UI polish
 
-- [ ] I08 — Spike AnkiConnect from MV3
+- [x] I08 — Spike AnkiConnect from MV3
   - depends on: I06a
-  - outcome: verify status, deck/model checks, tags, duplicate behavior, addNote, and sync through `127.0.0.1:8765`
+  - outcome: verified status, deck/model checks, tags, duplicate behavior, addNote, and sync through `127.0.0.1:8765`; popup `:w` and `:sync` now exercise the Anki boundary
 
 - [ ] I09 — Implement first integrated MVP
   - depends on: I07, I08

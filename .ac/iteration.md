@@ -2,11 +2,11 @@
 
 ## Current Slice
 
-Spike AnkiConnect from the MV3 service worker.
+Implement first integrated MVP.
 
 ## Goal
 
-Verify the Anki boundary before building the full save workflow: the MV3 service worker should be able to reach AnkiConnect at `127.0.0.1:8765`, classify readiness, verify deck `all` and model `Basic`, fetch tags, create a Basic note, classify duplicates, and sync.
+Finish the end-to-end browser-to-Anki loop: the popup should let the learner ask AI about visible browser context, manually fill Front/Back/Tags, run `:w`, create a Basic note in Anki deck `all`, sync, and leave clear status feedback while preserving the right draft state.
 
 ## Completed
 
@@ -23,22 +23,33 @@ Verify the Anki boundary before building the full save workflow: the MV3 service
 - Extension `:connect` OpenAI login is verified and stores credentials in Chrome extension storage.
 - AI readiness classifies credentials as connected, disconnected, expired, or failed.
 - The chat UI clears input immediately on send, shows the sent user message, displays a waiting assistant message, supports editable chat transcript mode, and has normal-mode message scrolling.
+- AnkiConnect readiness is implemented through the Anki Gateway: `version`, deck `all`, model `Basic`, and `getTags`.
+- AnkiConnect write/sync boundary is implemented and tested: Basic `addNote`, duplicate classification, missing deck/model classification, sync success, sync failure after save, and unavailable Anki.
+- A live local AnkiConnect spike created a temporary Basic note in deck `all`, observed duplicate classification, synced, deleted the temporary note, and synced again.
+- Popup `:w` writes the current card through the Anki Gateway and clears Front/Back on saved results while keeping Tags.
+- Popup `:sync` retries Anki sync through the Anki Gateway.
 - `bun run verify` passes.
 - OpenAI/Codex credentials are no longer stored in generated source modules.
 
 ## Scope
 
+- Complete MVP workflow polish around the already wired Chat and Anki boundaries.
 - Keep direct Anki protocol details inside the Anki Gateway and service-worker runtime shell.
-- Verify MV3 can POST to `http://127.0.0.1:8765`.
-- Verify AnkiConnect `version`, `deckNames`, `modelNames`, `getTags`, `addNote`, duplicate classification, and `sync` behavior.
-- Keep broad card-save workflow implementation deferred until the Anki seam is understood.
+- Keep direct OpenAI/Codex details inside the AI Provider Adapter and service-worker runtime shell.
+- Ensure `:w` creates a Basic note with exact Front and Back fields, syncs, and distinguishes duplicate, validation, unavailable Anki, invalid deck/model, saved-and-synced, and saved-but-sync-failed states.
+- Finish hidden source-tag suggestion and tag autocomplete only if needed for the first integrated MVP feedback loop.
 - Preserve architecture watchpoints: no content scripts, no Markdown/LaTeX rendering, no URL/title/screenshot metadata saved to Anki cards.
 
 ## Acceptance Signals
 
 - The unpacked extension reports `anki` connected when AnkiConnect is available with deck `all` and model `Basic`.
-- Anki unavailable, missing deck/model, duplicate note, create success, sync success, and sync failure are distinguishable enough for workflow status messages.
-- A local spike can create one Basic note in deck `all` through AnkiConnect and sync it, or fails with enough detail to choose a fallback or revise scope.
+- The unpacked extension reports `ai` connected after `:connect` login.
+- First chat send captures visible-browser context and receives a plain-text AI answer.
+- Card view lets the learner manually fill Front/Back/Tags.
+- `:w` creates a Basic note in deck `all`, syncs, clears Front/Back, and keeps Tags.
+- Duplicate card keeps the draft intact and reports duplicate clearly.
+- Create success plus sync failure still counts as saved and clears Front/Back while reporting sync failure.
+- `:sync` retries sync and reports success/failure clearly.
 - `bun run verify` passes.
 - OpenAI/Codex credentials are stored only in local Chrome extension storage.
 
@@ -47,7 +58,7 @@ Verify the Anki boundary before building the full save workflow: the MV3 service
 - Read `.ac/theory.md`, `.ac/dsl.md`, `.ac/architecture.md`, `.ac/todos.md`, and this file.
 - Check `git status --short --branch`.
 - Run `bun run verify` before continuing.
-- Begin I08, the AnkiConnect MV3 spike.
+- Begin I09, the first integrated MVP feedback slice.
 
 ## First Customer-Facing Checkpoint
 
@@ -55,4 +66,4 @@ Load the unpacked extension, open the popup with `MacCtrl+Shift+I`, see Chat vie
 
 ## Status
 
-I07 is complete. Current focus is the AnkiConnect MV3 risk spike.
+I08 is complete. Current focus is I09, the first integrated MVP feedback slice.

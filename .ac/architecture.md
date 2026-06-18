@@ -195,9 +195,9 @@ After archive and scaffold, the first full MVP checkpoint is:
 
 - Load unpacked extension.
 - Open popup with `MacCtrl+Shift+I`.
-- See plain TUI Card view by default.
+- See plain TUI Chat view by default.
 - See colored `anki` and `ai` badges.
-- Toggle to Chat with `Tab`.
+- Toggle between Chat and Card with `Tab`.
 - Type in Insert mode and send with `Enter`.
 - First send captures visible browser context.
 - AI returns plain text.

@@ -27,10 +27,30 @@ let assistantWaiting = false;
 interface RuntimeResponse<T> {
   ok: boolean;
   error?: string;
-  anki?: { status: ConnectionStatus; tags: string[] };
+  anki?: { status: ConnectionStatus; tags?: string[] };
   ai?: ConnectionStatus;
   context?: T;
   conversation?: ActiveConversation;
+  result?: T;
+}
+
+interface AnkiSaveRuntimeResult {
+  kind:
+    | "saved-and-synced"
+    | "saved-sync-failed"
+    | "duplicate"
+    | "invalid-deck-model"
+    | "validation-error"
+    | "unavailable"
+    | "error";
+  noteId?: number;
+  status: ConnectionStatus;
+  syncStatus?: ConnectionStatus;
+}
+
+interface AnkiSyncRuntimeResult {
+  kind: "synced" | "unavailable" | "error";
+  status: ConnectionStatus;
 }
 
 function sendRuntimeMessage<T>(message: unknown): Promise<RuntimeResponse<T>> {
@@ -336,11 +356,17 @@ async function refreshStatus(): Promise<void> {
   }
   if (response.anki) {
     state.anki = response.anki.status;
-    knownTags = response.anki.tags;
+    if (response.anki.tags) knownTags = response.anki.tags;
   }
   if (response.ai) state.ai = response.ai;
   state.statusLine = "status refreshed";
   render();
+}
+
+function applyAnkiRuntimeResponse(response: RuntimeResponse<unknown>): void {
+  if (!response.anki) return;
+  state.anki = response.anki.status;
+  if (response.anki.tags) knownTags = response.anki.tags;
 }
 
 async function captureContext(): Promise<void> {
@@ -354,6 +380,51 @@ async function captureContext(): Promise<void> {
   }
   state.activeConversation = response.conversation;
   state.statusLine = "context captured";
+  render();
+}
+
+async function syncAnkiFromPopup(): Promise<void> {
+  state.anki = { kind: "checking", label: "anki", detail: "syncing" };
+  state.statusLine = "syncing Anki";
+  render();
+
+  const response = await sendRuntimeMessage<AnkiSyncRuntimeResult>({ type: "idetic.anki-sync" });
+  applyAnkiRuntimeResponse(response as RuntimeResponse<unknown>);
+  state.statusLine = response.ok ? "Anki synced" : response.error ?? response.result?.status.detail ?? "Anki sync failed";
+  render();
+}
+
+async function writeCardToAnki(): Promise<void> {
+  state.anki = { kind: "checking", label: "anki", detail: "writing" };
+  state.statusLine = "writing Anki card";
+  render();
+
+  const response = await sendRuntimeMessage<AnkiSaveRuntimeResult>({ type: "idetic.anki-write", card: state.cardDraft });
+  applyAnkiRuntimeResponse(response as RuntimeResponse<unknown>);
+
+  const result = response.result;
+  if (!result) {
+    state.statusLine = response.error ?? "Anki write failed";
+    render();
+    return;
+  }
+
+  if (result.kind === "saved-and-synced" || result.kind === "saved-sync-failed") {
+    state.cardDraft = { ...state.cardDraft, front: "", back: "" };
+    await saveCardDraft(state.cardDraft);
+    state.statusLine = result.kind === "saved-and-synced"
+      ? "saved and synced"
+      : `saved note ${result.noteId ?? ""}; sync failed`.trim();
+    render();
+    return;
+  }
+
+  const statusDetail = result.status.detail ?? response.error;
+  if (result.kind === "duplicate") state.statusLine = "duplicate card; draft kept";
+  if (result.kind === "invalid-deck-model") state.statusLine = statusDetail ?? "missing deck all or Basic model";
+  if (result.kind === "validation-error") state.statusLine = statusDetail ?? "front and back are required";
+  if (result.kind === "unavailable") state.statusLine = statusDetail ?? "Anki unavailable";
+  if (result.kind === "error") state.statusLine = statusDetail ?? "Anki write failed";
   render();
 }
 
@@ -449,8 +520,8 @@ async function executeCommand(input: string): Promise<void> {
     state.statusLine = "conversation cleared";
   }
   if (command === "send") await sendChatDraft();
-  if (command === "sync") state.statusLine = "Anki sync spike pending";
-  if (command === "write") state.statusLine = "Anki write spike pending";
+  if (command === "sync") await syncAnkiFromPopup();
+  if (command === "write") await writeCardToAnki();
   render();
 }
 

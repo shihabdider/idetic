@@ -1,5 +1,5 @@
-import type { ConnectionStatus } from "../core/types";
-import { readAnkiReadiness } from "../platform/anki-connect";
+import type { CardDraft, ConnectionStatus } from "../core/types";
+import { readAnkiReadiness, saveBasicNoteAndSync, syncAnki } from "../platform/anki-connect";
 import { captureVisibleContext } from "../platform/browser-context";
 import {
   completeOpenAICodexOAuthConnection,
@@ -14,6 +14,8 @@ import { loadActiveConversation, replaceBrowserContext, saveActiveConversation }
 type RuntimeMessage =
   | { type: "idetic.status" }
   | { type: "idetic.capture-visible-context" }
+  | { type: "idetic.anki-sync" }
+  | { type: "idetic.anki-write"; card: CardDraft }
   | { type: "idetic.ai-connect" }
   | { type: "idetic.ai-chat"; text: string };
 
@@ -169,6 +171,17 @@ async function handleMessage(message: RuntimeMessage): Promise<unknown> {
     const context = await captureVisibleContext();
     const conversation = await replaceBrowserContext(context);
     return { ok: true, context, conversation };
+  }
+
+  if (message.type === "idetic.anki-sync") {
+    const sync = await syncAnki();
+    return { ok: sync.kind === "synced", anki: { status: sync.status }, result: sync, error: sync.status.detail };
+  }
+
+  if (message.type === "idetic.anki-write") {
+    const result = await saveBasicNoteAndSync(message.card);
+    const ok = result.kind === "saved-and-synced" || result.kind === "saved-sync-failed";
+    return { ok, anki: { status: result.status }, result, error: ok ? undefined : result.status.detail };
   }
 
   if (message.type === "idetic.ai-connect") {
