@@ -24,6 +24,10 @@ let chatDraft = "";
 let knownTags: string[] = [];
 let modeBeforeHelp: Mode = "normal";
 let assistantWaiting = false;
+let statusLineOverridesHints = false;
+
+const CARD_INSERT_FIELD_ORDER: CardField[] = ["front", "back", "tags"];
+const CHAT_INSERT_FIELD_ORDER: ChatField[] = ["messages", "input"];
 
 interface RuntimeResponse<T> {
   ok: boolean;
@@ -95,6 +99,8 @@ function selectedTagAutocompleteCandidate(): string | undefined {
 }
 
 function defaultStatusLine(): string {
+  if (statusLineOverridesHints && state.statusLine) return state.statusLine;
+
   const draft = state.cardDraft;
   const tagCandidate = selectedTagAutocompleteCandidate();
   if (tagCandidate) return `tag ${tagCandidate}  ^K`;
@@ -105,7 +111,8 @@ function defaultStatusLine(): string {
 function helpText(): string {
   return [
     "keys",
-    "  Tab        toggle card/chat, land normal",
+    "  Tab        normal toggles card/chat; insert next field",
+    "  Shift+Tab insert previous field",
     "  i          insert selected field",
     "  Esc        normal closes popup; insert/command/help returns normal",
     "  ?          help",
@@ -114,6 +121,7 @@ function helpText(): string {
     "  [ ]        scroll selected chat messages",
     "  Enter      chat insert sends; card insert advances field",
     "  Shift+Enter newline in insert",
+    "  Cmd+Enter card writes when front/back/tag complete",
     "  Ctrl+K     accept tag autocomplete candidate",
     "",
     "commands",
@@ -133,6 +141,11 @@ function helpText(): string {
 
 function activeSelection(): string {
   return state.view === "card" ? state.cardSelection : state.chatSelection;
+}
+
+function setStatusLine(message: string, overridesHints = false): void {
+  state.statusLine = message;
+  statusLineOverridesHints = overridesHints;
 }
 
 function renderStatusLeft(overrideMode?: string): string {
@@ -278,6 +291,7 @@ function render(): void {
 function bindInputs(): void {
   for (const element of app.querySelectorAll<HTMLTextAreaElement | HTMLInputElement>("[data-field]")) {
     element.addEventListener("input", () => {
+      statusLineOverridesHints = false;
       const field = element.dataset.field;
       if (field === "front" || field === "back" || field === "tags") {
         state.cardDraft = { ...state.cardDraft, [field]: element.value };
@@ -361,7 +375,7 @@ async function refreshStatus(): Promise<void> {
   if (!response.ok) {
     state.anki = { kind: "error", label: "anki", detail: response.error };
     state.ai = { kind: "error", label: "ai", detail: response.error };
-    state.statusLine = response.error ?? "status failed";
+    setStatusLine(response.error ?? "status failed");
     render();
     return;
   }
@@ -370,7 +384,7 @@ async function refreshStatus(): Promise<void> {
     if (response.anki.tags) knownTags = response.anki.tags;
   }
   if (response.ai) state.ai = response.ai;
-  state.statusLine = "status refreshed";
+  setStatusLine("status refreshed");
   render();
 }
 
@@ -381,33 +395,33 @@ function applyAnkiRuntimeResponse(response: RuntimeResponse<unknown>): void {
 }
 
 async function captureContext(): Promise<void> {
-  state.statusLine = "capturing context";
+  setStatusLine("capturing context");
   render();
   const response = await sendRuntimeMessage<unknown>({ type: "idetic.capture-visible-context" });
   if (!response.ok || !response.conversation) {
-    state.statusLine = response.error ?? "context capture failed";
+    setStatusLine(response.error ?? "context capture failed");
     render();
     return;
   }
   state.activeConversation = response.conversation;
-  state.statusLine = "context captured";
+  setStatusLine("context captured");
   render();
 }
 
 async function syncAnkiFromPopup(): Promise<void> {
   state.anki = { kind: "checking", label: "anki", detail: "syncing" };
-  state.statusLine = "syncing Anki";
+  setStatusLine("syncing Anki");
   render();
 
   const response = await sendRuntimeMessage<AnkiSyncRuntimeResult>({ type: "idetic.anki-sync" });
   applyAnkiRuntimeResponse(response as RuntimeResponse<unknown>);
-  state.statusLine = response.ok ? "Anki synced" : response.error ?? response.result?.status.detail ?? "Anki sync failed";
+  setStatusLine(response.ok ? "Anki synced" : response.error ?? response.result?.status.detail ?? "Anki sync failed");
   render();
 }
 
 async function writeCardToAnki(): Promise<void> {
   state.anki = { kind: "checking", label: "anki", detail: "writing" };
-  state.statusLine = "writing Anki card";
+  setStatusLine("writing Anki card", true);
   render();
 
   const response = await sendRuntimeMessage<AnkiSaveRuntimeResult>({ type: "idetic.anki-write", card: state.cardDraft });
@@ -415,7 +429,7 @@ async function writeCardToAnki(): Promise<void> {
 
   const result = response.result;
   if (!result) {
-    state.statusLine = response.error ?? "Anki write failed";
+    setStatusLine(response.error ?? "Anki write failed", true);
     render();
     return;
   }
@@ -423,25 +437,28 @@ async function writeCardToAnki(): Promise<void> {
   if (result.kind === "saved-and-synced" || result.kind === "saved-sync-failed") {
     state.cardDraft = { ...state.cardDraft, front: "", back: "" };
     await saveCardDraft(state.cardDraft);
-    state.statusLine = result.kind === "saved-and-synced"
-      ? "saved and synced"
-      : `saved note ${result.noteId ?? ""}; sync failed`.trim();
+    setStatusLine(
+      result.kind === "saved-and-synced"
+        ? "saved and synced"
+        : `saved note ${result.noteId ?? ""}; sync failed`.trim(),
+      true,
+    );
     render();
     return;
   }
 
   const statusDetail = result.status.detail ?? response.error;
-  if (result.kind === "duplicate") state.statusLine = "duplicate card; draft kept";
-  if (result.kind === "invalid-deck-model") state.statusLine = statusDetail ?? "missing deck all or Basic model";
-  if (result.kind === "validation-error") state.statusLine = statusDetail ?? "front and back are required";
-  if (result.kind === "unavailable") state.statusLine = statusDetail ?? "Anki unavailable";
-  if (result.kind === "error") state.statusLine = statusDetail ?? "Anki write failed";
+  if (result.kind === "duplicate") setStatusLine("duplicate card; draft kept", true);
+  if (result.kind === "invalid-deck-model") setStatusLine(statusDetail ?? "missing deck all or Basic model", true);
+  if (result.kind === "validation-error") setStatusLine(statusDetail ?? "front and back are required", true);
+  if (result.kind === "unavailable") setStatusLine(statusDetail ?? "Anki unavailable", true);
+  if (result.kind === "error") setStatusLine(statusDetail ?? "Anki write failed", true);
   render();
 }
 
 async function connectAI(): Promise<void> {
   state.ai = { kind: "checking", label: "ai", detail: "opening OpenAI login" };
-  state.statusLine = "opening OpenAI login";
+  setStatusLine("opening OpenAI login");
   render();
 
   const response = await sendRuntimeMessage<unknown>({ type: "idetic.ai-connect" });
@@ -449,18 +466,18 @@ async function connectAI(): Promise<void> {
 
   if (!response.ok) {
     state.ai = { kind: "error", label: "ai", detail: response.error };
-    state.statusLine = response.error ?? "OpenAI login failed";
+    setStatusLine(response.error ?? "OpenAI login failed");
     render();
     return;
   }
 
-  state.statusLine = "OpenAI login tab opened; reopen popup and :status after login";
+  setStatusLine("OpenAI login tab opened; reopen popup and :status after login");
   render();
 }
 
 async function sendChatDraft(): Promise<void> {
   if (assistantWaiting) {
-    state.statusLine = "assistant still responding";
+    setStatusLine("assistant still responding");
     render();
     return;
   }
@@ -474,7 +491,7 @@ async function sendChatDraft(): Promise<void> {
     ...state.activeConversation,
     turns: [...state.activeConversation.turns, { role: "user", text, createdAt: new Date().toISOString() }],
   };
-  state.statusLine = "Assistant is responding...";
+  setStatusLine("Assistant is responding...");
   await saveChatDraft(chatDraft);
   render();
 
@@ -484,14 +501,16 @@ async function sendChatDraft(): Promise<void> {
   if (response.ai) state.ai = response.ai;
 
   if (!response.ok) {
-    state.statusLine = response.error ?? "AI request failed";
+    setStatusLine(response.error ?? "AI request failed");
     render();
     return;
   }
 
-  state.statusLine = state.activeConversation.sourceTagSuggestion
-    ? `AI answered; tag ${state.activeConversation.sourceTagSuggestion}`
-    : "AI answered";
+  setStatusLine(
+    state.activeConversation.sourceTagSuggestion
+      ? `AI answered; tag ${state.activeConversation.sourceTagSuggestion}`
+      : "AI answered",
+  );
   render();
 }
 
@@ -506,13 +525,13 @@ async function executeCommand(input: string): Promise<void> {
   }
   if (resolution.kind === "unknown") {
     state.mode = "normal";
-    state.statusLine = `unknown command ${resolution.input}`;
+    setStatusLine(`unknown command ${resolution.input}`);
     render();
     return;
   }
   if (resolution.kind === "ambiguous") {
     state.mode = "normal";
-    state.statusLine = `ambiguous ${resolution.input}: ${resolution.matches.join(" ")}`;
+    setStatusLine(`ambiguous ${resolution.input}: ${resolution.matches.join(" ")}`);
     render();
     return;
   }
@@ -530,7 +549,7 @@ async function executeCommand(input: string): Promise<void> {
     state.activeConversation = await clearConversationOnly();
     chatDraft = "";
     await clearChatDraft();
-    state.statusLine = "conversation cleared";
+    setStatusLine("conversation cleared");
   }
   if (command === "send") await sendChatDraft();
   if (command === "sync") await syncAnkiFromPopup();
@@ -551,9 +570,66 @@ function moveSelection(delta: 1 | -1): void {
   render();
 }
 
+function cycleField<T>(order: readonly T[], current: T, delta: 1 | -1): T {
+  const currentIndex = order.indexOf(current);
+  const startIndex = currentIndex === -1 ? 0 : currentIndex;
+  return order[(startIndex + delta + order.length) % order.length];
+}
+
+function moveInsertFocus(delta: 1 | -1): void {
+  statusLineOverridesHints = false;
+
+  if (state.view === "card") {
+    state.cardSelection = cycleField(CARD_INSERT_FIELD_ORDER, state.cardSelection, delta);
+    render();
+    return;
+  }
+
+  const current = state.chatSelection === "messages" ? "messages" : "input";
+  const next = cycleField(CHAT_INSERT_FIELD_ORDER, current, delta);
+  if (next === "messages" && assistantWaiting) {
+    setStatusLine("assistant still responding");
+    render();
+    return;
+  }
+  state.chatSelection = next;
+  render();
+}
+
+function missingCardDraftFields(): CardField[] {
+  const missing: CardField[] = [];
+  if (!state.cardDraft.front.trim()) missing.push("front");
+  if (!state.cardDraft.back.trim()) missing.push("back");
+  if (!state.cardDraft.tags.trim()) missing.push("tags");
+  return missing;
+}
+
+function formatCardFields(fields: CardField[]): string {
+  const labels = fields.map((field) => field === "tags" ? "tag" : field);
+  if (labels.length <= 1) return labels[0] ?? "card";
+  if (labels.length === 2) return `${labels[0]} and ${labels[1]}`;
+  return `${labels.slice(0, -1).join(", ")}, and ${labels[labels.length - 1]}`;
+}
+
+async function writeCardShortcut(): Promise<void> {
+  const missing = missingCardDraftFields();
+  if (missing.length > 0) {
+    setStatusLine(`write requires ${formatCardFields(missing)}`, true);
+    render();
+    return;
+  }
+
+  state.mode = "normal";
+  await writeCardToAnki();
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Tab") {
     event.preventDefault();
+    if (state.mode === "insert") {
+      moveInsertFocus(event.shiftKey ? -1 : 1);
+      return;
+    }
     const next = toggleViewFromAnyMode({ mode: state.mode, view: state.view, cardSelection: state.cardSelection });
     state.mode = next.mode;
     state.view = next.view;
@@ -586,6 +662,12 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
+  if (state.view === "card" && (state.mode === "insert" || state.mode === "normal") && event.metaKey && event.key === "Enter") {
+    event.preventDefault();
+    void writeCardShortcut();
+    return;
+  }
+
   if (state.mode === "insert") {
     if (event.key === "Escape") {
       event.preventDefault();
@@ -597,13 +679,13 @@ document.addEventListener("keydown", (event) => {
       event.preventDefault();
       const candidate = selectedTagAutocompleteCandidate();
       if (!candidate) {
-        state.statusLine = "no tag candidate";
+        setStatusLine("no tag candidate");
         render();
         return;
       }
       state.cardDraft = { ...state.cardDraft, tags: applyTagAutocompleteCandidate(state.cardDraft.tags, candidate) };
       void saveCardDraft(state.cardDraft);
-      state.statusLine = `tag ${candidate} accepted`;
+      setStatusLine(`tag ${candidate} accepted`);
       render();
       return;
     }
@@ -633,7 +715,7 @@ document.addEventListener("keydown", (event) => {
     if (event.key === "i") {
       event.preventDefault();
       if (state.view === "chat" && state.chatSelection === "messages" && assistantWaiting) {
-        state.statusLine = "assistant still responding";
+        setStatusLine("assistant still responding");
         render();
         return;
       }
