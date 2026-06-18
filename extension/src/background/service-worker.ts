@@ -203,6 +203,7 @@ async function handleMessage(message: RuntimeMessage): Promise<unknown> {
       const answer = await sendOpenAICodexChat({ message: text, conversation });
       const updated = {
         ...conversationWithUser,
+        sourceTagSuggestion: answer.sourceTagSuggestion ?? conversationWithUser.sourceTagSuggestion,
         turns: [...conversationWithUser.turns, { role: "assistant" as const, text: answer.text, createdAt: new Date().toISOString() }],
       };
       await saveActiveConversation(updated);

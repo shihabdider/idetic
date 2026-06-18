@@ -1,3 +1,4 @@
+import { normalizeTagToken } from "../core/tag-policy";
 import type { ActiveConversation, BrowserContext, ConnectionStatus } from "../core/types";
 
 const CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann";
@@ -18,6 +19,9 @@ const IDETIC_AI_INSTRUCTIONS = [
   "Answer in plain text only.",
   "Do not generate Anki cards or bulk suggestions; the learner writes cards manually.",
   "If source provenance is uncertain, say so briefly instead of inventing missing details.",
+  "End every response with one final hidden control line: IDETIC_SOURCE_TAG: <tag>.",
+  "Use source tag format firstauthor_YYYY_MM_DD, shortened only to explicit visible precision; leave the tag blank when author or date precision is uncertain.",
+  "The control line is for Idetic only and will be hidden from the learner.",
 ].join("\n");
 
 export interface OpenAICodexCredentials {
@@ -53,6 +57,7 @@ export interface OpenAICodexChatRequest {
 export interface OpenAICodexChatResponse {
   text: string;
   model: string;
+  sourceTagSuggestion?: string;
 }
 
 export interface OpenAICodexRuntimeOptions {
@@ -480,6 +485,27 @@ export async function readCodexResponseText(response: Response): Promise<string>
   }
 }
 
+export function parseOpenAICodexAssistantMessage(rawText: string): { text: string; sourceTagSuggestion?: string } {
+  const lines = rawText.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+
+  for (let index = lines.length - 1; index >= 0; index -= 1) {
+    const line = lines[index].trim();
+    if (!line) continue;
+
+    const match = /^IDETIC_SOURCE_TAG:\s*(.*)$/i.exec(line);
+    if (!match) break;
+
+    lines.splice(index, 1);
+    const sourceTagSuggestion = normalizeTagToken(match[1]);
+    return {
+      text: lines.join("\n").trim(),
+      sourceTagSuggestion: sourceTagSuggestion || undefined,
+    };
+  }
+
+  return { text: rawText.trim() };
+}
+
 export async function sendOpenAICodexChat(
   request: OpenAICodexChatRequest,
   options: OpenAICodexRuntimeOptions = {},
@@ -517,8 +543,8 @@ export async function sendOpenAICodexChat(
     throw new OpenAICodexError(`OpenAI/Codex request failed with HTTP ${response.status}: ${safeErrorDetail(errorText)}`, "failed");
   }
 
-  const text = (await readCodexResponseText(response)).trim();
-  if (!text) throw new OpenAICodexError("OpenAI/Codex response was empty or could not be parsed", "failed");
+  const messageBody = parseOpenAICodexAssistantMessage(await readCodexResponseText(response));
+  if (!messageBody.text) throw new OpenAICodexError("OpenAI/Codex response was empty or could not be parsed", "failed");
 
-  return { text, model: OPENAI_CODEX_MODEL };
+  return { ...messageBody, model: OPENAI_CODEX_MODEL };
 }

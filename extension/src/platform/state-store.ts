@@ -44,7 +44,8 @@ export async function saveActiveConversation(conversation: ActiveConversation): 
 
 export async function replaceBrowserContext(context: BrowserContext): Promise<ActiveConversation> {
   const conversation = await loadActiveConversation();
-  const updated = { ...conversation, context };
+  const { sourceTagSuggestion: _sourceTagSuggestion, ...conversationWithoutSourceTag } = conversation;
+  const updated = { ...conversationWithoutSourceTag, context };
   await saveActiveConversation(updated);
   return updated;
 }

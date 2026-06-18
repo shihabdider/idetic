@@ -33,9 +33,20 @@ export function sourceTagFromParts(parts: SourceTagParts): string | undefined {
   return segments.join("_");
 }
 
+function rawTagParts(tagsInput: string): string[] {
+  return tagsInput.trimStart().split(/\s+/);
+}
+
 export function currentTagToken(tagsInput: string): string {
-  const parts = tagsInput.split(/\s+/);
+  const parts = rawTagParts(tagsInput);
   return parts.at(-1) ?? "";
+}
+
+function completedTagTokens(tagsInput: string): string[] {
+  const parts = rawTagParts(tagsInput);
+  const hasOpenToken = tagsInput.length > 0 && !/\s$/.test(tagsInput);
+  const completed = hasOpenToken ? parts.slice(0, -1) : parts;
+  return completed.map(normalizeTagToken).filter((tag) => tag.length > 0);
 }
 
 export function tagAutocompleteCandidates(
@@ -44,6 +55,7 @@ export function tagAutocompleteCandidates(
   sourceTagSuggestion?: string,
 ): string[] {
   const token = normalizeTagToken(currentTagToken(tagsInput));
+  const selected = new Set(completedTagTokens(tagsInput));
   const seen = new Set<string>();
   const candidates: string[] = [];
 
@@ -51,6 +63,7 @@ export function tagAutocompleteCandidates(
     if (!tag) return;
     const normalized = normalizeTagToken(tag);
     if (!normalized) return;
+    if (selected.has(normalized)) return;
     if (token && !normalized.startsWith(token)) return;
     if (seen.has(normalized)) return;
     seen.add(normalized);
@@ -60,4 +73,16 @@ export function tagAutocompleteCandidates(
   addCandidate(sourceTagSuggestion);
   for (const tag of existingTags) addCandidate(tag);
   return candidates;
+}
+
+export function applyTagAutocompleteCandidate(tagsInput: string, candidate: string): string {
+  const normalizedCandidate = normalizeTagToken(candidate);
+  if (!normalizedCandidate) return tagsInput;
+
+  const parts = rawTagParts(tagsInput);
+  const hasOpenToken = tagsInput.length > 0 && !/\s$/.test(tagsInput);
+  const completed = hasOpenToken ? parts.slice(0, -1) : parts;
+  const tokens = completed.map(normalizeTagToken).filter((tag) => tag.length > 0 && tag !== normalizedCandidate);
+  tokens.push(normalizedCandidate);
+  return `${tokens.join(" ")} `;
 }

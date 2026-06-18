@@ -4,6 +4,7 @@ import {
   completeOpenAICodexOAuthConnection,
   createOpenAICodexAuthorizationUrl,
   extractCodexEventStreamText,
+  parseOpenAICodexAssistantMessage,
   parseOpenAICodexOAuthCallbackUrl,
   readCodexResponseText,
   readOpenAICodexReadiness,
@@ -154,6 +155,14 @@ describe("OpenAI Codex adapter", () => {
     expect(await readCodexResponseText(response)).toBe("json text");
   });
 
+  test("hides and normalizes the source-tag control line", () => {
+    expect(parseOpenAICodexAssistantMessage("This is useful.\n\nIDETIC_SOURCE_TAG: Kahneman 2011")).toEqual({
+      text: "This is useful.",
+      sourceTagSuggestion: "kahneman_2011",
+    });
+    expect(parseOpenAICodexAssistantMessage("No source visible.\nIDETIC_SOURCE_TAG:")).toEqual({ text: "No source visible." });
+  });
+
   test("sends visible-context chat to Codex and returns plain text", async () => {
     let observedUrl = "";
     let observedInit: RequestInit | undefined;
@@ -192,6 +201,25 @@ describe("OpenAI Codex adapter", () => {
     expect(body.model).toBe("gpt-5.5");
     expect(body.stream).toBe(true);
     expect(body.instructions).toContain("Do not generate Anki cards");
+    expect(body.instructions).toContain("IDETIC_SOURCE_TAG");
     expect(body.input[0].content).toContainEqual({ type: "input_image", image_url: "data:image/png;base64,abc123" });
+  });
+
+  test("returns a hidden source tag suggestion from Codex chat", async () => {
+    const fetchImpl = (async () =>
+      new Response('data: {"delta":"answer\\nIDETIC_SOURCE_TAG: Kahneman 2011"}\n\ndata: [DONE]\n\n', {
+        status: 200,
+        headers: { "content-type": "text/event-stream" },
+      })) as unknown as typeof fetch;
+
+    const response = await sendOpenAICodexChat(
+      {
+        message: "Source?",
+        conversation: { turns: [] },
+      },
+      { credentials: FUTURE_CREDENTIALS, fetchImpl, now: () => 0 },
+    );
+
+    expect(response).toMatchObject({ text: "answer", sourceTagSuggestion: "kahneman_2011" });
   });
 });

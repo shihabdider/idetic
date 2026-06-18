@@ -2,11 +2,11 @@
 
 ## Current Slice
 
-Implement first integrated MVP.
+First integrated MVP feedback.
 
 ## Goal
 
-Finish the end-to-end browser-to-Anki loop: the popup should let the learner ask AI about visible browser context, manually fill Front/Back/Tags, run `:w`, create a Basic note in Anki deck `all`, sync, and leave clear status feedback while preserving the right draft state.
+Validate the end-to-end browser-to-Anki loop with the unpacked extension: the popup should let the learner ask AI about visible browser context, manually fill Front/Back/Tags, run `:w`, create a Basic note in Anki deck `all`, sync, and leave clear status feedback while preserving the right draft state.
 
 ## Completed
 
@@ -28,16 +28,18 @@ Finish the end-to-end browser-to-Anki loop: the popup should let the learner ask
 - A live local AnkiConnect spike created a temporary Basic note in deck `all`, observed duplicate classification, synced, deleted the temporary note, and synced again.
 - Popup `:w` writes the current card through the Anki Gateway and clears Front/Back on saved results while keeping Tags.
 - Popup `:sync` retries Anki sync through the Anki Gateway.
+- Hidden source-tag suggestions are parsed from AI adapter control lines and stored on the active conversation without showing the control line to the learner.
+- `Ctrl+K` in the Tags field accepts the best source-tag or Anki-tag autocomplete candidate.
 - `bun run verify` passes.
+- `autocode verify` reports feedback readiness with no configured blocking checks.
 - OpenAI/Codex credentials are no longer stored in generated source modules.
 
 ## Scope
 
-- Complete MVP workflow polish around the already wired Chat and Anki boundaries.
+- Validate MVP workflow polish around the already wired Chat and Anki boundaries.
 - Keep direct Anki protocol details inside the Anki Gateway and service-worker runtime shell.
 - Keep direct OpenAI/Codex details inside the AI Provider Adapter and service-worker runtime shell.
 - Ensure `:w` creates a Basic note with exact Front and Back fields, syncs, and distinguishes duplicate, validation, unavailable Anki, invalid deck/model, saved-and-synced, and saved-but-sync-failed states.
-- Finish hidden source-tag suggestion and tag autocomplete only if needed for the first integrated MVP feedback loop.
 - Preserve architecture watchpoints: no content scripts, no Markdown/LaTeX rendering, no URL/title/screenshot metadata saved to Anki cards.
 
 ## Acceptance Signals
@@ -45,6 +47,7 @@ Finish the end-to-end browser-to-Anki loop: the popup should let the learner ask
 - The unpacked extension reports `anki` connected when AnkiConnect is available with deck `all` and model `Basic`.
 - The unpacked extension reports `ai` connected after `:connect` login.
 - First chat send captures visible-browser context and receives a plain-text AI answer.
+- If AI can infer explicit source provenance, the hidden source-tag suggestion appears as the first Tags autocomplete candidate and `Ctrl+K` accepts it.
 - Card view lets the learner manually fill Front/Back/Tags.
 - `:w` creates a Basic note in deck `all`, syncs, clears Front/Back, and keeps Tags.
 - Duplicate card keeps the draft intact and reports duplicate clearly.
@@ -58,12 +61,12 @@ Finish the end-to-end browser-to-Anki loop: the popup should let the learner ask
 - Read `.ac/theory.md`, `.ac/dsl.md`, `.ac/architecture.md`, `.ac/todos.md`, and this file.
 - Check `git status --short --branch`.
 - Run `bun run verify` before continuing.
-- Begin I09, the first integrated MVP feedback slice.
+- Load the unpacked extension and collect feedback on the integrated MVP before planning new implementation iterations.
 
 ## First Customer-Facing Checkpoint
 
-Load the unpacked extension, open the popup with `MacCtrl+Shift+I`, see Chat view by default with connection badges, ask an AI question about captured visible-browser context, manually fill Front/Back/Tags, run `:w`, create a Basic note in Anki deck `all`, sync, and see Front/Back clear while Tags remain.
+Load the unpacked extension, open the popup with `MacCtrl+Shift+I`, see Chat view by default with connection badges, ask an AI question about captured visible-browser context, optionally accept a hidden source-tag autocomplete candidate with `Ctrl+K` in Tags, manually fill Front/Back/Tags, run `:w`, create a Basic note in Anki deck `all`, sync, and see Front/Back clear while Tags remain.
 
 ## Status
 
-I08 is complete. Current focus is I09, the first integrated MVP feedback slice.
+I09 implementation is complete and ready for integrated MVP feedback. Manual extension validation is the next step before adding more implementation iterations.

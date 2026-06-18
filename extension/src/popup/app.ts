@@ -1,5 +1,6 @@
 import { resolveCommand } from "../core/commands";
 import { nextCardField, previousCardField, toggleViewFromAnyMode } from "../core/modal";
+import { applyTagAutocompleteCandidate, currentTagToken, tagAutocompleteCandidates } from "../core/tag-policy";
 import type { ActiveConversation, AppState, CardField, ChatField, ChatTurn, ConnectionStatus, Mode } from "../core/types";
 import { createInitialAppState } from "../core/types";
 import {
@@ -85,8 +86,18 @@ function contextLine(): string {
   return `context ${source} ${captured}`;
 }
 
+function selectedTagAutocompleteCandidate(): string | undefined {
+  if (state.view !== "card" || state.cardSelection !== "tags") return undefined;
+  const candidates = tagAutocompleteCandidates(state.cardDraft.tags, knownTags, state.activeConversation.sourceTagSuggestion);
+  if (currentTagToken(state.cardDraft.tags).trim()) return candidates[0];
+  if (!state.cardDraft.tags.trim() && state.activeConversation.sourceTagSuggestion) return candidates[0];
+  return undefined;
+}
+
 function defaultStatusLine(): string {
   const draft = state.cardDraft;
+  const tagCandidate = selectedTagAutocompleteCandidate();
+  if (tagCandidate) return `tag ${tagCandidate}  ^K`;
   if (state.view === "card" && draft.front.trim() && draft.back.trim() && draft.tags.trim()) return "ready  :w";
   return state.statusLine;
 }
@@ -478,7 +489,9 @@ async function sendChatDraft(): Promise<void> {
     return;
   }
 
-  state.statusLine = "AI answered";
+  state.statusLine = state.activeConversation.sourceTagSuggestion
+    ? `AI answered; tag ${state.activeConversation.sourceTagSuggestion}`
+    : "AI answered";
   render();
 }
 
@@ -582,7 +595,15 @@ document.addEventListener("keydown", (event) => {
     }
     if (event.ctrlKey && event.key.toLowerCase() === "k") {
       event.preventDefault();
-      state.statusLine = knownTags.length === 0 ? "no tag candidate" : "tag autocomplete spike pending";
+      const candidate = selectedTagAutocompleteCandidate();
+      if (!candidate) {
+        state.statusLine = "no tag candidate";
+        render();
+        return;
+      }
+      state.cardDraft = { ...state.cardDraft, tags: applyTagAutocompleteCandidate(state.cardDraft.tags, candidate) };
+      void saveCardDraft(state.cardDraft);
+      state.statusLine = `tag ${candidate} accepted`;
       render();
       return;
     }

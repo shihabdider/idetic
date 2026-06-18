@@ -40,9 +40,9 @@
   - depends on: I06a
   - outcome: verified status, deck/model checks, tags, duplicate behavior, addNote, and sync through `127.0.0.1:8765`; popup `:w` and `:sync` now exercise the Anki boundary
 
-- [ ] I09 — Implement first integrated MVP
+- [x] I09 — Implement first integrated MVP
   - depends on: I07, I08
-  - outcome: popup supports Card/Chat views, modal UI, persisted state, screenshot context, AI chat, Basic card save, sync, and status feedback
+  - outcome: popup integrates Chat and Card views, persisted state, screenshot context, OpenAI/Codex chat, hidden source-tag suggestion parsing, tag autocomplete acceptance, Basic card save, sync retry, draft clearing policy, and status feedback
 
 ## Notes
 
@@ -51,3 +51,4 @@
 - Keep implementation bounded by `.ac/architecture.md`.
 - Use `autocode isolate` before independent worktree implementation.
 - Do not commit token dumps or generated credential source files; OpenAI/Codex credentials live only in local Chrome extension storage.
+- No additional implementation iteration is planned before human feedback on the integrated MVP.

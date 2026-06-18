@@ -1,5 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { normalizeTagToken, sourceTagFromParts, tagAutocompleteCandidates } from "../extension/src/core/tag-policy";
+import {
+  applyTagAutocompleteCandidate,
+  normalizeTagToken,
+  sourceTagFromParts,
+  tagAutocompleteCandidates,
+} from "../extension/src/core/tag-policy";
 
 describe("tag policy", () => {
   test("normalizes tags to lowercase underscore tokens", () => {
@@ -20,5 +25,17 @@ describe("tag policy", () => {
       "kahneman_2011",
       "kant_1781",
     ]);
+  });
+
+  test("does not suggest completed tags again", () => {
+    expect(tagAutocompleteCandidates("kahneman_2011 ka", ["kahneman_2011", "kant_1781"], "karpathy_2024_03")).toEqual([
+      "karpathy_2024_03",
+      "kant_1781",
+    ]);
+  });
+
+  test("accepts a tag autocomplete candidate by replacing the current token", () => {
+    expect(applyTagAutocompleteCandidate("paper ka", "Kahneman 2011")).toBe("paper kahneman_2011 ");
+    expect(applyTagAutocompleteCandidate("", "Karpathy 2024/03")).toBe("karpathy_2024_03 ");
   });
 });
